@@ -1,12 +1,11 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
-import { StyledText } from '../components/ui/StyledText';
-import { REGISTER_NEW_USER } from '../graphql/mutations/user';
+import { StyledText } from '../../../components/ui/StyledText';
+import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import { RootTabScreenProps } from '../../../navigation/types';
 
-import { RootTabScreenProps } from '../types';
-
-export default function AuthScreen({
+export default function RegisterScreen({
   navigation,
 }: RootTabScreenProps<'TabOne'>) {
   const [email, setEmail] = useState('');
@@ -28,7 +27,7 @@ export default function AuthScreen({
 
   return (
     <View style={styles.container}>
-      <StyledText style={styles.title}>Авторизация</StyledText>
+      <StyledText style={styles.title}>Регистрация</StyledText>
       <TextInput
         style={styles.input}
         value={email}

@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
-import { StyledText } from '../components/ui/StyledText';
-import { GET_ALL_USERS } from '../graphql/query/user';
+import { StyledText } from '../../components/ui/StyledText';
+import { GET_ALL_USERS } from '../../graphql/query/user';
 
-export default function TabTwoScreen() {
+export default function HomeScreen() {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
   const { data, loading, error } = useQuery(GET_ALL_USERS);
