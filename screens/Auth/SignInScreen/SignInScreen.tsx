@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { StyledText } from '../../../components/ui/StyledText';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
-import { RootTabScreenProps } from '../../../navigation/types';
+import { TypeSignInScreenProps } from './types';
 
-export default function SignInScreen({
-  navigation,
-}: RootTabScreenProps<'TabOne'>) {
+export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -40,7 +38,12 @@ export default function SignInScreen({
         onChangeText={setPassword}
         placeholder='Введите пароль'
       />
-      <Button title='Зарегистрировать' onPress={registerHandler} />
+      <Button title='Войти' onPress={registerHandler} />
+      <View style={styles.divider} />
+      <Button
+        title='Регистрация'
+        onPress={() => navigation.navigate('Register')}
+      />
     </View>
   );
 }
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#491410',
+    backgroundColor: '#1e493d',
   },
   title: {
     fontSize: 44,
@@ -69,5 +72,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     paddingHorizontal: 15,
     lineHeight: 50,
+  },
+  divider: {
+    width: '80%',
+    marginVertical: 30,
+    height: 2,
+    backgroundColor: 'grey',
   },
 });

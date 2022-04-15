@@ -1,10 +1,4 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -12,20 +6,12 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName } from 'react-native';
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
-import NotFoundScreen from '../screens/NotFoundScreen';
-import AuthScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
-import TabTwoScreen from '../screens/HomeScreen/HomeScreen';
+import NotFoundScreen from '../screens/NotFoundScreen/NotFoundScreen';
 import {
   RootSignedInStackParamList,
   RootSignedOutStackParamList,
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
 } from './types';
 import SignInScreen from '../screens/Auth/SignInScreen/SignInScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
@@ -45,11 +31,6 @@ export default function Navigation({
   );
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
-// const Stack = createNativeStackNavigator<RootStackParamList>();
 const SignedInStack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
   createNativeStackNavigator<RootSignedOutStackParamList>();
@@ -58,13 +39,13 @@ type TypeRootNavigatorProps = {
   isSignedIn: boolean;
 };
 
-// function RootNavigator(props: TypeRootNavigatorProps) {
 function RootNavigator(props: TypeRootNavigatorProps) {
   return (
     <>
       {props.isSignedIn ? (
         <SignedInStack.Navigator>
           <SignedInStack.Screen name='Home' component={HomeScreen} />
+          <SignedInStack.Screen name='NotFound' component={NotFoundScreen} />
         </SignedInStack.Navigator>
       ) : (
         <SignedOutStack.Navigator>
@@ -72,20 +53,6 @@ function RootNavigator(props: TypeRootNavigatorProps) {
           <SignedOutStack.Screen name='Register' component={RegisterScreen} />
         </SignedOutStack.Navigator>
       )}
-
-      {/* <Stack.Screen
-        name='Root'
-        component={BottomTabNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name='NotFound'
-        component={NotFoundScreen}
-        options={{ title: 'Oops!' }}
-      />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name='Modal' component={ModalScreen} />
-      </Stack.Group> */}
     </>
   );
 }

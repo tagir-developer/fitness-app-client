@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { StyledText } from '../../../components/ui/StyledText';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
-import { RootTabScreenProps } from '../../../navigation/types';
+import { TypeRegisterScreenProps } from './types';
 
 export default function RegisterScreen({
   navigation,
-}: RootTabScreenProps<'TabOne'>) {
+}: TypeRegisterScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -41,6 +41,8 @@ export default function RegisterScreen({
         placeholder='Введите пароль'
       />
       <Button title='Зарегистрировать' onPress={registerHandler} />
+      <View style={styles.divider} />
+      <Button title='Войти' onPress={() => navigation.navigate('SignIn')} />
     </View>
   );
 }
@@ -69,5 +71,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     paddingHorizontal: 15,
     lineHeight: 50,
+  },
+  divider: {
+    width: '80%',
+    marginVertical: 30,
+    height: 2,
+    backgroundColor: 'grey',
   },
 });
