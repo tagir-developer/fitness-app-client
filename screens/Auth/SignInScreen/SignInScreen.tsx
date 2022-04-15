@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { StyledButton } from '../../../components/ui/StyledButton';
 import { StyledText } from '../../../components/ui/StyledText';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
 import { TypeSignInScreenProps } from './types';
@@ -26,20 +27,30 @@ export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
   return (
     <View style={styles.container}>
       <StyledText style={styles.title}>Вход в систему</StyledText>
+
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
         placeholder='Введите email'
       />
+
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
         placeholder='Введите пароль'
       />
-      <Button title='Войти' onPress={registerHandler} />
+
+      {/* <Button title='Войти' onPress={registerHandler} /> */}
+      <StyledButton
+        title='Войти'
+        onPress={registerHandler}
+        style={styles.button}
+      />
+
       <View style={styles.divider} />
+
       <Button
         title='Регистрация'
         onPress={() => navigation.navigate('Register')}
@@ -78,5 +89,13 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 2,
     backgroundColor: 'grey',
+  },
+  button: {
+    width: '80%',
+    backgroundColor: '#68a741',
+    marginVertical: 30,
+    borderRadius: 10,
+    fontSize: 24,
+    fontFamily: 'roboto',
   },
 });

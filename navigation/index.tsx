@@ -19,13 +19,13 @@ import HomeScreen from '../screens/HomeScreen/HomeScreen';
 
 export default function Navigation({
   colorScheme,
+  isSignedIn,
 }: {
   colorScheme: ColorSchemeName;
+  isSignedIn: boolean;
 }) {
   return (
-    <NavigationContainer
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-    >
+    <NavigationContainer theme={DefaultTheme}>
       <RootNavigator isSignedIn={false} />
     </NavigationContainer>
   );
@@ -48,7 +48,11 @@ function RootNavigator(props: TypeRootNavigatorProps) {
           <SignedInStack.Screen name='NotFound' component={NotFoundScreen} />
         </SignedInStack.Navigator>
       ) : (
-        <SignedOutStack.Navigator>
+        <SignedOutStack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
           <SignedOutStack.Screen name='SignIn' component={SignInScreen} />
           <SignedOutStack.Screen name='Register' component={RegisterScreen} />
         </SignedOutStack.Navigator>
