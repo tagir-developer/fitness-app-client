@@ -16,17 +16,16 @@ import {
 import SignInScreen from '../screens/Auth/SignInScreen/SignInScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
+import { useAuthContext } from '../context/authContext';
 
 export default function Navigation({
   colorScheme,
-  isSignedIn,
 }: {
   colorScheme: ColorSchemeName;
-  isSignedIn: boolean;
 }) {
   return (
     <NavigationContainer theme={DefaultTheme}>
-      <RootNavigator isSignedIn={false} />
+      <RootNavigator />
     </NavigationContainer>
   );
 }
@@ -35,14 +34,12 @@ const SignedInStack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
   createNativeStackNavigator<RootSignedOutStackParamList>();
 
-type TypeRootNavigatorProps = {
-  isSignedIn: boolean;
-};
+function RootNavigator() {
+  const { loggedIn } = useAuthContext();
 
-function RootNavigator(props: TypeRootNavigatorProps) {
   return (
     <>
-      {props.isSignedIn ? (
+      {loggedIn ? (
         <SignedInStack.Navigator>
           <SignedInStack.Screen name='Home' component={HomeScreen} />
           <SignedInStack.Screen name='NotFound' component={NotFoundScreen} />

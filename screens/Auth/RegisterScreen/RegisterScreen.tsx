@@ -1,11 +1,26 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { StyledButton } from '../../../components/ui/StyledButton';
 import { StyledText } from '../../../components/ui/StyledText';
+import { useAuthContext } from '../../../context/authContext';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
 import {
+  registerServerValidationErrorHandler,
+  registerValidationErrorHandler,
+  validateRegisterData,
+} from '../../../utils/validators/authValidators';
+import {
   TypeRegisteredUserData,
+  TypeRegisterFormData,
   TypeRegisterFormUpdateValues,
   TypeRegisterScreenProps,
   TypeRegisterValidationErrors,
@@ -14,26 +29,16 @@ import {
 export default function RegisterScreen({
   navigation,
 }: TypeRegisterScreenProps) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<TypeRegisterFormData>({
     email: '',
     emailError: false,
     password: '',
     passwordError: false,
   });
 
+  const { handleChangeLoginState } = useAuthContext();
+
   const [registerUser] = useMutation(REGISTER_NEW_USER);
-
-  // const handleInputChange = (
-  //   fieldName: string,
-  //   value: string | boolean
-  // ): void => {
-  //   const newFormData = {
-  //     ...form,
-  //     [fieldName]: value,
-  //   };
-
-  //   setForm(newFormData);
-  // };
 
   const changeFormValues = (values: TypeRegisterFormUpdateValues): void => {
     const newFormData = {
@@ -45,30 +50,19 @@ export default function RegisterScreen({
   };
 
   const registerHandler = () => {
+    Keyboard.dismiss();
+
     // validate form values
     const { email, password } = form;
 
-    let errors: TypeRegisterValidationErrors = [];
+    const errors = validateRegisterData(email, password);
 
-    const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i;
-
-    if (email.length === 0 || !emailRegExp.test(email)) {
-      errors.push('emailError');
-    }
-
-    if (password.length < 5) {
-      errors.push('passwordError');
-    }
+    registerValidationErrorHandler(errors, changeFormValues);
 
     if (errors.length > 0) {
-      const values: TypeRegisterFormUpdateValues = {};
-
-      errors.forEach((value) => {
-        values[value] = true;
-      });
-
-      changeFormValues(values);
-
+      Alert.alert('Ошибка Валидации', 'Введите корректные данные', [
+        { text: 'OK' },
+      ]);
       return;
     }
 
@@ -77,10 +71,13 @@ export default function RegisterScreen({
       variables: { user: { email, password } },
     })
       .then(({ data }) => {
-        // ! Надо будет занести в глобальный стейт, вызвав обработчик handleChangeLoginState
         const userData: TypeRegisteredUserData = data.register;
 
-        // handleChangeLoginState(true, userData.accessToken)
+        handleChangeLoginState(
+          true,
+          userData.accessToken,
+          userData.refreshToken
+        );
 
         setForm({
           ...form,
@@ -92,60 +89,53 @@ export default function RegisterScreen({
         const errorMessage: string =
           e?.networkError?.result?.errors?.[0]?.message ?? '';
 
-        if (errorMessage.toLowerCase().includes('email')) {
-          errors.push('emailError');
-        }
+        Alert.alert('Ошибка регистрации', errorMessage, [{ text: 'OK' }]);
 
-        if (errorMessage.toLowerCase().includes('пароль')) {
-          errors.push('passwordError');
-        }
+        const errors = registerServerValidationErrorHandler(errorMessage);
 
-        // ? Этот код повторяется, надо зарефачить
-        if (errors.length > 0) {
-          const values: TypeRegisterFormUpdateValues = {};
-
-          errors.forEach((value) => {
-            values[value] = true;
-          });
-
-          changeFormValues(values);
-        }
+        registerValidationErrorHandler(errors, changeFormValues);
       });
   };
 
   return (
-    <View style={styles.container}>
-      <StyledText style={styles.title}>Регистрация</StyledText>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <StyledText style={styles.title}>Регистрация</StyledText>
 
-      <TextInput
-        style={[styles.input, form.emailError && styles.inputError]}
-        value={form.email}
-        onChangeText={(value) =>
-          changeFormValues({ email: value, emailError: false })
-        }
-        placeholder='Введите email'
-      />
+        <TextInput
+          style={[styles.input, form.emailError && styles.inputError]}
+          value={form.email}
+          onChangeText={(value) =>
+            changeFormValues({ email: value, emailError: false })
+          }
+          placeholder='Введите email'
+          keyboardType={'email-address'}
+          autoCorrect={false}
+          autoCapitalize={'none'}
+        />
 
-      <TextInput
-        style={[styles.input, form.passwordError && styles.inputError]}
-        value={form.password}
-        onChangeText={(value) =>
-          changeFormValues({ password: value, passwordError: false })
-        }
-        placeholder='Введите пароль'
-      />
+        <TextInput
+          style={[styles.input, form.passwordError && styles.inputError]}
+          value={form.password}
+          onChangeText={(value) =>
+            changeFormValues({ password: value, passwordError: false })
+          }
+          placeholder='Введите пароль'
+          autoCorrect={false}
+          autoCapitalize={'none'}
+        />
 
-      {/* <Button title='Зарегистрировать' onPress={registerHandler} /> */}
-      <StyledButton
-        title='Зарегистрировать'
-        onPress={registerHandler}
-        style={styles.button}
-      />
+        <StyledButton
+          title='Зарегистрировать'
+          onPress={registerHandler}
+          style={styles.button}
+        />
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
 
-      <Button title='Войти' onPress={() => navigation.navigate('SignIn')} />
-    </View>
+        <Button title='Войти' onPress={() => navigation.navigate('SignIn')} />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -170,9 +160,8 @@ const styles = StyleSheet.create({
     width: '80%',
     marginVertical: 10,
     backgroundColor: '#d8e1f4',
-    fontSize: 24,
+    fontSize: 18,
     paddingHorizontal: 15,
-    lineHeight: 50,
   },
   inputError: {
     borderColor: 'red',

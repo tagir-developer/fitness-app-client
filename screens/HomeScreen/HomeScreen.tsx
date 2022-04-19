@@ -1,13 +1,17 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
+import { StyledButton } from '../../components/ui/StyledButton';
 import { StyledText } from '../../components/ui/StyledText';
+import { useAuthContext } from '../../context/authContext';
 import { GET_ALL_USERS } from '../../graphql/query/user';
 
 export default function HomeScreen() {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
-  const { data, loading, error } = useQuery(GET_ALL_USERS);
+  const { handleChangeLoginState } = useAuthContext();
+
+  const { data, loading, error, refetch } = useQuery(GET_ALL_USERS);
 
   console.log('Полученные пользователи', data);
 
@@ -19,6 +23,11 @@ export default function HomeScreen() {
 
   const getAllUsers = () => {
     console.log('CLICK');
+    refetch();
+  };
+
+  const handleLogout = (): void => {
+    handleChangeLoginState(false);
   };
 
   if (loading) return <StyledText>Loading...</StyledText>;
@@ -37,6 +46,8 @@ export default function HomeScreen() {
           );
         })}
       </View>
+
+      <StyledButton title='Выйти' onPress={handleLogout} />
     </View>
   );
 }
@@ -54,7 +65,7 @@ const styles = StyleSheet.create({
   },
   users: {
     marginVertical: 30,
-    height: 600,
+    height: 300,
     width: '80%',
     backgroundColor: 'grey',
     display: 'flex',

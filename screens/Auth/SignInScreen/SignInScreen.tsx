@@ -1,61 +1,142 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { StyledButton } from '../../../components/ui/StyledButton';
 import { StyledText } from '../../../components/ui/StyledText';
-import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
-import { TypeSignInScreenProps } from './types';
+import { useAuthContext } from '../../../context/authContext';
+import { LOGIN_USER, REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import {
+  registerServerValidationErrorHandler,
+  registerValidationErrorHandler,
+  validateRegisterData,
+} from '../../../utils/validators/authValidators';
+import {
+  TypeRegisterFormData,
+  TypeRegisterFormUpdateValues,
+} from '../RegisterScreen/types';
+import { TypeSignedInUserData, TypeSignInScreenProps } from './types';
 
 export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState<TypeRegisterFormData>({
+    email: '',
+    emailError: false,
+    password: '',
+    passwordError: false,
+  });
 
-  const [registerUser] = useMutation(REGISTER_NEW_USER);
+  const changeFormValues = (values: TypeRegisterFormUpdateValues): void => {
+    const newFormData = {
+      ...form,
+      ...values,
+    };
 
-  const registerHandler = () => {
-    console.log('Регистрация', email, password);
+    setForm(newFormData);
+  };
 
-    registerUser({
+  const { handleChangeLoginState } = useAuthContext();
+
+  const [loginUser] = useMutation(LOGIN_USER);
+
+  const loginHandler = () => {
+    Keyboard.dismiss();
+
+    // validate form values
+    const { email, password } = form;
+
+    const errors = validateRegisterData(email, password);
+
+    registerValidationErrorHandler(errors, changeFormValues);
+
+    if (errors.length > 0) {
+      Alert.alert('Ошибка Валидации', 'Введите корректные данные', [
+        { text: 'OK' },
+      ]);
+      return;
+    }
+
+    // send graphql request
+    loginUser({
       variables: { user: { email, password } },
-    }).then(({ data }) => {
-      console.log('После регистрации', data);
-      setEmail('');
-      setPassword('');
-    });
+    })
+      .then(({ data }) => {
+        const userData: TypeSignedInUserData = data.login;
+
+        console.log('Данные после авторизации', userData);
+
+        handleChangeLoginState(
+          true,
+          userData.accessToken,
+          userData.refreshToken
+        );
+
+        setForm({
+          ...form,
+          email: '',
+          password: '',
+        });
+      })
+      .catch((e) => {
+        const errorMessage: string =
+          e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+        Alert.alert('Ошибка авторизации', errorMessage, [{ text: 'OK' }]);
+
+        const errors = registerServerValidationErrorHandler(errorMessage);
+
+        registerValidationErrorHandler(errors, changeFormValues);
+      });
   };
 
   return (
-    <View style={styles.container}>
-      <StyledText style={styles.title}>Вход в систему</StyledText>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <StyledText style={styles.title}>Вход в систему</StyledText>
 
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder='Введите email'
-      />
+        <TextInput
+          style={[styles.input, form.emailError && styles.inputError]}
+          value={form.email}
+          onChangeText={(value) =>
+            changeFormValues({ email: value, emailError: false })
+          }
+          placeholder='Введите email'
+          keyboardType={'email-address'}
+          autoCorrect={false}
+          autoCapitalize={'none'}
+        />
 
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder='Введите пароль'
-      />
+        <TextInput
+          style={[styles.input, form.passwordError && styles.inputError]}
+          value={form.password}
+          onChangeText={(value) =>
+            changeFormValues({ password: value, passwordError: false })
+          }
+          placeholder='Введите пароль'
+          autoCorrect={false}
+          autoCapitalize={'none'}
+        />
 
-      {/* <Button title='Войти' onPress={registerHandler} /> */}
-      <StyledButton
-        title='Войти'
-        onPress={registerHandler}
-        style={styles.button}
-      />
+        <StyledButton
+          title='Войти'
+          onPress={loginHandler}
+          style={styles.button}
+        />
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
 
-      <Button
-        title='Регистрация'
-        onPress={() => navigation.navigate('Register')}
-      />
-    </View>
+        <Button
+          title='Регистрация'
+          onPress={() => navigation.navigate('Register')}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -80,9 +161,11 @@ const styles = StyleSheet.create({
     width: '80%',
     marginVertical: 10,
     backgroundColor: '#d8e1f4',
-    fontSize: 24,
+    fontSize: 18,
     paddingHorizontal: 15,
-    lineHeight: 50,
+  },
+  inputError: {
+    borderColor: 'red',
   },
   divider: {
     width: '80%',

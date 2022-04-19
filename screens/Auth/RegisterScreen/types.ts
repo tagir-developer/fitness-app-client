@@ -13,9 +13,6 @@ export type TypeRegisterFormData = {
   passwordError: boolean;
 };
 
-// export type TypeRegisterFormValues = {
-//   [key: string]: string | boolean;
-// };
 export type TypeRegisterFormUpdateValues = {
   email?: string;
   emailError?: boolean;

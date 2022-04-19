@@ -5,3 +5,13 @@ export type TypeSignInScreenProps = NativeStackScreenProps<
   RootSignedOutStackParamList,
   'SignIn'
 >;
+
+export type TypeSignedInUserData = {
+  accessToken: string;
+  refreshToken: string;
+  status: string;
+  user: {
+    id?: string;
+    email?: string;
+  };
+};
