@@ -17,6 +17,7 @@ import SignInScreen from '../screens/Auth/SignInScreen/SignInScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import { useAuthContext } from '../context/authContext';
+import AboutScreen from '../screens/AboutScreen/AboutScreen';
 
 export default function Navigation({
   colorScheme,
@@ -42,6 +43,7 @@ function RootNavigator() {
       {loggedIn ? (
         <SignedInStack.Navigator>
           <SignedInStack.Screen name='Home' component={HomeScreen} />
+          <SignedInStack.Screen name='About' component={AboutScreen} />
           <SignedInStack.Screen name='NotFound' component={NotFoundScreen} />
         </SignedInStack.Navigator>
       ) : (

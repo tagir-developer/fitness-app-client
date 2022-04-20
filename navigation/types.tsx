@@ -7,6 +7,7 @@
 export type RootSignedInStackParamList = {
   // Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Home: undefined;
+  About: undefined;
   NotFound: undefined;
   //   Home: SomeType | undefined
 };
