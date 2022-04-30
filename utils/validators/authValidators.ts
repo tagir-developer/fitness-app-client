@@ -1,4 +1,6 @@
+import { EMAIL_REG_EXP } from '../../common/constants';
 import {
+  RegisterErrorTypes,
   TypeRegisterFormUpdateValues,
   TypeRegisterValidationErrors,
 } from '../../screens/Auth/RegisterScreen/types';
@@ -9,30 +11,12 @@ export const validateRegisterData = (
 ): TypeRegisterValidationErrors => {
   let errors: TypeRegisterValidationErrors = [];
 
-  const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i;
-
-  if (email.length === 0 || !emailRegExp.test(email)) {
-    errors.push('emailError');
+  if (email.length === 0 || !EMAIL_REG_EXP.test(email)) {
+    errors.push(RegisterErrorTypes.EMAIL_ERROR);
   }
 
   if (password.length < 5) {
-    errors.push('passwordError');
-  }
-
-  return errors;
-};
-
-export const registerServerValidationErrorHandler = (
-  errorMessage: string
-): TypeRegisterValidationErrors => {
-  let errors: TypeRegisterValidationErrors = [];
-
-  if (errorMessage.toLowerCase().includes('email')) {
-    errors.push('emailError');
-  }
-
-  if (errorMessage.toLowerCase().includes('пароль')) {
-    errors.push('passwordError');
+    errors.push(RegisterErrorTypes.PASSWORD_ERROR);
   }
 
   return errors;
@@ -51,4 +35,20 @@ export const registerValidationErrorHandler = (
 
     setFormValuesHandler(values);
   }
+};
+
+export const registerServerValidationErrorHandler = (
+  errorMessage: string
+): TypeRegisterValidationErrors => {
+  let errors: TypeRegisterValidationErrors = [];
+
+  if (
+    errorMessage.toLowerCase().includes('email') ||
+    errorMessage.toLowerCase().includes('пароль')
+  ) {
+    errors.push(RegisterErrorTypes.EMAIL_ERROR);
+    errors.push(RegisterErrorTypes.PASSWORD_ERROR);
+  }
+
+  return errors;
 };

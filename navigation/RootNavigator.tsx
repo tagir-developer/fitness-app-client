@@ -18,24 +18,14 @@ import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import { useAuthContext } from '../context/authContext';
 import AboutScreen from '../screens/AboutScreen/AboutScreen';
-
-export default function Navigation({
-  colorScheme,
-}: {
-  colorScheme: ColorSchemeName;
-}) {
-  return (
-    <NavigationContainer theme={DefaultTheme}>
-      <RootNavigator />
-    </NavigationContainer>
-  );
-}
+import ResetPasswordScreen from '../screens/Auth/ResetPasswordScreen/ResetPasswordScreen';
+import NewPasswordScreen from '../screens/Auth/NewPasswordScreen/NewPasswordScreen';
 
 const SignedInStack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
   createNativeStackNavigator<RootSignedOutStackParamList>();
 
-function RootNavigator() {
+export default function RootNavigator() {
   const { loggedIn } = useAuthContext();
 
   return (
@@ -54,6 +44,14 @@ function RootNavigator() {
         >
           <SignedOutStack.Screen name='SignIn' component={SignInScreen} />
           <SignedOutStack.Screen name='Register' component={RegisterScreen} />
+          <SignedOutStack.Screen
+            name='ResetPassword'
+            component={ResetPasswordScreen}
+          />
+          <SignedOutStack.Screen
+            name='NewPassword'
+            component={NewPasswordScreen}
+          />
         </SignedOutStack.Navigator>
       )}
     </>

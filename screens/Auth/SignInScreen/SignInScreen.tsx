@@ -135,6 +135,13 @@ export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
           title='Регистрация'
           onPress={() => navigation.navigate('Register')}
         />
+
+        <View style={styles.divider} />
+
+        <Button
+          title='Забыли пароль?'
+          onPress={() => navigation.navigate('ResetPassword')}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

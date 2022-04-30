@@ -15,6 +15,9 @@ export type RootSignedInStackParamList = {
 export type RootSignedOutStackParamList = {
   SignIn: undefined;
   Register: undefined;
+  // ResetPassword: { token: string };
+  ResetPassword: undefined;
+  NewPassword: { token: string };
 };
 
 export type RootStackParamList =

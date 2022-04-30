@@ -5,7 +5,6 @@ export const REGISTER_NEW_USER = gql`
     register(user: $user) {
       accessToken
       refreshToken
-      status
       user {
         id
         email
@@ -19,7 +18,6 @@ export const LOGIN_USER = gql`
     login(user: $user) {
       accessToken
       refreshToken
-      status
       user {
         id
         email
@@ -33,6 +31,22 @@ export const REFRESH_USER_TOKEN = gql`
     refresh(refreshToken: $refreshToken) {
       accessToken
       refreshToken
+    }
+  }
+`;
+
+export const RESET_USER_PASSWORD = gql`
+  mutation reset($email: String!) {
+    reset(email: $email) {
+      message
+    }
+  }
+`;
+
+export const CHANGE_USER_PASSWORD = gql`
+  mutation changePassword($data: ChangePasswordInput!) {
+    changePassword(data: $data) {
+      message
     }
   }
 `;

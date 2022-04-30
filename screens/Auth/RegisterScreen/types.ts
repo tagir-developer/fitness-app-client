@@ -20,7 +20,12 @@ export type TypeRegisterFormUpdateValues = {
   passwordError?: boolean;
 };
 
-export type TypeRegisterValidationErrors = ('emailError' | 'passwordError')[];
+export enum RegisterErrorTypes {
+  EMAIL_ERROR = 'emailError',
+  PASSWORD_ERROR = 'passwordError',
+}
+
+export type TypeRegisterValidationErrors = RegisterErrorTypes[];
 
 export type TypeRegisteredUserData = {
   accessToken: string;

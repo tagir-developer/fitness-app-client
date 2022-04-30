@@ -17,7 +17,6 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
   });
 
   useEffect(() => {
-    console.log('USE EFFECT +++++');
     if (!loading) {
       setUsers(data.getAllUsers);
     }
@@ -33,8 +32,6 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
   };
 
   if (loading) return <StyledText>Loading...</StyledText>;
-
-  console.log('ПОЛЬЗОВАТЕЛИ =====', data);
 
   return (
     <View style={styles.container}>

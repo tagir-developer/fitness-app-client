@@ -4,7 +4,7 @@ import { Alert, Button, StyleSheet, View } from 'react-native';
 import { StyledButton } from '../../components/ui/StyledButton';
 import { StyledText } from '../../components/ui/StyledText';
 import { useAuthContext } from '../../context/authContext';
-import { GET_ALL_USERS, GET_USER_BY_EMAIL } from '../../graphql/query/user';
+import { GET_USER_BY_EMAIL } from '../../graphql/query/user';
 import { TypeAboutScreenProps } from './types';
 
 export default function AboutScreen({ navigation }: TypeAboutScreenProps) {
@@ -24,28 +24,15 @@ export default function AboutScreen({ navigation }: TypeAboutScreenProps) {
   if (loading) return <StyledText>Загрузка...</StyledText>;
 
   if (error) {
-    // console.log('ОБЪЕКТ ОШИБКИ ===== error', error);
-    // console.log(
-    //   'ОБЪЕКТ ОШИБКИ ====== error.graphQLErrors',
-    //   JSON.stringify(error.graphQLErrors)
-    // );
-    // console.log('ОБЪЕКТ ОШИБКИ ====== error.clientErrors', error.clientErrors);
-
-    // if (error.message === 'Unauthorized') {
-    //   handleChangeLoginState(false);
-    // }
-
     if (error.message === 'Unauthorized') {
       Alert.alert('Ошибка', 'Пользователь не авторизован');
     } else {
       Alert.alert(
         'Ошибка',
-        'Не удалось получить пользователя ' + error.message
+        'Не удалось получить пользователя. ' + error.message
       );
     }
   }
-
-  console.log('data - данные пользователя', data?.getUser);
 
   return (
     <View style={styles.container}>
