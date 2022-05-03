@@ -4,6 +4,19 @@
 //   }
 // }
 
+export enum SignedOutPageTypes {
+  SIGN_IN = 'SignIn',
+  REGISTER = 'Register',
+  RESET_PASSWORD = 'ResetPassword',
+  NEW_PASSWORD = 'NewPassword',
+}
+
+export enum PageTypes {
+  HOME = 'Home',
+  ABOUT = 'About',
+  NOT_FOUND = 'NotFound',
+}
+
 export type RootSignedInStackParamList = {
   // Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Home: undefined;

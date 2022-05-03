@@ -40,6 +40,9 @@ export default function RootNavigator() {
         <SignedOutStack.Navigator
           screenOptions={{
             headerShown: false,
+            contentStyle: {
+              backgroundColor: '#000000',
+            },
           }}
         >
           <SignedOutStack.Screen name='SignIn' component={SignInScreen} />

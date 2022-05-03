@@ -18,6 +18,7 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
           roboto: require('../assets/fonts/Roboto-Regular.ttf'),
           'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf'),
+          'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service

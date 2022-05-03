@@ -1,16 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 
 import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation/Navigation';
+import { Provider as PaperProvider } from 'react-native-paper';
 import {
   InMemoryCache,
   ApolloClient,
   ApolloProvider,
   HttpLink,
   ApolloLink,
-  RequestHandler,
-  from,
   NormalizedCacheObject,
   Observable,
 } from '@apollo/client';
@@ -20,6 +18,9 @@ import { AuthContext } from './context/authContext';
 import { setContext } from 'apollo-link-context';
 import { onError } from '@apollo/client/link/error';
 import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
+import { paperTheme } from './common/paperTheme';
+import { ThemeProvider } from 'styled-components';
+import { myTheme } from './common/theme';
 
 const httpLink = new HttpLink({
   uri: 'http://192.168.0.103:5000/graphql',
@@ -153,10 +154,14 @@ export default function App() {
   } else {
     return (
       <ApolloProvider client={apolloClient}>
-        <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
-          <Navigation />
-          <StatusBar />
-        </AuthContext.Provider>
+        {/* <PaperProvider theme={paperTheme}> */}
+        <ThemeProvider theme={myTheme}>
+          <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
+            <Navigation />
+            <StatusBar />
+          </AuthContext.Provider>
+        </ThemeProvider>
+        {/* </PaperProvider> */}
       </ApolloProvider>
     );
   }

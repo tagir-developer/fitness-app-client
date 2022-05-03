@@ -1,17 +1,15 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import {
-  Alert,
-  Button,
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { StyledButton } from '../../../components/ui/StyledButton';
-import { StyledText } from '../../../components/ui/StyledText';
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { AppButton } from '../../../components/buttons/AppButton';
+import { LinkButton } from '../../../components/buttons/LinkButton';
+import { AppText } from '../../../components/typography/AppText';
+import { AuthScreenTitle } from '../../../components/typography/AuthScreenTitle';
+import { AppFlex } from '../../../components/ui/AppFlex';
+import { AppTextInput } from '../../../components/ui/AppTextInput';
+import MainLayout from '../../../components/ui/MainLayout';
 import { RESET_USER_PASSWORD } from '../../../graphql/mutations/user';
+import { SignedOutPageTypes } from '../../../navigation/types';
 import {
   passwordResetErrorHandler,
   resetServerValidationErrorHandler,
@@ -76,12 +74,6 @@ export default function ResetPasswordScreen({
           data?.reset?.message ??
             'Проверьте почту и перейдите по ссылке, чтобы придумать новый пароль'
         );
-        // Alert.alert(
-        //   'Ссылка для сброса пароля отправлена на ваш email',
-        //   data?.reset?.message ??
-        //     'Проверьте почту и перейдите по ссылке, чтобы придумать новый пароль',
-        //   [{ text: 'OK' }]
-        // );
 
         navigation.navigate('SignIn');
       })
@@ -98,78 +90,50 @@ export default function ResetPasswordScreen({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <StyledText style={styles.title}>Сброс пароля</StyledText>
+    <MainLayout>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <AppFlex flex='1'>
+          <AuthScreenTitle mb='20px' size='32px'>
+            ЗАБЫЛИ ПАРОЛЬ?
+          </AuthScreenTitle>
 
-        <TextInput
-          style={[styles.input, form.emailError && styles.inputError]}
-          value={form.email}
-          onChangeText={(value) =>
-            changeFormValues({ email: value, emailError: false })
-          }
-          placeholder='Введите email'
-          keyboardType={'email-address'}
-          autoCorrect={false}
-          autoCapitalize={'none'}
-        />
+          <AppText
+            size='16px'
+            w='80%'
+            color='#8E8E93'
+            textAlign='center'
+            mb='30px'
+          >
+            Укажите email, указанный при регистрации. Мы вышлем на него ссылку
+            для сброса пароля.
+          </AppText>
 
-        <StyledButton
-          title='Отправить ссылку'
-          onPress={sendResetMailHandler}
-          style={styles.button}
-        />
+          <AppTextInput
+            error={form.emailError}
+            value={form.email}
+            onChangeText={(value) =>
+              changeFormValues({ email: value, emailError: false })
+            }
+            placeholder='Введите email'
+            keyboardType={'email-address'}
+            mb='40px'
+          />
 
-        <View style={styles.divider} />
+          <AppButton
+            title='Отправить ссылку'
+            onPress={sendResetMailHandler}
+            mb='30px'
+          />
 
-        <Button
-          title='Авторизация'
-          onPress={() => navigation.navigate('SignIn')}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+          <LinkButton
+            title='Войти в систему'
+            onPress={() => navigation.navigate(SignedOutPageTypes.SIGN_IN)}
+            underline
+            size='18px'
+            mb='40px'
+          />
+        </AppFlex>
+      </TouchableWithoutFeedback>
+    </MainLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#703415',
-  },
-  title: {
-    fontSize: 44,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 40,
-  },
-  input: {
-    height: 50,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    width: '80%',
-    marginVertical: 10,
-    backgroundColor: '#d8e1f4',
-    fontSize: 18,
-    paddingHorizontal: 15,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  divider: {
-    width: '80%',
-    marginVertical: 30,
-    height: 2,
-    backgroundColor: 'grey',
-  },
-  button: {
-    width: '80%',
-    backgroundColor: '#68a741',
-    marginVertical: 30,
-    borderRadius: 10,
-    fontSize: 24,
-    fontFamily: 'roboto',
-  },
-});

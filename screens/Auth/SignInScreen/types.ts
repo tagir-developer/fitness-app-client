@@ -1,9 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootSignedOutStackParamList } from '../../../navigation/types';
+import {
+  RootSignedOutStackParamList,
+  SignedOutPageTypes,
+} from '../../../navigation/types';
 
 export type TypeSignInScreenProps = NativeStackScreenProps<
   RootSignedOutStackParamList,
-  'SignIn'
+  SignedOutPageTypes.SIGN_IN
 >;
 
 export type TypeSignedInUserData = {

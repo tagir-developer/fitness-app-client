@@ -1,18 +1,13 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import {
-  Alert,
-  Button,
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { StyledButton } from '../../../components/ui/StyledButton';
-import { StyledText } from '../../../components/ui/StyledText';
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { AuthScreenTitle } from '../../../components/typography/AuthScreenTitle';
+import { AppButton } from '../../../components/buttons/AppButton';
+import { AppFlex } from '../../../components/ui/AppFlex';
+import { AppTextInput } from '../../../components/ui/AppTextInput';
+import MainLayout from '../../../components/ui/MainLayout';
 import { useAuthContext } from '../../../context/authContext';
-import { LOGIN_USER, REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import { LOGIN_USER } from '../../../graphql/mutations/user';
 import {
   registerServerValidationErrorHandler,
   registerValidationErrorHandler,
@@ -23,6 +18,8 @@ import {
   TypeRegisterFormUpdateValues,
 } from '../RegisterScreen/types';
 import { TypeSignedInUserData, TypeSignInScreenProps } from './types';
+import { LinkButton } from '../../../components/buttons/LinkButton';
+import { SignedOutPageTypes } from '../../../navigation/types';
 
 export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
   const [form, setForm] = useState<TypeRegisterFormData>({
@@ -96,96 +93,53 @@ export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <StyledText style={styles.title}>Вход в систему</StyledText>
+    <MainLayout>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <AppFlex flex='1'>
+          <AuthScreenTitle mb='30px'>ВХОД В СИСТЕМУ</AuthScreenTitle>
 
-        <TextInput
-          style={[styles.input, form.emailError && styles.inputError]}
-          value={form.email}
-          onChangeText={(value) =>
-            changeFormValues({ email: value, emailError: false })
-          }
-          placeholder='Введите email'
-          keyboardType={'email-address'}
-          autoCorrect={false}
-          autoCapitalize={'none'}
-        />
+          <AppTextInput
+            error={form.emailError}
+            value={form.email}
+            onChangeText={(value) =>
+              changeFormValues({ email: value, emailError: false })
+            }
+            placeholder='Введите email'
+            mb='20px'
+          />
 
-        <TextInput
-          style={[styles.input, form.passwordError && styles.inputError]}
-          value={form.password}
-          onChangeText={(value) =>
-            changeFormValues({ password: value, passwordError: false })
-          }
-          placeholder='Введите пароль'
-          autoCorrect={false}
-          autoCapitalize={'none'}
-        />
+          <AppTextInput
+            error={form.passwordError}
+            value={form.password}
+            onChangeText={(value) =>
+              changeFormValues({ password: value, passwordError: false })
+            }
+            placeholder='Введите пароль'
+            isPassword
+            mb='40px'
+          />
 
-        <StyledButton
-          title='Войти'
-          onPress={loginHandler}
-          style={styles.button}
-        />
+          <AppButton title='Войти' onPress={loginHandler} mb='30px' />
 
-        <View style={styles.divider} />
+          <LinkButton
+            title='Зарегистрироваться'
+            onPress={() => navigation.navigate(SignedOutPageTypes.REGISTER)}
+            underline
+            size='18px'
+            mb='40px'
+          />
 
-        <Button
-          title='Регистрация'
-          onPress={() => navigation.navigate('Register')}
-        />
-
-        <View style={styles.divider} />
-
-        <Button
-          title='Забыли пароль?'
-          onPress={() => navigation.navigate('ResetPassword')}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+          <LinkButton
+            title='Забыли пароль?'
+            onPress={() =>
+              navigation.navigate(SignedOutPageTypes.RESET_PASSWORD)
+            }
+            size='16px'
+            color='#6B6B6B'
+            underline
+          />
+        </AppFlex>
+      </TouchableWithoutFeedback>
+    </MainLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1e493d',
-  },
-  title: {
-    fontSize: 44,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 40,
-  },
-  input: {
-    height: 50,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    width: '80%',
-    marginVertical: 10,
-    backgroundColor: '#d8e1f4',
-    fontSize: 18,
-    paddingHorizontal: 15,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  divider: {
-    width: '80%',
-    marginVertical: 30,
-    height: 2,
-    backgroundColor: 'grey',
-  },
-  button: {
-    width: '80%',
-    backgroundColor: '#68a741',
-    marginVertical: 30,
-    borderRadius: 10,
-    fontSize: 24,
-    fontFamily: 'roboto',
-  },
-});

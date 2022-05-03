@@ -1,9 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootSignedOutStackParamList } from '../../../navigation/types';
+import {
+  RootSignedOutStackParamList,
+  SignedOutPageTypes,
+} from '../../../navigation/types';
 
 export type TypeNewPasswordScreenProps = NativeStackScreenProps<
   RootSignedOutStackParamList,
-  'NewPassword'
+  SignedOutPageTypes.NEW_PASSWORD
 >;
 
 export type TypeSuccessResponseData = {

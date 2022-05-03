@@ -1,18 +1,15 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import {
-  Alert,
-  Button,
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { StyledButton } from '../../../components/ui/StyledButton';
-import { StyledText } from '../../../components/ui/StyledText';
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { AppButton } from '../../../components/buttons/AppButton';
+import { LinkButton } from '../../../components/buttons/LinkButton';
+import { AuthScreenTitle } from '../../../components/typography/AuthScreenTitle';
+import { AppFlex } from '../../../components/ui/AppFlex';
+import { AppTextInput } from '../../../components/ui/AppTextInput';
+import MainLayout from '../../../components/ui/MainLayout';
 import { useAuthContext } from '../../../context/authContext';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import { SignedOutPageTypes } from '../../../navigation/types';
 import {
   registerServerValidationErrorHandler,
   registerValidationErrorHandler,
@@ -23,7 +20,6 @@ import {
   TypeRegisterFormData,
   TypeRegisterFormUpdateValues,
   TypeRegisterScreenProps,
-  TypeRegisterValidationErrors,
 } from './types';
 
 export default function RegisterScreen({
@@ -98,86 +94,49 @@ export default function RegisterScreen({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <StyledText style={styles.title}>Регистрация</StyledText>
+    <MainLayout>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <AppFlex flex='1'>
+          <AuthScreenTitle mb='30px' size='40px'>
+            РЕГИСТРАЦИЯ
+          </AuthScreenTitle>
 
-        <TextInput
-          style={[styles.input, form.emailError && styles.inputError]}
-          value={form.email}
-          onChangeText={(value) =>
-            changeFormValues({ email: value, emailError: false })
-          }
-          placeholder='Введите email'
-          keyboardType={'email-address'}
-          autoCorrect={false}
-          autoCapitalize={'none'}
-        />
+          <AppTextInput
+            error={form.emailError}
+            value={form.email}
+            onChangeText={(value) =>
+              changeFormValues({ email: value, emailError: false })
+            }
+            placeholder='Введите email'
+            mb='20px'
+          />
 
-        <TextInput
-          style={[styles.input, form.passwordError && styles.inputError]}
-          value={form.password}
-          onChangeText={(value) =>
-            changeFormValues({ password: value, passwordError: false })
-          }
-          placeholder='Введите пароль'
-          autoCorrect={false}
-          autoCapitalize={'none'}
-        />
+          <AppTextInput
+            error={form.passwordError}
+            value={form.password}
+            onChangeText={(value) =>
+              changeFormValues({ password: value, passwordError: false })
+            }
+            placeholder='Придумайте пароль'
+            isPassword
+            mb='40px'
+          />
 
-        <StyledButton
-          title='Зарегистрировать'
-          onPress={registerHandler}
-          style={styles.button}
-        />
+          <AppButton
+            title='Зарегистрироваться'
+            onPress={registerHandler}
+            mb='30px'
+          />
 
-        <View style={styles.divider} />
-
-        <Button title='Войти' onPress={() => navigation.navigate('SignIn')} />
-      </View>
-    </TouchableWithoutFeedback>
+          <LinkButton
+            title='Войти в систему'
+            onPress={() => navigation.navigate(SignedOutPageTypes.SIGN_IN)}
+            underline
+            size='18px'
+            mb='40px'
+          />
+        </AppFlex>
+      </TouchableWithoutFeedback>
+    </MainLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#102349',
-  },
-  title: {
-    fontSize: 44,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 40,
-  },
-  input: {
-    height: 50,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    width: '80%',
-    marginVertical: 10,
-    backgroundColor: '#d8e1f4',
-    fontSize: 18,
-    paddingHorizontal: 15,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  divider: {
-    width: '80%',
-    marginVertical: 30,
-    height: 2,
-    backgroundColor: 'grey',
-  },
-  button: {
-    width: '80%',
-    backgroundColor: '#259ab8',
-    marginVertical: 30,
-    borderRadius: 10,
-    fontSize: 24,
-    fontFamily: 'roboto',
-  },
-});
