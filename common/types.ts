@@ -1,5 +1,11 @@
 // styled-component types
 
+import { DefaultTheme } from 'styled-components';
+
+export type TypeThemeProps = {
+  theme: DefaultTheme;
+};
+
 export type CssSize = `${number}${'px' | '%'}`;
 
 export type MarginProps = {

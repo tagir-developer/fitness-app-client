@@ -75,7 +75,7 @@ export default function ResetPasswordScreen({
             'Проверьте почту и перейдите по ссылке, чтобы придумать новый пароль'
         );
 
-        navigation.navigate('SignIn');
+        navigation.navigate(SignedOutPageTypes.SIGN_IN);
       })
       .catch((e) => {
         const errorMessage: string =

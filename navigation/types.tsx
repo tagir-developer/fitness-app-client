@@ -15,6 +15,7 @@ export enum PageTypes {
   HOME = 'Home',
   ABOUT = 'About',
   NOT_FOUND = 'NotFound',
+  ALL_PROGRAMS = 'AllPrograms',
 }
 
 export type RootSignedInStackParamList = {
@@ -22,6 +23,7 @@ export type RootSignedInStackParamList = {
   Home: undefined;
   About: undefined;
   NotFound: undefined;
+  AllPrograms: undefined;
   //   Home: SomeType | undefined
 };
 

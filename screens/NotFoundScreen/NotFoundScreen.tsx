@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { StyledText } from '../../components/ui/StyledText';
-import { RootSignedInStackParamList } from '../../navigation/types';
+import { PageTypes, RootSignedInStackParamList } from '../../navigation/types';
 
 type TypeNotFoundScreenProps = NativeStackScreenProps<
   RootSignedInStackParamList,
@@ -15,7 +15,7 @@ export default function NotFoundScreen({
     <View style={styles.container}>
       <StyledText style={styles.title}>Страница не найдена.</StyledText>
       <TouchableOpacity
-        onPress={() => navigation.replace('Home')}
+        onPress={() => navigation.replace(PageTypes.HOME)}
         style={styles.link}
       >
         <StyledText style={styles.linkText}>

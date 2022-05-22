@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Image, StyleSheet, View } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen/NotFoundScreen';
 import {
@@ -20,22 +20,71 @@ import { useAuthContext } from '../context/authContext';
 import AboutScreen from '../screens/AboutScreen/AboutScreen';
 import ResetPasswordScreen from '../screens/Auth/ResetPasswordScreen/ResetPasswordScreen';
 import NewPasswordScreen from '../screens/Auth/NewPasswordScreen/NewPasswordScreen';
+import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/AllProgramsScreen';
+import { AppHeader } from '../components/ui/AppHeader';
 
-const SignedInStack = createNativeStackNavigator<RootSignedInStackParamList>();
+const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
   createNativeStackNavigator<RootSignedOutStackParamList>();
 
 export default function RootNavigator() {
-  const { loggedIn } = useAuthContext();
+  // const { loggedIn } = useAuthContext();
+
+  // ! Временно переведем в значение true чтобы не авторизоваться каждый раз
+  const loggedIn = true;
 
   return (
     <>
       {loggedIn ? (
-        <SignedInStack.Navigator>
-          <SignedInStack.Screen name='Home' component={HomeScreen} />
-          <SignedInStack.Screen name='About' component={AboutScreen} />
-          <SignedInStack.Screen name='NotFound' component={NotFoundScreen} />
-        </SignedInStack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: '#140f2a',
+            },
+          }}
+        >
+          <Stack.Group
+          // screenOptions={{
+          //   headerShown: false,
+          //   contentStyle: {
+          //     backgroundColor: '#140f2a',
+          //   },
+          // }}
+          >
+            <Stack.Screen name='Home' component={HomeScreen} />
+            <Stack.Screen name='About' component={AboutScreen} />
+          </Stack.Group>
+
+          <Stack.Group
+          // screenOptions={{
+          //   header: () => <AppHeader title='Программы тренировок' />,
+          //   // header,
+          //   // headerTitle: 'Программы тренировок',
+          //   // headerBackground: () => (
+          //   //   <View
+          //   //     style={styles.test}
+          //   //     // source={{
+          //   //     //   uri: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg',
+          //   //     // }}
+          //   //   />
+          //   // ),
+          //   // headerBackground: () => (
+          //   //   <Image
+          //   //     style={StyleSheet.absoluteFill}
+          //   //     source={require('../assets/images/ui/header-bg.png')}
+          //   //     // source={{
+          //   //     //   uri: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg',
+          //   //     // }}
+          //   //   />
+          //   // ),
+          // }}
+          >
+            <Stack.Screen name='AllPrograms' component={AllProgramsScreen} />
+          </Stack.Group>
+
+          <Stack.Screen name='NotFound' component={NotFoundScreen} />
+        </Stack.Navigator>
       ) : (
         <SignedOutStack.Navigator
           screenOptions={{
@@ -60,6 +109,14 @@ export default function RootNavigator() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  test: {
+    width: '100%',
+    height: 200,
+    backgroundColor: 'red',
+  },
+});
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.

@@ -16,6 +16,8 @@ type Props = ViewProps &
     w?: CssSize;
     h?: CssSize;
     flex?: string;
+    // Временное свойство для подкраски на этапе разработки
+    devColor?: boolean;
   };
 
 const StyledFlex = styled.View<Props>`
@@ -27,6 +29,8 @@ const StyledFlex = styled.View<Props>`
   justify-content: ${(props) => props.justify ?? 'center'};
   align-items: ${(props) => props.align ?? 'center'};
   flex: ${(props) => props.flex ?? 'none'};
+
+  background-color: ${(props) => (props.devColor ? 'red' : 'transparent')};
 
   margin-top: ${(props) => props.mt ?? '0px'};
   margin-bottom: ${(props) => props.mb ?? '0px'};

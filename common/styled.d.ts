@@ -4,6 +4,7 @@ declare module 'styled-components' {
   export interface DefaultTheme {
     borderRadius: string;
     marginBottom: string;
+    width: string;
 
     fonts: {
       light: string;
@@ -17,6 +18,7 @@ declare module 'styled-components' {
       primaryText: string;
       danger: string;
       accent: string;
+      empty: string;
     };
   }
 }

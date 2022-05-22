@@ -1,30 +1,40 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { ReactChild } from 'react';
-import { GestureResponderEvent } from 'react-native';
+import { TouchableOpacityProps } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
 import { CssSize, MarginProps } from '../../common/types';
 
-type Props = MarginProps & {
-  onPress: ((event: GestureResponderEvent) => void) | undefined;
-  title: string;
-  color?: string;
-};
-
-type StyledTouchableOpacityProps = MarginProps & {
-  width?: CssSize;
-};
+type Props = TouchableOpacityProps &
+  MarginProps & {
+    title: string;
+    color?: string;
+    w?: CssSize;
+    subTitle?: string;
+    fontSize?: CssSize;
+  };
 
 type ButtonTextProps = {
   theme: DefaultTheme;
   color?: string;
+  fontSize?: CssSize;
 };
 
 type ImageBackgroundProps = {
   children: ReactChild;
 };
 
-const RoundedTouchableOpacity = styled.TouchableOpacity<StyledTouchableOpacityProps>`
-  width: 286px;
-  height: 57px;
+type ContentViewProps = {
+  subTitle?: string;
+};
+
+const RoundedTouchableOpacity = styled.TouchableOpacity<Props>`
+  width: ${(props) => props.w ?? props.theme.width};
+  height: auto;
+
+  background: ${(props) => props.theme.colors.empty};
+  border-radius: 52px;
+
+  overflow: hidden;
 
   margin-top: ${(props) => props.mt ?? '0px'};
   margin-bottom: ${(props) => props.mb ?? '0px'};
@@ -33,9 +43,18 @@ const RoundedTouchableOpacity = styled.TouchableOpacity<StyledTouchableOpacityPr
 `;
 
 const ButtonText = styled.Text<ButtonTextProps>`
+  font-family: ${(props) => props.theme.fonts.bold};
   font-weight: 700;
-  font-size: 15px;
+  font-size: ${(props) => props.fontSize ?? '15px'};
   color: ${(props) => props.color ?? props.theme.colors.primaryText};
+`;
+
+const SubtitleText = styled.Text`
+  font-family: ${(props) => props.theme.fonts.normal};
+  font-size: 14px;
+  color: #5c5c5c;
+
+  margin-top: 10px;
 `;
 
 const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
@@ -45,20 +64,37 @@ const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
   align-items: center;
 `;
 
+const StyledInnerView = styled.View`
+  height: auto;
+  overflow: hidden;
+
+  border-radius: 52px;
+
+  margin: 2px;
+`;
+
+const ContentView = styled.View<ContentViewProps>`
+  height: ${(props) => (props.subTitle ? '77px' : '57px')};
+`;
+
 export const AppButton: React.FC<Props> = (props) => (
-  <RoundedTouchableOpacity
-    onPress={props.onPress}
-    mt={props.mt}
-    mb={props.mb}
-    ml={props.ml}
-    mr={props.mr}
-    activeOpacity={0.9}
-  >
-    <StyledImageBackground
-      source={require('../../assets/images/ui/steelButton.png')}
-      resizeMode='contain'
-    >
-      <ButtonText color={props.color}>{props.title.toUpperCase()}</ButtonText>
-    </StyledImageBackground>
+  <RoundedTouchableOpacity {...props} activeOpacity={0.9}>
+    <LinearGradient colors={['#F8F8F8', '#3C3C3C']}>
+      <StyledInnerView>
+        <ContentView subTitle={props.subTitle}>
+          <StyledImageBackground
+            source={require('../../assets/images/ui/home-menu-item-bg.jpg')}
+            resizeMode='repeat'
+          >
+            <>
+              <ButtonText color={props.color} fontSize={props.fontSize}>
+                {props.title.toUpperCase()}
+              </ButtonText>
+              {props.subTitle && <SubtitleText>{props.subTitle}</SubtitleText>}
+            </>
+          </StyledImageBackground>
+        </ContentView>
+      </StyledInnerView>
+    </LinearGradient>
   </RoundedTouchableOpacity>
 );

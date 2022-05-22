@@ -1,10 +1,14 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
-import { StyledButton } from '../../components/ui/StyledButton';
-import { StyledText } from '../../components/ui/StyledText';
+import { Alert } from 'react-native';
+import { AppButton } from '../../components/buttons/AppButton';
+import { AppFlex } from '../../components/ui/AppFlex';
+import { HomeMenu } from '../../components/ui/HomeMenu';
+import { HomeMenuItem } from '../../components/ui/HomeMenuItem';
+import MainLayout from '../../components/ui/MainLayout';
 import { useAuthContext } from '../../context/authContext';
 import { GET_ALL_USERS } from '../../graphql/query/user';
+import { PageTypes } from '../../navigation/types';
 import { TypeHomeScreenProps } from './types';
 
 export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
@@ -12,77 +16,121 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
 
   const { handleChangeLoginState } = useAuthContext();
 
-  const { data, loading, error, refetch } = useQuery(GET_ALL_USERS, {
-    notifyOnNetworkStatusChange: true,
-  });
+  // есть ли продолжающаяся тренировка
+  const isActiveWorkout = false;
 
-  useEffect(() => {
-    if (!loading) {
-      setUsers(data.getAllUsers);
-    }
-  }, [data]);
+  // ! Этот функционал по выходу из системы добавить на страницу настроек
 
-  const getAllUsers = () => {
-    console.log('CLICK');
-    refetch();
+  // const { data, loading, error, refetch } = useQuery(GET_ALL_USERS, {
+  //   notifyOnNetworkStatusChange: true,
+  // });
+
+  // useEffect(() => {
+  //   if (!loading) {
+  //     setUsers(data.getAllUsers);
+  //   }
+  // }, [data]);
+
+  // const getAllUsers = () => {
+  //   console.log('CLICK');
+  //   refetch();
+  // };
+
+  const completeWorkoutHandler = (): void => {
+    Alert.alert(
+      'Закончить тренировку',
+      'Вы действительно хотите закончить тренировку?',
+      [
+        {
+          text: 'Отмена',
+          onPress: () => console.log('Отмена действия закончить тренировку'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => console.log('Подтверждение закончить тренировку'),
+        },
+      ]
+    );
   };
 
   const handleLogout = (): void => {
     handleChangeLoginState(false);
   };
 
-  if (loading) return <StyledText>Loading...</StyledText>;
+  // if (loading) return <StyledText>Loading...</StyledText>;
 
   return (
-    <View style={styles.container}>
-      <StyledText style={styles.title}>Второй экран</StyledText>
-      <Button onPress={getAllUsers} title='Получить пользователей' />
+    <MainLayout>
+      <AppFlex flex='1'>
+        <AppFlex flex='1'>
+          <AppFlex h='200px'>
+            {isActiveWorkout ? (
+              <>
+                <AppButton
+                  title='Продолжить тренировку'
+                  subTitle='Базовая программа'
+                  onPress={() => {}}
+                  mb='25px'
+                  fontSize='17px'
+                />
 
-      <Button
-        onPress={() => navigation.navigate('About')}
-        title='О приложении'
-      />
+                <AppButton
+                  title='Закончить тренировку'
+                  onPress={completeWorkoutHandler}
+                  fontSize='17px'
+                  mb='30px'
+                />
+              </>
+            ) : (
+              <AppButton
+                title='Начать тренировку'
+                subTitle='Базовая программа'
+                onPress={() => {}}
+                mb='25px'
+                fontSize='17px'
+              />
+            )}
+          </AppFlex>
 
-      <View style={styles.users}>
-        {users.map((user: any, index: any) => {
-          return (
-            <View style={styles.userInfo} key={index}>
-              <StyledText>{user.email}</StyledText>
-            </View>
-          );
-        })}
-      </View>
+          <HomeMenu>
+            <HomeMenuItem
+              title='Программы'
+              onPress={() => navigation.navigate(PageTypes.ALL_PROGRAMS)}
+            />
+            <HomeMenuItem
+              title='История тренировок'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Упражнения'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Мышечные группы'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Состояние тела'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Статистика'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Калькулятор'
+              onPress={() => console.log('sdsdsd')}
+            />
+            <HomeMenuItem
+              title='Настройки'
+              onPress={() => console.log('sdsdsd')}
+            />
+          </HomeMenu>
+        </AppFlex>
 
-      <StyledButton title='Выйти' onPress={handleLogout} />
-    </View>
+        {/* <StyledButton title='Выйти' onPress={handleLogout} /> */}
+      </AppFlex>
+    </MainLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 40,
-  },
-  users: {
-    marginVertical: 30,
-    height: 300,
-    width: '80%',
-    backgroundColor: 'grey',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  userInfo: {
-    marginVertical: 10,
-    height: 50,
-    width: '90%',
-    backgroundColor: 'white',
-  },
-});

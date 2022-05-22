@@ -73,7 +73,7 @@ export default function NewPasswordScreen({
           [{ text: 'OK' }]
         );
 
-        navigation.navigate('SignIn');
+        navigation.navigate(SignedOutPageTypes.SIGN_IN);
       })
       .catch((e) => {
         const errorMessage: string =
@@ -86,7 +86,7 @@ export default function NewPasswordScreen({
         if (
           errorMessage.includes('ссылка восстановления пароля недействительна')
         ) {
-          navigation.navigate('SignIn');
+          navigation.navigate(SignedOutPageTypes.SIGN_IN);
         }
 
         const errors = newPasswordServerValidationErrorHandler(errorMessage);
