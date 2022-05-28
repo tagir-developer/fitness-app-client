@@ -2,10 +2,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ReactChild } from 'react';
 import { TouchableOpacityProps } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
-import { CssSize, MarginProps } from '../../common/types';
+import { css } from 'styled-components';
+import {
+  CssSize,
+  MarginProps,
+  PositionProps,
+  TypeThemeProps,
+} from '../../common/types';
 
 type Props = TouchableOpacityProps &
-  MarginProps & {
+  MarginProps &
+  PositionProps & {
     title: string;
     color?: string;
     w?: CssSize;
@@ -13,8 +20,7 @@ type Props = TouchableOpacityProps &
     fontSize?: CssSize;
   };
 
-type ButtonTextProps = {
-  theme: DefaultTheme;
+type ButtonTextProps = TypeThemeProps & {
   color?: string;
   fontSize?: CssSize;
 };
@@ -28,6 +34,15 @@ type ContentViewProps = {
 };
 
 const RoundedTouchableOpacity = styled.TouchableOpacity<Props>`
+  position: ${(props) => props.position ?? 'relative'};
+
+  top: ${(props) => props.top ?? 'auto'};
+  bottom: ${(props) => props.bottom ?? 'auto'};
+  left: ${(props) => props.left ?? 'auto'};
+  right: ${(props) => props.right ?? 'auto'};
+
+  z-index: 100;
+
   width: ${(props) => props.w ?? props.theme.width};
   height: auto;
 
@@ -79,7 +94,10 @@ const ContentView = styled.View<ContentViewProps>`
 
 export const AppButton: React.FC<Props> = (props) => (
   <RoundedTouchableOpacity {...props} activeOpacity={0.9}>
-    <LinearGradient colors={['#F8F8F8', '#3C3C3C']}>
+    <LinearGradient
+      colors={['#F8F8F8', '#3C3C3C']}
+      style={{ borderRadius: 30 }}
+    >
       <StyledInnerView>
         <ContentView subTitle={props.subTitle}>
           <StyledImageBackground

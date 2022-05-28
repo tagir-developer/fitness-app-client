@@ -1,7 +1,8 @@
 import { ReactChild } from 'react';
 import styled, { DefaultTheme } from 'styled-components/native';
 import GoBackIcon from '../../common/icons/goBack';
-import { CssSize, MarginProps } from '../../common/types';
+import { myTheme } from '../../common/theme';
+import { CssSize } from '../../common/types';
 import { HeaderButton } from '../buttons/HeaderButton';
 
 type Props = {
@@ -23,6 +24,11 @@ type ImageBackgroundProps = {
 };
 
 const StyledView = styled.View`
+  position: absolute;
+  top: 0;
+
+  z-index: 200;
+
   width: 100%;
   height: 114px;
 
@@ -79,7 +85,7 @@ const RightContainer = styled.View`
 `;
 
 export const AppHeader: React.FC<Props> = (props) => (
-  <StyledView>
+  <StyledView style={myTheme.shadow}>
     <StyledImageBackground
       source={require('../../assets/images/ui/header-bg.png')}
       resizeMode='cover'
@@ -99,7 +105,7 @@ export const AppHeader: React.FC<Props> = (props) => (
         <RightContainer>
           <HeaderButton
             onPress={props.onPressRightButton}
-            icon={props.rightButtonIcon ?? <GoBackIcon />}
+            icon={props.rightButtonIcon}
           />
         </RightContainer>
       </>

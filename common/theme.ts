@@ -5,6 +5,19 @@ const myTheme: DefaultTheme = {
   marginBottom: '20px',
   width: '75%',
 
+  shadow: {
+    // ios shadow
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    // android shadow
+    elevation: 12,
+  },
+
   fonts: {
     light: 'roboto-light',
     normal: 'roboto',

@@ -22,6 +22,14 @@ export type PaddingProps = {
   pr?: CssSize;
 };
 
+export type PositionProps = {
+  position?: 'absolute' | 'relative';
+  top?: CssSize;
+  bottom?: CssSize;
+  left?: CssSize;
+  right?: CssSize;
+};
+
 export type MarginPaddingProps = MarginProps & PaddingProps;
 
 export type FlexDirectionTypes =
