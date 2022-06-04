@@ -1,8 +1,10 @@
 import { ReactChild } from 'react';
+import { ImageSourcePropType } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
 import GoBackIcon from '../../common/icons/goBack';
 import { myTheme } from '../../common/theme';
 import { CssSize } from '../../common/types';
+import { useAppContext } from '../../context/appContext';
 import { HeaderButton } from '../buttons/HeaderButton';
 
 type Props = {
@@ -11,6 +13,7 @@ type Props = {
   onPressRightButton?: () => void;
   leftButtonIcon?: JSX.Element;
   rightButtonIcon?: JSX.Element;
+  // headerImage: ImageSourcePropType;
 };
 
 type ButtonTextProps = {
@@ -84,31 +87,41 @@ const RightContainer = styled.View`
   padding-top: 47px;
 `;
 
-export const AppHeader: React.FC<Props> = (props) => (
-  <StyledView style={myTheme.shadow}>
-    <StyledImageBackground
-      source={require('../../assets/images/ui/header-bg.png')}
-      resizeMode='cover'
-    >
-      <>
-        <LeftContainer>
-          <HeaderButton
-            onPress={props.onPressLeftButton}
-            icon={props.leftButtonIcon ?? <GoBackIcon />}
-          />
-        </LeftContainer>
+export const AppHeader: React.FC<Props> = (props) => {
+  const { addLoadingSource, removeLoadingSource } = useAppContext();
+  return (
+    <StyledView style={myTheme.shadow}>
+      <StyledImageBackground
+        source={require('../../assets/images/ui/header-bg.png')}
+        // source={props.headerImage}
+        resizeMode='cover'
+        onLoadStart={() =>
+          addLoadingSource('../../assets/images/ui/header-bg.png')
+        }
+        onLoadEnd={() =>
+          removeLoadingSource('../../assets/images/ui/header-bg.png')
+        }
+      >
+        <>
+          <LeftContainer>
+            <HeaderButton
+              onPress={props.onPressLeftButton}
+              icon={props.leftButtonIcon ?? <GoBackIcon />}
+            />
+          </LeftContainer>
 
-        <TitleContainer>
-          <TitleText>{props.title}</TitleText>
-        </TitleContainer>
+          <TitleContainer>
+            <TitleText>{props.title}</TitleText>
+          </TitleContainer>
 
-        <RightContainer>
-          <HeaderButton
-            onPress={props.onPressRightButton}
-            icon={props.rightButtonIcon}
-          />
-        </RightContainer>
-      </>
-    </StyledImageBackground>
-  </StyledView>
-);
+          <RightContainer>
+            <HeaderButton
+              onPress={props.onPressRightButton}
+              icon={props.rightButtonIcon}
+            />
+          </RightContainer>
+        </>
+      </StyledImageBackground>
+    </StyledView>
+  );
+};

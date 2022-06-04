@@ -1,14 +1,18 @@
 import { useQuery } from '@apollo/client';
-import { useState } from 'react';
-import { Alert, FlatList, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { FlatList, ImageSourcePropType, Text, View } from 'react-native';
 import GearIcon from '../../../common/icons/gearIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
 import { CardWithImage } from '../../../components/cards/CardWithImage';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
+import { AppStyledTextInput } from '../../../components/formControls/AppStyledTextInput';
+import { ConfirmModal } from '../../../components/modals/ConfirmModal';
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
+import { useAppContext } from '../../../context/appContext';
 import { TypeHomeScreenProps } from './types';
+// const headerImage = require('../assets/images/ui/header-bg.png');
 
 const LIST_TOP_SPACE = '250px';
 const LIST_BOTTOM_SPACE = '150px';
@@ -16,32 +20,54 @@ const LIST_BOTTOM_SPACE = '150px';
 export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
+  const { loadingSourcesStack } = useAppContext();
+
   const [activeProgramId, setActiveProgramId] = useState<string | null>('1');
+  const [programName, setProgramName] = useState('');
+
+  // const [isImagesLoaded, setIsImagesLoaded] = useState(true);
+
+  const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
 
   const [sourcesLoading, setSourcesLoading] = useState(true);
 
-  const createProgrammHandler = (): void => {
-    Alert.alert(
-      'Закончить тренировку',
-      'Вы действительно хотите закончить тренировку?',
-      [
-        {
-          text: 'Отмена',
-          onPress: () => console.log('Отмена действия закончить тренировку'),
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => console.log('Подтверждение закончить тренировку'),
-        },
-      ]
-    );
+  const addProgram = (): void => {
+    console.log('Новая программа - ', programName);
+    setIsAddProgramModalOpen(false);
+    setProgramName('');
   };
 
-  // const loadEndHandler = (): void => {
-  //   console.log('Конец загрузки картинок');
-  //   setSourcesLoading(false);
+  const cancelAddProgram = (): void => {
+    setIsAddProgramModalOpen(false);
+    setProgramName('');
+  };
+
+  // useEffect(() => {
+  //   const asyncLoadImages = async (): Promise<void> => {
+  //     const headerImage =
+  //       await require('../../../assets/images/ui/header-bg.png');
+  //     setIsImagesLoaded(true);
+  //     return headerImage
+  //   };
+
+  //   asyncLoadImages();
+  // }, []);
+
+  // const LoadImage = (): any => {
+  //   const asyncLoadImages = async (): Promise<any> => {
+  //     const headerImage =
+  //       await require('../../../assets/images/ui/header-bg.png');
+  //     console.log('headerImage', headerImage);
+  //     setIsImagesLoaded(false);
+  //     return headerImage;
+  //   };
+
+  //   const headerImage = asyncLoadImages();
+
+  //   return headerImage;
   // };
+
+  // const headerImage = LoadImage();
 
   // if (loading) return <StyledText>Loading...</StyledText>;
 
@@ -62,21 +88,41 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     { id: '12', title: 'Чудовищный пресс' },
   ];
 
-  console.log('active program id', activeProgramId);
+  // console.log('active program id', activeProgramId);
+
+  console.log('loadingSourcesStack', loadingSourcesStack);
+
+  // if (loadingSourcesStack.length)
+  //   return (
+  //     <View style={{ width: '100%', height: 100, backgroundColor: 'red' }} />
+  //   );
 
   return (
     <MainLayout>
+      {/* {loadingSourcesStack.length > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'red',
+            zIndex: 1000,
+          }}
+        ></View>
+      )} */}
+
       <AppHeader
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<GearIcon />}
         onPressRightButton={() => {}}
+        // headerImage={headerImage}
       />
 
       <OpacityDarkness top='0px' h={LIST_TOP_SPACE} reverse={true}>
         <AppButton
           title='Создать свою программу'
-          onPress={createProgrammHandler}
+          onPress={() => setIsAddProgramModalOpen(true)}
           fontSize='17px'
           mt='100px'
         />
@@ -106,6 +152,21 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       </AppFlex>
 
       <OpacityDarkness bottom='0px' h={LIST_BOTTOM_SPACE} />
+
+      <ConfirmModal
+        isOpen={isAddProgramModalOpen}
+        title='Новая программа'
+        onPressOk={addProgram}
+        onPressCancel={cancelAddProgram}
+        message='Введите название программы'
+      >
+        <AppStyledTextInput
+          value={programName}
+          onChangeText={(value) => setProgramName(value)}
+          placeholder='Название программы'
+          mt='10px'
+        />
+      </ConfirmModal>
     </MainLayout>
   );
 }

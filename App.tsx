@@ -21,6 +21,7 @@ import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
 import { paperTheme } from './common/paperTheme';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
+import { AppContext } from './context/appContext';
 
 const httpLink = new HttpLink({
   uri: 'http://192.168.0.103:5000/graphql',
@@ -122,6 +123,16 @@ export default function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const [loadingSourcesStack, setLoadingSourcesStack] = useState<string[]>([]);
+
+  const addLoadingSource = (value: string) => {
+    setLoadingSourcesStack((prev) => [...prev, value]);
+  };
+
+  const removeLoadingSource = (value: string) => {
+    setLoadingSourcesStack((prev) => prev.filter((item) => item !== value));
+  };
+
   const handleChangeLoginState = (
     loggedInParam = false,
     accessToken?: string,
@@ -157,8 +168,16 @@ export default function App() {
         {/* <PaperProvider theme={paperTheme}> */}
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
-            <Navigation />
-            <StatusBar />
+            <AppContext.Provider
+              value={{
+                loadingSourcesStack,
+                addLoadingSource,
+                removeLoadingSource,
+              }}
+            >
+              <Navigation />
+              <StatusBar />
+            </AppContext.Provider>
           </AuthContext.Provider>
         </ThemeProvider>
         {/* </PaperProvider> */}

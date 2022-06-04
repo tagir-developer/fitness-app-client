@@ -1,14 +1,13 @@
 import { TextInputProps } from 'react-native';
 import styled, { DefaultTheme, css } from 'styled-components/native';
-import { MarginProps } from '../../common/types';
+import { CssSize, MarginProps } from '../../common/types';
 
 type Props = TextInputProps &
   MarginProps & {
-    width?: string;
+    width?: CssSize;
     color?: string;
     error?: boolean;
     isPassword?: boolean;
-    margin?: string;
   };
 
 type TypeTextInputProps = Props & {
