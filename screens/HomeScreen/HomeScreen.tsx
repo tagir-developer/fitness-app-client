@@ -6,15 +6,25 @@ import { AppFlex } from '../../components/ui/AppFlex';
 import { HomeMenu } from '../../components/ui/HomeMenu';
 import { HomeMenuItem } from '../../components/ui/HomeMenuItem';
 import MainLayout from '../../components/ui/MainLayout';
+import { useAppContext } from '../../context/appContext';
 import { useAuthContext } from '../../context/authContext';
 import { GET_ALL_USERS } from '../../graphql/query/user';
+import { useGetSourcesLoadingState } from '../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../navigation/types';
 import { TypeHomeScreenProps } from './types';
+
+const SCREEN_SOURCES_COUNT = 1;
 
 export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
+  const unusedvar = 56;
+
+  console.log();
+
   const { handleChangeLoginState } = useAuthContext();
+
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   // есть ли продолжающаяся тренировка
   const isActiveWorkout = false;
@@ -58,10 +68,16 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
     handleChangeLoginState(false);
   };
 
+  useEffect(() => {
+    if (users) {
+      console.log('users', users);
+    }
+  }, []);
+
   // if (loading) return <StyledText>Loading...</StyledText>;
 
   return (
-    <MainLayout>
+    <MainLayout loading={loading}>
       <AppFlex flex='1'>
         <AppFlex flex='1'>
           <AppFlex h='200px'>

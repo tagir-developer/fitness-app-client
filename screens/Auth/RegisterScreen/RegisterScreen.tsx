@@ -94,7 +94,7 @@ export default function RegisterScreen({
   };
 
   return (
-    <MainLayout>
+    <MainLayout loadingSourcesCount={1}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='30px' size='40px'>

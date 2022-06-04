@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, ImageSourcePropType, Text, View } from 'react-native';
 import GearIcon from '../../../common/icons/gearIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
@@ -11,25 +12,24 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useAppContext } from '../../../context/appContext';
+import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { TypeHomeScreenProps } from './types';
 // const headerImage = require('../assets/images/ui/header-bg.png');
 
 const LIST_TOP_SPACE = '250px';
 const LIST_BOTTOM_SPACE = '150px';
 
+const SCREEN_SOURCES_COUNT = 2;
+
 export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   const [users, setUsers] = useState<{ email: string }[]>([]);
-
-  const { loadingSourcesStack } = useAppContext();
 
   const [activeProgramId, setActiveProgramId] = useState<string | null>('1');
   const [programName, setProgramName] = useState('');
 
-  // const [isImagesLoaded, setIsImagesLoaded] = useState(true);
-
   const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
 
-  const [sourcesLoading, setSourcesLoading] = useState(true);
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const addProgram = (): void => {
     console.log('Новая программа - ', programName);
@@ -42,36 +42,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     setProgramName('');
   };
 
-  // useEffect(() => {
-  //   const asyncLoadImages = async (): Promise<void> => {
-  //     const headerImage =
-  //       await require('../../../assets/images/ui/header-bg.png');
-  //     setIsImagesLoaded(true);
-  //     return headerImage
-  //   };
-
-  //   asyncLoadImages();
-  // }, []);
-
-  // const LoadImage = (): any => {
-  //   const asyncLoadImages = async (): Promise<any> => {
-  //     const headerImage =
-  //       await require('../../../assets/images/ui/header-bg.png');
-  //     console.log('headerImage', headerImage);
-  //     setIsImagesLoaded(false);
-  //     return headerImage;
-  //   };
-
-  //   const headerImage = asyncLoadImages();
-
-  //   return headerImage;
-  // };
-
-  // const headerImage = LoadImage();
-
   // if (loading) return <StyledText>Loading...</StyledText>;
-
-  // if (sourcesLoading) return <StyledText>Загрузка...</StyledText>;
 
   const programs = [
     { id: '1', title: 'Базовая программа' },
@@ -88,29 +59,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     { id: '12', title: 'Чудовищный пресс' },
   ];
 
-  // console.log('active program id', activeProgramId);
-
-  console.log('loadingSourcesStack', loadingSourcesStack);
-
-  // if (loadingSourcesStack.length)
-  //   return (
-  //     <View style={{ width: '100%', height: 100, backgroundColor: 'red' }} />
-  //   );
-
   return (
-    <MainLayout>
-      {/* {loadingSourcesStack.length > 0 && (
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'red',
-            zIndex: 1000,
-          }}
-        ></View>
-      )} */}
-
+    <MainLayout loading={loading}>
       <AppHeader
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}

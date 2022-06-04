@@ -96,7 +96,7 @@ export default function NewPasswordScreen({
   };
 
   return (
-    <MainLayout>
+    <MainLayout loadingSourcesCount={1}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='42px'>СБРОС ПАРОЛЯ</AuthScreenTitle>

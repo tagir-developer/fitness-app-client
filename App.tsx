@@ -123,14 +123,16 @@ export default function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [loadingSourcesStack, setLoadingSourcesStack] = useState<string[]>([]);
+  const [sourcesCount, setSourcesCount] = useState(0);
 
-  const addLoadingSource = (value: string) => {
-    setLoadingSourcesStack((prev) => [...prev, value]);
+  const addSourcesCount = () => {
+    console.log('Счетчик увеличен +++++');
+    setSourcesCount((prev) => prev + 1);
   };
 
-  const removeLoadingSource = (value: string) => {
-    setLoadingSourcesStack((prev) => prev.filter((item) => item !== value));
+  const clearSourcesCount = () => {
+    console.log('Счетчик обнулен ------');
+    setSourcesCount(0);
   };
 
   const handleChangeLoginState = (
@@ -170,9 +172,9 @@ export default function App() {
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
             <AppContext.Provider
               value={{
-                loadingSourcesStack,
-                addLoadingSource,
-                removeLoadingSource,
+                sourcesCount,
+                addSourcesCount,
+                clearSourcesCount,
               }}
             >
               <Navigation />

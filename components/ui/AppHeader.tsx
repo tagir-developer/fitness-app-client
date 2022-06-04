@@ -1,5 +1,4 @@
 import { ReactChild } from 'react';
-import { ImageSourcePropType } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
 import GoBackIcon from '../../common/icons/goBack';
 import { myTheme } from '../../common/theme';
@@ -13,7 +12,6 @@ type Props = {
   onPressRightButton?: () => void;
   leftButtonIcon?: JSX.Element;
   rightButtonIcon?: JSX.Element;
-  // headerImage: ImageSourcePropType;
 };
 
 type ButtonTextProps = {
@@ -88,19 +86,13 @@ const RightContainer = styled.View`
 `;
 
 export const AppHeader: React.FC<Props> = (props) => {
-  const { addLoadingSource, removeLoadingSource } = useAppContext();
+  const { addSourcesCount } = useAppContext();
   return (
     <StyledView style={myTheme.shadow}>
       <StyledImageBackground
         source={require('../../assets/images/ui/header-bg.png')}
-        // source={props.headerImage}
         resizeMode='cover'
-        onLoadStart={() =>
-          addLoadingSource('../../assets/images/ui/header-bg.png')
-        }
-        onLoadEnd={() =>
-          removeLoadingSource('../../assets/images/ui/header-bg.png')
-        }
+        onLoadEnd={addSourcesCount}
       >
         <>
           <LeftContainer>

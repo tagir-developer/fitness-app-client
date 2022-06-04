@@ -90,7 +90,7 @@ export default function ResetPasswordScreen({
   };
 
   return (
-    <MainLayout>
+    <MainLayout loadingSourcesCount={1}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='20px' size='32px'>

@@ -5,6 +5,7 @@ import { useAppContext } from '../../context/appContext';
 
 type TypeMainLayoutProps = {
   children: ReactNode;
+  loading: boolean;
 };
 
 type ImageBackgroundProps = {
@@ -37,13 +38,11 @@ const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
 `;
 
 export default function MainLayout(props: TypeMainLayoutProps) {
-  const { addLoadingSource, removeLoadingSource, loadingSourcesStack } =
-    useAppContext();
+  const { addSourcesCount } = useAppContext();
 
-  const sourcesLoading = loadingSourcesStack.length > 0;
   return (
     <MainWrapper>
-      {sourcesLoading && (
+      {props.loading && (
         <LoaderLayout>
           <ActivityIndicator size='large' color='#4aa3ba' />
         </LoaderLayout>
@@ -52,12 +51,7 @@ export default function MainLayout(props: TypeMainLayoutProps) {
       <StyledImageBackground
         source={require('../../assets/images/app-background.jpg')}
         resizeMode='cover'
-        onLoadStart={() =>
-          addLoadingSource('../../assets/images/app-background.jpg')
-        }
-        onLoadEnd={() =>
-          removeLoadingSource('../../assets/images/app-background.jpg')
-        }
+        onLoadEnd={addSourcesCount}
       >
         {props.children}
       </StyledImageBackground>
