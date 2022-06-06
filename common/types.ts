@@ -1,5 +1,6 @@
 // styled-component types
 
+import { ReactNode } from 'react';
 import { DefaultTheme } from 'styled-components';
 
 export type TypeThemeProps = {
@@ -57,3 +58,7 @@ export type FlexAlignItemsTypes =
   | 'inherit';
 
 export type TypeTextAlign = 'center' | 'right' | 'left';
+
+export type TypeImageBackground = {
+  children: ReactNode;
+};

@@ -1,15 +1,12 @@
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { ReactNode } from 'react';
 import styled from 'styled-components/native';
 import { useAppContext } from '../../context/appContext';
+import { TypeImageBackground } from '../../common/types';
 
 type TypeMainLayoutProps = {
   children: ReactNode;
   loading: boolean;
-};
-
-type ImageBackgroundProps = {
-  children: ReactNode;
 };
 
 const MainWrapper = styled.View`
@@ -31,7 +28,7 @@ const LoaderLayout = styled.View`
   z-index: 1000;
 `;
 
-const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   flex: 1;
   justify-content: center;
   align-items: center;

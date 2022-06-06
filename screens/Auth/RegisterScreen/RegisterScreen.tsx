@@ -9,6 +9,7 @@ import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useAuthContext } from '../../../context/authContext';
 import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { SignedOutPageTypes } from '../../../navigation/types';
 import {
   registerServerValidationErrorHandler,
@@ -22,6 +23,8 @@ import {
   TypeRegisterScreenProps,
 } from './types';
 
+const SCREEN_SOURCES_COUNT = 1;
+
 export default function RegisterScreen({
   navigation,
 }: TypeRegisterScreenProps) {
@@ -31,6 +34,8 @@ export default function RegisterScreen({
     password: '',
     passwordError: false,
   });
+
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const { handleChangeLoginState } = useAuthContext();
 
@@ -87,14 +92,14 @@ export default function RegisterScreen({
 
         Alert.alert('Ошибка регистрации', errorMessage, [{ text: 'OK' }]);
 
-        const errors = registerServerValidationErrorHandler(errorMessage);
+        const serverErrors = registerServerValidationErrorHandler(errorMessage);
 
-        registerValidationErrorHandler(errors, changeFormValues);
+        registerValidationErrorHandler(serverErrors, changeFormValues);
       });
   };
 
   return (
-    <MainLayout loadingSourcesCount={1}>
+    <MainLayout loading={loading}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='30px' size='40px'>

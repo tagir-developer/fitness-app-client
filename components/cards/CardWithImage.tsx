@@ -1,9 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { ReactChild } from 'react';
 import { GestureResponderEvent, TouchableOpacityProps } from 'react-native';
 import styled from 'styled-components/native';
 import ActiveGreenCheckbox from '../../common/icons/activeGreenCheckbox';
-import { CssSize, MarginProps, TypeThemeProps } from '../../common/types';
+import {
+  CssSize,
+  MarginProps,
+  TypeImageBackground,
+  TypeThemeProps,
+} from '../../common/types';
 import { ShapeWithGradientBorder } from '../common/ShapeWithGradientBorder';
 import { AppFlex } from '../ui/AppFlex';
 
@@ -21,10 +25,6 @@ type Props = TouchableOpacityProps &
 type CardTextProps = TypeThemeProps & {
   color?: string;
   fontSize?: CssSize;
-};
-
-type ImageBackgroundProps = {
-  children: ReactChild;
 };
 
 type CardImageProps = {
@@ -57,7 +57,7 @@ const CardText = styled.Text<CardTextProps>`
   color: ${(props) => props.color ?? props.theme.colors.primaryText};
 `;
 
-const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   width: 100%;
   height: 59px;
 `;

@@ -20,6 +20,9 @@ import {
 import { TypeSignedInUserData, TypeSignInScreenProps } from './types';
 import { LinkButton } from '../../../components/buttons/LinkButton';
 import { SignedOutPageTypes } from '../../../navigation/types';
+import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
+
+const SCREEN_SOURCES_COUNT = 1;
 
 export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
   const [form, setForm] = useState<TypeRegisterFormData>({
@@ -28,6 +31,8 @@ export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
     password: '',
     passwordError: false,
   });
+
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const changeFormValues = (values: TypeRegisterFormUpdateValues): void => {
     const newFormData = {
@@ -86,14 +91,14 @@ export default function SignInScreen({ navigation }: TypeSignInScreenProps) {
 
         Alert.alert('Ошибка авторизации', errorMessage, [{ text: 'OK' }]);
 
-        const errors = registerServerValidationErrorHandler(errorMessage);
+        const serverErrors = registerServerValidationErrorHandler(errorMessage);
 
-        registerValidationErrorHandler(errors, changeFormValues);
+        registerValidationErrorHandler(serverErrors, changeFormValues);
       });
   };
 
   return (
-    <MainLayout loadingSourcesCount={1}>
+    <MainLayout loading={loading}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='30px'>ВХОД В СИСТЕМУ</AuthScreenTitle>

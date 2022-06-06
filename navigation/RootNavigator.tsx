@@ -1,12 +1,6 @@
-import { FontAwesome } from '@expo/vector-icons';
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen/NotFoundScreen';
 import {
@@ -16,12 +10,11 @@ import {
 import SignInScreen from '../screens/Auth/SignInScreen/SignInScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import { useAuthContext } from '../context/authContext';
 import AboutScreen from '../screens/AboutScreen/AboutScreen';
 import ResetPasswordScreen from '../screens/Auth/ResetPasswordScreen/ResetPasswordScreen';
 import NewPasswordScreen from '../screens/Auth/NewPasswordScreen/NewPasswordScreen';
 import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/AllProgramsScreen';
-import { AppHeader } from '../components/ui/AppHeader';
+import CreateProgramScreen from '../screens/trainingPrograms/CreateProgramScreen/CreateProgramScreen';
 
 const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
@@ -56,31 +49,12 @@ export default function RootNavigator() {
             <Stack.Screen name='About' component={AboutScreen} />
           </Stack.Group>
 
-          <Stack.Group
-          // screenOptions={{
-          //   header: () => <AppHeader title='Программы тренировок' />,
-          //   // header,
-          //   // headerTitle: 'Программы тренировок',
-          //   // headerBackground: () => (
-          //   //   <View
-          //   //     style={styles.test}
-          //   //     // source={{
-          //   //     //   uri: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg',
-          //   //     // }}
-          //   //   />
-          //   // ),
-          //   // headerBackground: () => (
-          //   //   <Image
-          //   //     style={StyleSheet.absoluteFill}
-          //   //     source={require('../assets/images/ui/header-bg.png')}
-          //   //     // source={{
-          //   //     //   uri: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg',
-          //   //     // }}
-          //   //   />
-          //   // ),
-          // }}
-          >
+          <Stack.Group>
             <Stack.Screen name='AllPrograms' component={AllProgramsScreen} />
+            <Stack.Screen
+              name='CreateProgram'
+              component={CreateProgramScreen}
+            />
           </Stack.Group>
 
           <Stack.Screen name='NotFound' component={NotFoundScreen} />

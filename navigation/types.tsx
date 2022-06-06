@@ -16,6 +16,7 @@ export enum PageTypes {
   ABOUT = 'About',
   NOT_FOUND = 'NotFound',
   ALL_PROGRAMS = 'AllPrograms',
+  CREATE_PROGRAM = 'CreateProgram',
 }
 
 export type RootSignedInStackParamList = {
@@ -24,6 +25,7 @@ export type RootSignedInStackParamList = {
   About: undefined;
   NotFound: undefined;
   AllPrograms: undefined;
+  CreateProgram: { programName: string };
   //   Home: SomeType | undefined
 };
 

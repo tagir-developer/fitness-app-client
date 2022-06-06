@@ -1,14 +1,14 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { ReactChild } from 'react';
 import { TouchableOpacityProps } from 'react-native';
-import styled, { DefaultTheme } from 'styled-components/native';
-import { css } from 'styled-components';
+import styled from 'styled-components/native';
 import {
   CssSize,
   MarginProps,
   PositionProps,
+  TypeImageBackground,
   TypeThemeProps,
 } from '../../common/types';
+import { useAppContext } from '../../context/appContext';
 
 type Props = TouchableOpacityProps &
   MarginProps &
@@ -23,10 +23,6 @@ type Props = TouchableOpacityProps &
 type ButtonTextProps = TypeThemeProps & {
   color?: string;
   fontSize?: CssSize;
-};
-
-type ImageBackgroundProps = {
-  children: ReactChild;
 };
 
 type ContentViewProps = {
@@ -72,7 +68,7 @@ const SubtitleText = styled.Text`
   margin-top: 10px;
 `;
 
-const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   display: flex;
   flex: 1;
   justify-content: center;
@@ -92,27 +88,31 @@ const ContentView = styled.View<ContentViewProps>`
   height: ${(props) => (props.subTitle ? '77px' : '57px')};
 `;
 
-export const AppButton: React.FC<Props> = (props) => (
-  <RoundedTouchableOpacity {...props} activeOpacity={0.9}>
-    <LinearGradient
-      colors={['#F8F8F8', '#3C3C3C']}
-      style={{ borderRadius: 30 }}
-    >
-      <StyledInnerView>
-        <ContentView subTitle={props.subTitle}>
-          <StyledImageBackground
-            source={require('../../assets/images/ui/home-menu-item-bg.jpg')}
-            resizeMode='repeat'
-          >
-            <>
+export const AppButton: React.FC<Props> = (props) => {
+  // const { addSourcesCount } = useAppContext();
+
+  return (
+    <RoundedTouchableOpacity {...props} activeOpacity={0.9}>
+      <LinearGradient
+        colors={['#F8F8F8', '#3C3C3C']}
+        style={{ borderRadius: 30 }}
+      >
+        <StyledInnerView>
+          <ContentView subTitle={props.subTitle}>
+            <StyledImageBackground
+              source={require('../../assets/images/ui/home-menu-item-bg.jpg')}
+              resizeMode='repeat'
+              // onLoadEnd={addSourcesCount}
+            >
               <ButtonText color={props.color} fontSize={props.fontSize}>
                 {props.title.toUpperCase()}
               </ButtonText>
+
               {props.subTitle && <SubtitleText>{props.subTitle}</SubtitleText>}
-            </>
-          </StyledImageBackground>
-        </ContentView>
-      </StyledInnerView>
-    </LinearGradient>
-  </RoundedTouchableOpacity>
-);
+            </StyledImageBackground>
+          </ContentView>
+        </StyledInnerView>
+      </LinearGradient>
+    </RoundedTouchableOpacity>
+  );
+};

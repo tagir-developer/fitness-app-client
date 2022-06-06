@@ -1,8 +1,7 @@
-import { ReactChild } from 'react';
 import styled, { DefaultTheme } from 'styled-components/native';
 import GoBackIcon from '../../common/icons/goBack';
 import { myTheme } from '../../common/theme';
-import { CssSize } from '../../common/types';
+import { CssSize, TypeImageBackground } from '../../common/types';
 import { useAppContext } from '../../context/appContext';
 import { HeaderButton } from '../buttons/HeaderButton';
 
@@ -18,10 +17,6 @@ type ButtonTextProps = {
   theme: DefaultTheme;
   color?: string;
   fontSize?: CssSize;
-};
-
-type ImageBackgroundProps = {
-  children: ReactChild;
 };
 
 const StyledView = styled.View`
@@ -45,7 +40,7 @@ const TitleText = styled.Text<ButtonTextProps>`
   text-align: center;
 `;
 
-const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   display: flex;
   flex: 1;
   justify-content: space-between;
@@ -87,6 +82,7 @@ const RightContainer = styled.View`
 
 export const AppHeader: React.FC<Props> = (props) => {
   const { addSourcesCount } = useAppContext();
+
   return (
     <StyledView style={myTheme.shadow}>
       <StyledImageBackground
@@ -94,25 +90,25 @@ export const AppHeader: React.FC<Props> = (props) => {
         resizeMode='cover'
         onLoadEnd={addSourcesCount}
       >
-        <>
-          <LeftContainer>
-            <HeaderButton
-              onPress={props.onPressLeftButton}
-              icon={props.leftButtonIcon ?? <GoBackIcon />}
-            />
-          </LeftContainer>
+        <LeftContainer>
+          <HeaderButton
+            onPress={props.onPressLeftButton}
+            icon={props.leftButtonIcon ?? <GoBackIcon />}
+          />
+        </LeftContainer>
 
-          <TitleContainer>
-            <TitleText>{props.title}</TitleText>
-          </TitleContainer>
+        <TitleContainer>
+          <TitleText>{props.title}</TitleText>
+        </TitleContainer>
 
-          <RightContainer>
+        <RightContainer>
+          {props.onPressRightButton && (
             <HeaderButton
               onPress={props.onPressRightButton}
               icon={props.rightButtonIcon}
             />
-          </RightContainer>
-        </>
+          )}
+        </RightContainer>
       </StyledImageBackground>
     </StyledView>
   );

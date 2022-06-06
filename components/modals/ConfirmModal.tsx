@@ -1,10 +1,6 @@
-import {
-  ImageBackground,
-  ImageBackgroundProps,
-  ModalProps,
-} from 'react-native';
+import { ModalProps } from 'react-native';
 import styled from 'styled-components/native';
-import { TypeThemeProps } from '../../common/types';
+import { TypeImageBackground, TypeThemeProps } from '../../common/types';
 import { AppModal } from './AppModal';
 import omit from 'lodash.omit';
 
@@ -18,7 +14,7 @@ type Props = ModalProps & {
   cancelMessage?: string;
 };
 
-const StyledImageBackground = styled.ImageBackground<{ children: JSX.Element }>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   width: 100%;
   height: auto;
 `;
@@ -108,39 +104,37 @@ export const ConfirmModal: React.FC<Props> = (props) => (
       source={require('../../assets/images/ui/home-menu-item-bg.jpg')}
       resizeMode='repeat'
     >
-      <>
-        <TitleContainer>
-          <TitleText>{props.title}</TitleText>
-        </TitleContainer>
+      <TitleContainer>
+        <TitleText>{props.title}</TitleText>
+      </TitleContainer>
 
-        <ContentContainer>
-          {props.message && <ContentText>{props.message}</ContentText>}
+      <ContentContainer>
+        {props.message && <ContentText>{props.message}</ContentText>}
 
-          {props.message && props.children && <ContentDivider />}
+        {props.message && props.children && <ContentDivider />}
 
-          {props.children}
-        </ContentContainer>
+        {props.children}
+      </ContentContainer>
 
-        {props.onPressCancel ? (
-          <ButtonsContainer>
-            <ModalButton onPress={props.onPressCancel} activeOpacity={0.9}>
-              <TitleText>{props.cancelMessage ?? 'Отмена'}</TitleText>
-            </ModalButton>
+      {props.onPressCancel ? (
+        <ButtonsContainer>
+          <ModalButton onPress={props.onPressCancel} activeOpacity={0.9}>
+            <TitleText>{props.cancelMessage ?? 'Отмена'}</TitleText>
+          </ModalButton>
 
-            <ButtonsDivider />
+          <ButtonsDivider />
 
-            <ModalButton onPress={props.onPressOk} activeOpacity={0.9}>
-              <TitleText>{props.okMessage ?? 'Ок'}</TitleText>
-            </ModalButton>
-          </ButtonsContainer>
-        ) : (
-          <ButtonsContainer>
-            <ModalButton onPress={props.onPressOk}>
-              <TitleText>{props.okMessage ?? 'Ок'}</TitleText>
-            </ModalButton>
-          </ButtonsContainer>
-        )}
-      </>
+          <ModalButton onPress={props.onPressOk} activeOpacity={0.9}>
+            <TitleText>{props.okMessage ?? 'Ок'}</TitleText>
+          </ModalButton>
+        </ButtonsContainer>
+      ) : (
+        <ButtonsContainer>
+          <ModalButton onPress={props.onPressOk}>
+            <TitleText>{props.okMessage ?? 'Ок'}</TitleText>
+          </ModalButton>
+        </ButtonsContainer>
+      )}
     </StyledImageBackground>
   </AppModal>
 );

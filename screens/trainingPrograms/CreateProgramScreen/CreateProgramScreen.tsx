@@ -1,7 +1,5 @@
-import { useQuery } from '@apollo/client';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, ImageSourcePropType, Text, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, View } from 'react-native';
 import GearIcon from '../../../common/icons/gearIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
 import { CardWithImage } from '../../../components/cards/CardWithImage';
@@ -12,18 +10,16 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { PageTypes } from '../../../navigation/types';
-import { TypeHomeScreenProps } from './types';
-// const headerImage = require('../assets/images/ui/header-bg.png');
+import { TypeCreateProgramScreenProps } from './types';
 
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
 const SCREEN_SOURCES_COUNT = 4;
 
-export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
-  const [users, setUsers] = useState<{ email: string }[]>([]);
-
+export default function CreateProgramScreen({
+  navigation,
+}: TypeCreateProgramScreenProps) {
   const [activeProgramId, setActiveProgramId] = useState<string | null>('1');
   const [programName, setProgramName] = useState('');
 
@@ -32,19 +28,14 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const addProgram = (): void => {
-    console.log('Новая программа - ', programName);
     setIsAddProgramModalOpen(false);
     setProgramName('');
-
-    navigation.navigate(PageTypes.CREATE_PROGRAM, { programName });
   };
 
   const cancelAddProgram = (): void => {
     setIsAddProgramModalOpen(false);
     setProgramName('');
   };
-
-  // if (loading) return <StyledText>Loading...</StyledText>;
 
   const programs = [
     { id: '1', title: 'Базовая программа' },
@@ -64,16 +55,15 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   return (
     <MainLayout loading={loading}>
       <AppHeader
-        title='Программы тренировок'
+        title='Новая программа'
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<GearIcon />}
         onPressRightButton={() => {}}
-        // headerImage={headerImage}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
         <AppButton
-          title='Создать свою программу'
+          title='Добавить новый день'
           onPress={() => setIsAddProgramModalOpen(true)}
           fontSize='17px'
           mt='100px'

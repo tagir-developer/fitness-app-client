@@ -9,6 +9,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
 import { RESET_USER_PASSWORD } from '../../../graphql/mutations/user';
+import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { SignedOutPageTypes } from '../../../navigation/types';
 import {
   passwordResetErrorHandler,
@@ -21,6 +22,8 @@ import {
   TypeResetPasswordScreenProps,
 } from './types';
 
+const SCREEN_SOURCES_COUNT = 1;
+
 export default function ResetPasswordScreen({
   navigation,
 }: TypeResetPasswordScreenProps) {
@@ -28,6 +31,8 @@ export default function ResetPasswordScreen({
     email: '',
     emailError: false,
   });
+
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const changeFormValues = (
     values: TypeResetPasswordFormUpdateValues
@@ -83,14 +88,14 @@ export default function ResetPasswordScreen({
 
         Alert.alert('Ошибка', errorMessage, [{ text: 'OK' }]);
 
-        const errors = resetServerValidationErrorHandler(errorMessage);
+        const serverErrors = resetServerValidationErrorHandler(errorMessage);
 
-        passwordResetErrorHandler(errors, changeFormValues);
+        passwordResetErrorHandler(serverErrors, changeFormValues);
       });
   };
 
   return (
-    <MainLayout loadingSourcesCount={1}>
+    <MainLayout loading={loading}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='20px' size='32px'>

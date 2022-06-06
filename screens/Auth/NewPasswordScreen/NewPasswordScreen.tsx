@@ -8,6 +8,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
 import { CHANGE_USER_PASSWORD } from '../../../graphql/mutations/user';
+import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { SignedOutPageTypes } from '../../../navigation/types';
 import {
   changePasswordErrorHandler,
@@ -20,11 +21,15 @@ import {
   TypeNewPasswordScreenProps,
 } from './types';
 
+const SCREEN_SOURCES_COUNT = 1;
+
 export default function NewPasswordScreen({
   route,
   navigation,
 }: TypeNewPasswordScreenProps) {
   const { token } = route.params;
+
+  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
 
   const [form, setForm] = useState<TypeNewPasswordFormData>({
     password: '',
@@ -89,14 +94,15 @@ export default function NewPasswordScreen({
           navigation.navigate(SignedOutPageTypes.SIGN_IN);
         }
 
-        const errors = newPasswordServerValidationErrorHandler(errorMessage);
+        const serverErrors =
+          newPasswordServerValidationErrorHandler(errorMessage);
 
-        changePasswordErrorHandler(errors, changeFormValues);
+        changePasswordErrorHandler(serverErrors, changeFormValues);
       });
   };
 
   return (
-    <MainLayout loadingSourcesCount={1}>
+    <MainLayout loading={loading}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <AppFlex flex='1'>
           <AuthScreenTitle mb='42px'>СБРОС ПАРОЛЯ</AuthScreenTitle>

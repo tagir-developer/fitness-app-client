@@ -1,6 +1,6 @@
-import { ReactChild } from 'react';
 import { TouchableOpacityProps } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
+import { TypeImageBackground } from '../../common/types';
 
 type Props = TouchableOpacityProps & {
   title: string;
@@ -8,10 +8,6 @@ type Props = TouchableOpacityProps & {
 
 type TextProps = {
   theme: DefaultTheme;
-};
-
-type ImageBackgroundProps = {
-  children: ReactChild;
 };
 
 const TouchableWrapper = styled.TouchableOpacity<TouchableOpacityProps>`
@@ -35,7 +31,7 @@ const Text = styled.Text<TextProps>`
   color: ${(props) => props.theme.colors.primaryText};
 `;
 
-const StyledImageBackground = styled.ImageBackground<ImageBackgroundProps>`
+const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   width: 100%;
   display: flex;
   flex: 1;

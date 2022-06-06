@@ -18,10 +18,6 @@ const SCREEN_SOURCES_COUNT = 1;
 export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
-  const unusedvar = 56;
-
-  console.log();
-
   const { handleChangeLoginState } = useAuthContext();
 
   const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
