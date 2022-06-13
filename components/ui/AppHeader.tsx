@@ -1,4 +1,5 @@
 import styled, { DefaultTheme } from 'styled-components/native';
+import { cutLongString } from '../../common/helpers/cutLongString';
 import GoBackIcon from '../../common/icons/goBack';
 import { myTheme } from '../../common/theme';
 import { CssSize, TypeImageBackground } from '../../common/types';
@@ -98,7 +99,7 @@ export const AppHeader: React.FC<Props> = (props) => {
         </LeftContainer>
 
         <TitleContainer>
-          <TitleText>{props.title}</TitleText>
+          <TitleText>{cutLongString(props.title, 23)}</TitleText>
         </TitleContainer>
 
         <RightContainer>

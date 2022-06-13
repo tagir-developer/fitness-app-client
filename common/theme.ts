@@ -28,6 +28,7 @@ const myTheme: DefaultTheme = {
     primary: 'cyan',
     secondary: 'magenta',
     primaryText: '#1E1E1E',
+    secondaryText: '#3F3F3F',
     danger: 'red',
     accent: '#265BAA',
     empty: '#B7B7B7',

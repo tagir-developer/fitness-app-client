@@ -17,24 +17,27 @@ export enum PageTypes {
   NOT_FOUND = 'NotFound',
   ALL_PROGRAMS = 'AllPrograms',
   CREATE_PROGRAM = 'CreateProgram',
+  ADD_EXERCISE_TO_PROGRAM = 'AddExerciseToProgram',
+  CHOOSE_EXERCISE_FOR_NEW_PROGRAM = 'ChooseExerciseForNewProgram',
 }
 
 export type RootSignedInStackParamList = {
   // Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Home: undefined;
-  About: undefined;
-  NotFound: undefined;
-  AllPrograms: undefined;
-  CreateProgram: { programName: string };
+  [PageTypes.HOME]: undefined;
+  [PageTypes.ABOUT]: undefined;
+  [PageTypes.NOT_FOUND]: undefined;
+  [PageTypes.ALL_PROGRAMS]: undefined;
+  [PageTypes.CREATE_PROGRAM]: { programName: string };
+  [PageTypes.ADD_EXERCISE_TO_PROGRAM]: { dayName: string };
+  [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
   //   Home: SomeType | undefined
 };
 
 export type RootSignedOutStackParamList = {
-  SignIn: undefined;
-  Register: undefined;
-  // ResetPassword: { token: string };
-  ResetPassword: undefined;
-  NewPassword: { token: string };
+  [SignedOutPageTypes.SIGN_IN]: undefined;
+  [SignedOutPageTypes.REGISTER]: undefined;
+  [SignedOutPageTypes.RESET_PASSWORD]: undefined;
+  [SignedOutPageTypes.NEW_PASSWORD]: { token: string };
 };
 
 export type RootStackParamList =

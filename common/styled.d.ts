@@ -28,6 +28,7 @@ declare module 'styled-components' {
       primary: string;
       secondary: string;
       primaryText: string;
+      secondaryText: string;
       danger: string;
       accent: string;
       empty: string;

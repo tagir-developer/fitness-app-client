@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { GestureResponderEvent, TouchableOpacityProps } from 'react-native';
 import styled from 'styled-components/native';
+import { cutLongString } from '../../common/helpers/cutLongString';
 import ActiveGreenCheckbox from '../../common/icons/activeGreenCheckbox';
 import {
   CssSize,
@@ -93,7 +94,7 @@ export const CardWithImage: React.FC<Props> = (props) => (
 
         <AppFlex flex='0.6' align='flex-start'>
           <CardText color={props.color} fontSize={props.fontSize}>
-            {props.title}
+            {cutLongString(props.title, 42)}
           </CardText>
         </AppFlex>
 

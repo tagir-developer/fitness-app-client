@@ -1,11 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen/NotFoundScreen';
 import {
+  PageTypes,
   RootSignedInStackParamList,
   RootSignedOutStackParamList,
+  SignedOutPageTypes,
 } from './types';
 import SignInScreen from '../screens/Auth/SignInScreen/SignInScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
@@ -15,6 +16,8 @@ import ResetPasswordScreen from '../screens/Auth/ResetPasswordScreen/ResetPasswo
 import NewPasswordScreen from '../screens/Auth/NewPasswordScreen/NewPasswordScreen';
 import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/AllProgramsScreen';
 import CreateProgramScreen from '../screens/trainingPrograms/CreateProgramScreen/CreateProgramScreen';
+import AddExerciseToProgram from '../screens/trainingPrograms/AddExerciseToProgram/AddExerciseToProgram';
+import ChooseExerciseForNewProgram from '../screens/trainingPrograms/ChooseExerciseForNewProgram/ChooseExerciseForNewProgram';
 
 const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
@@ -45,19 +48,30 @@ export default function RootNavigator() {
           //   },
           // }}
           >
-            <Stack.Screen name='Home' component={HomeScreen} />
-            <Stack.Screen name='About' component={AboutScreen} />
+            <Stack.Screen name={PageTypes.HOME} component={HomeScreen} />
+            <Stack.Screen name={PageTypes.ABOUT} component={AboutScreen} />
           </Stack.Group>
 
           <Stack.Group>
-            <Stack.Screen name='AllPrograms' component={AllProgramsScreen} />
             <Stack.Screen
-              name='CreateProgram'
+              name={PageTypes.ALL_PROGRAMS}
+              component={AllProgramsScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.CREATE_PROGRAM}
               component={CreateProgramScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.ADD_EXERCISE_TO_PROGRAM}
+              component={AddExerciseToProgram}
+            />
+            <Stack.Screen
+              name={PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM}
+              component={ChooseExerciseForNewProgram}
             />
           </Stack.Group>
 
-          <Stack.Screen name='NotFound' component={NotFoundScreen} />
+          <Stack.Screen name={PageTypes.NOT_FOUND} component={NotFoundScreen} />
         </Stack.Navigator>
       ) : (
         <SignedOutStack.Navigator
@@ -68,14 +82,20 @@ export default function RootNavigator() {
             },
           }}
         >
-          <SignedOutStack.Screen name='SignIn' component={SignInScreen} />
-          <SignedOutStack.Screen name='Register' component={RegisterScreen} />
           <SignedOutStack.Screen
-            name='ResetPassword'
+            name={SignedOutPageTypes.SIGN_IN}
+            component={SignInScreen}
+          />
+          <SignedOutStack.Screen
+            name={SignedOutPageTypes.REGISTER}
+            component={RegisterScreen}
+          />
+          <SignedOutStack.Screen
+            name={SignedOutPageTypes.RESET_PASSWORD}
             component={ResetPasswordScreen}
           />
           <SignedOutStack.Screen
-            name='NewPassword'
+            name={SignedOutPageTypes.NEW_PASSWORD}
             component={NewPasswordScreen}
           />
         </SignedOutStack.Navigator>
@@ -83,14 +103,6 @@ export default function RootNavigator() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  test: {
-    width: '100%',
-    height: 200,
-    backgroundColor: 'red',
-  },
-});
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.

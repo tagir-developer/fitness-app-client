@@ -3,47 +3,33 @@ import { FlatList, View } from 'react-native';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
-import { SimpleCard } from '../../../components/cards/SimpleCard';
+import { InfoCard } from '../../../components/cards/InfoCard';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
-import { AppStyledTextInput } from '../../../components/formControls/AppStyledTextInput';
 import { ConfirmModal } from '../../../components/modals/ConfirmModal';
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { PageTypes } from '../../../navigation/types';
-import { TypeCreateProgramScreenProps, TypeTrainingProgram } from './types';
+import { TypeAddExerciseToProgram, TypeExercises } from './types';
 
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
-export default function CreateProgramScreen({
+export default function AddExerciseToProgram({
   route,
   navigation,
-}: TypeCreateProgramScreenProps) {
-  const { programName } = route.params;
+}: TypeAddExerciseToProgram) {
+  const { dayName } = route.params;
 
-  const [dayName, setDayName] = useState('');
-
-  const [isAddDayModalOpen, setIsAddDayModalOpen] = useState(false);
+  const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
-  const addDay = (): void => {
-    setIsAddDayModalOpen(false);
-    setDayName('');
-  };
-
-  const cancelAddDay = (): void => {
-    setIsAddDayModalOpen(false);
-    setDayName('');
-  };
-
-  const programs: TypeTrainingProgram[] = [
+  const exercises: TypeExercises[] = [
     {
       id: '1',
-      title: 'День 1',
+      title: 'Жим лежа',
       muscleGroups: [
         { id: '1', name: 'Бицепс' },
         { id: '2', name: 'Трицепс' },
@@ -51,7 +37,7 @@ export default function CreateProgramScreen({
     },
     {
       id: '2',
-      title: 'День 2',
+      title: 'Приседания',
       muscleGroups: [
         { id: '1', name: 'Ноги' },
         { id: '2', name: 'Грудь' },
@@ -60,7 +46,7 @@ export default function CreateProgramScreen({
     },
     {
       id: '3',
-      title: 'День 3',
+      title: 'Подтягивания',
       muscleGroups: [{ id: '1', name: 'Ноги' }],
     },
   ];
@@ -68,19 +54,18 @@ export default function CreateProgramScreen({
   return (
     <MainLayout loading={loading}>
       <AppHeader
-        title={programName}
+        title={dayName}
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<CheckIcon />}
         onPressRightButton={() => {
           console.log('Сохранить и выйти');
-          navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, { dayName });
         }}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
         <AppButton
-          title='Добавить новый день'
-          onPress={() => setIsAddDayModalOpen(true)}
+          title='Добавить упражнение'
+          onPress={() => setIsAddProgramModalOpen(true)}
           fontSize='17px'
           mt='100px'
         />
@@ -89,13 +74,14 @@ export default function CreateProgramScreen({
       <AppFlex flex='1' justify='flex-start'>
         <FlatList
           style={{ width: '100%' }}
-          data={programs}
+          data={exercises}
           renderItem={({ item }) => (
-            <SimpleCard
+            <InfoCard
               title={item.title}
               description={item.muscleGroups.map((i) => i.name).join(', ')}
               onPress={() => console.log('Нажали на карточку', item.id)}
               deleteHandler={() => console.log('Удалить карточку', item.id)}
+              infoPressHandler={() => console.log('Нажали инфо', item.id)}
             />
           )}
           keyExtractor={(item) => item.id}
@@ -106,7 +92,7 @@ export default function CreateProgramScreen({
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }
           ListEmptyComponent={
-            <EmptyList message='Нет тренировочных дней. Добавьте первый день.' />
+            <EmptyList message='Нет упражнений. Добавьте первое упражнение.' />
           }
           alwaysBounceVertical={false}
         />
@@ -114,20 +100,20 @@ export default function CreateProgramScreen({
 
       <OpacityDarkness bottom='0px' h={`${LIST_BOTTOM_SPACE}px`} />
 
-      <ConfirmModal
-        isOpen={isAddDayModalOpen}
+      {/* <ConfirmModal
+        isOpen={isAddProgramModalOpen}
         title='Новый день'
-        onPressOk={addDay}
-        onPressCancel={cancelAddDay}
+        onPressOk={addProgram}
+        onPressCancel={cancelAddProgram}
         message='Введите название дня'
       >
         <AppStyledTextInput
-          value={dayName}
-          onChangeText={(value) => setDayName(value)}
+          value={programName}
+          onChangeText={(value) => setProgramName(value)}
           placeholder='Название дня'
           mt='10px'
         />
-      </ConfirmModal>
+      </ConfirmModal> */}
     </MainLayout>
   );
 }

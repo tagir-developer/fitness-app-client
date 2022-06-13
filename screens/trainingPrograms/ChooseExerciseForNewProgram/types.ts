@@ -4,9 +4,9 @@ import {
   RootSignedInStackParamList,
 } from '../../../navigation/types';
 
-export type TypeCreateProgramScreenProps = NativeStackScreenProps<
+export type TypeChooseExerciseForProgram = NativeStackScreenProps<
   RootSignedInStackParamList,
-  PageTypes.CREATE_PROGRAM
+  PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM
 >;
 
 type TypeMuscleGroup = {
@@ -14,7 +14,7 @@ type TypeMuscleGroup = {
   name: string;
 };
 
-export type TypeTrainingProgram = {
+export type TypeExercises = {
   id: string;
   title: string;
   muscleGroups: TypeMuscleGroup[];

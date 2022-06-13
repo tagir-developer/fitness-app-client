@@ -22,5 +22,7 @@ export function useGetSourcesLoadingState(screenSourcesCount: number): boolean {
     setIsSourcesCountCleared(true);
   }, []);
 
-  return loading;
+  // ! Временно отключим лодер
+  // return loading;
+  return false;
 }

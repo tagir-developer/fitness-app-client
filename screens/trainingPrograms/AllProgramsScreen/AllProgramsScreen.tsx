@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, ImageSourcePropType, Text, View } from 'react-native';
+import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import GearIcon from '../../../common/icons/gearIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
 import { CardWithImage } from '../../../components/cards/CardWithImage';
@@ -19,8 +20,6 @@ import { TypeHomeScreenProps } from './types';
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
-const SCREEN_SOURCES_COUNT = 4;
-
 export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   const [users, setUsers] = useState<{ email: string }[]>([]);
 
@@ -29,7 +28,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
   const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
 
-  const loading = useGetSourcesLoadingState(SCREEN_SOURCES_COUNT);
+  const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
   const addProgram = (): void => {
     console.log('Новая программа - ', programName);
@@ -49,8 +48,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   const programs = [
     { id: '1', title: 'Базовая программа' },
     { id: '2', title: 'Мощные ноги' },
-    { id: '3', title: 'Чудовищный пресс' },
-    { id: '4', title: 'Чудовищный пресс' },
+    { id: '3', title: 'Чудовищный пресс и программа тренировок ха-ха' },
+    { id: '4', title: 'Очень до жопы длинное название программы' },
     { id: '5', title: 'Чудовищный пресс' },
     { id: '6', title: 'Чудовищный пресс' },
     { id: '7', title: 'Чудовищный пресс' },
@@ -67,7 +66,11 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<GearIcon />}
-        onPressRightButton={() => {}}
+        onPressRightButton={() =>
+          // ! Временно переходим по новым экранам отсюда
+          // navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
+          navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM)
+        }
         // headerImage={headerImage}
       />
 
