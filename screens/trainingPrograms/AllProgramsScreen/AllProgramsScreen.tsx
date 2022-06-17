@@ -69,7 +69,9 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         onPressRightButton={() =>
           // ! Временно переходим по новым экранам отсюда
           // navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
-          navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM)
+          navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
+            dayName: 'День 1',
+          })
         }
         // headerImage={headerImage}
       />

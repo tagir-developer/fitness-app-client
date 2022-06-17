@@ -8,7 +8,7 @@ import {
   TypeImageBackground,
   TypeThemeProps,
 } from '../../common/types';
-import { useAppContext } from '../../context/appContext';
+// import { useAppContext } from '../../context/appContext';
 
 type Props = TouchableOpacityProps &
   MarginProps &

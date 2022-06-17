@@ -7,12 +7,12 @@ import {
   TypeThemeProps,
 } from '../../common/types';
 import { AppFlex } from '../ui/AppFlex';
-import Swipeout, { SwipeoutButtonProperties } from 'react-native-swipeout';
-import DeleteCardIcon from '../../common/icons/DeleteCardIcon';
+import Swipeout from 'react-native-swipeout';
 import ShowInfoIcon from '../../common/icons/ShowInfoIcon';
 import { LinearGradient } from 'expo-linear-gradient';
 import ActiveCardIcon from '../../common/icons/ActiveCardIcon';
 import { cutLongString } from '../../common/helpers/cutLongString';
+import { getRightSwipeoutButtons } from '../../common/helpers/getSwipeoutBtns';
 
 type Props = TouchableOpacityProps &
   MarginProps & {
@@ -22,7 +22,8 @@ type Props = TouchableOpacityProps &
     w?: CssSize;
     isActive?: boolean;
     description: string;
-    deleteHandler: () => void;
+    deleteHandler?: () => void;
+    copyHandler?: () => void;
     infoPressHandler: () => void;
     disableSwipeoutButtons?: boolean;
   };
@@ -90,18 +91,10 @@ const InfoContainer = styled.TouchableOpacity`
 `;
 
 export const InfoCard: React.FC<Props> = (props) => {
-  const swipeoutBtns: SwipeoutButtonProperties[] = [
-    {
-      backgroundColor: '#DA0E0E',
-      underlayColor: '#8d2525',
-      component: (
-        <AppFlex flex='1'>
-          <DeleteCardIcon />
-        </AppFlex>
-      ),
-      onPress: props.deleteHandler,
-    },
-  ];
+  const rightButtons = getRightSwipeoutButtons(
+    props.copyHandler,
+    props.deleteHandler
+  );
 
   const innerContent: JSX.Element = (
     <>
@@ -126,7 +119,7 @@ export const InfoCard: React.FC<Props> = (props) => {
   );
 
   return (
-    <Swipeout right={swipeoutBtns} disabled={props.disableSwipeoutButtons}>
+    <Swipeout right={rightButtons} disabled={!rightButtons.length}>
       <CardContainer {...props} activeOpacity={1}>
         <StyledImageBackground
           source={require('../../assets/images/ui/w-100-steel-bg.jpg')}

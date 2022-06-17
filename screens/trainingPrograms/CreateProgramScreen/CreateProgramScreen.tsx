@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
@@ -40,7 +44,7 @@ export default function CreateProgramScreen({
     setDayName('');
   };
 
-  const programs: TypeTrainingProgram[] = [
+  const initialPrograms: TypeTrainingProgram[] = [
     {
       id: '1',
       title: 'День 1',
@@ -65,6 +69,28 @@ export default function CreateProgramScreen({
     },
   ];
 
+  const [programs, setPrograms] =
+    useState<TypeTrainingProgram[]>(initialPrograms);
+
+  const renderItem = ({
+    item,
+    drag,
+  }: RenderItemParams<TypeTrainingProgram>) => {
+    return (
+      <ScaleDecorator>
+        <SimpleCard
+          onLongPress={drag}
+          title={item.title}
+          description={item.muscleGroups.map((i) => i.name).join(', ')}
+          onPress={() => console.log('Нажали на карточку', item.id)}
+          deleteHandler={() => console.log('Удалить карточку', item.id)}
+          copyHandler={() => console.log('Скопировать карточку', item.id)}
+          editHandler={() => console.log('Редактировать карточку', item.id)}
+        />
+      </ScaleDecorator>
+    );
+  };
+
   return (
     <MainLayout loading={loading}>
       <AppHeader
@@ -86,19 +112,12 @@ export default function CreateProgramScreen({
         />
       </OpacityDarkness>
 
-      <AppFlex flex='1' justify='flex-start'>
-        <FlatList
-          style={{ width: '100%' }}
+      <AppFlex flex='1' align='stretch' justify='flex-start'>
+        <DraggableFlatList
           data={programs}
-          renderItem={({ item }) => (
-            <SimpleCard
-              title={item.title}
-              description={item.muscleGroups.map((i) => i.name).join(', ')}
-              onPress={() => console.log('Нажали на карточку', item.id)}
-              deleteHandler={() => console.log('Удалить карточку', item.id)}
-            />
-          )}
+          onDragEnd={({ data }) => setPrograms(data)}
           keyExtractor={(item) => item.id}
+          renderItem={renderItem}
           ListHeaderComponent={
             <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
           }

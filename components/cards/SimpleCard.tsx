@@ -11,6 +11,11 @@ import { AppFlex } from '../ui/AppFlex';
 import Swipeout, { SwipeoutButtonProperties } from 'react-native-swipeout';
 import DeleteCardIcon from '../../common/icons/DeleteCardIcon';
 import { cutLongString } from '../../common/helpers/cutLongString';
+import CopyCardIcon from '../../common/icons/CopyCardIcon';
+import {
+  getLeftSwipeoutButtons,
+  getRightSwipeoutButtons,
+} from '../../common/helpers/getSwipeoutBtns';
 
 type Props = TouchableOpacityProps &
   MarginProps & {
@@ -20,7 +25,9 @@ type Props = TouchableOpacityProps &
     w?: CssSize;
     isActive?: boolean;
     description: string;
-    deleteHandler: () => void;
+    deleteHandler?: () => void;
+    copyHandler?: () => void;
+    editHandler?: () => void;
   };
 
 type CardTextProps = TypeThemeProps & {
@@ -77,21 +84,19 @@ const CardContent = styled.View`
 `;
 
 export const SimpleCard: React.FC<Props> = (props) => {
-  const swipeoutBtns: SwipeoutButtonProperties[] = [
-    {
-      backgroundColor: '#DA0E0E',
-      underlayColor: '#8d2525',
-      component: (
-        <AppFlex flex='1'>
-          <DeleteCardIcon />
-        </AppFlex>
-      ),
-      onPress: props.deleteHandler,
-    },
-  ];
+  const rightButtons = getRightSwipeoutButtons(
+    props.copyHandler,
+    props.deleteHandler
+  );
+
+  const leftButtons = getLeftSwipeoutButtons(props.editHandler);
 
   return (
-    <Swipeout right={swipeoutBtns}>
+    <Swipeout
+      right={rightButtons}
+      left={leftButtons}
+      disabled={!rightButtons.length && !leftButtons.length}
+    >
       <CardContainer {...props} activeOpacity={1}>
         <StyledImageBackground
           source={require('../../assets/images/ui/w-100-steel-bg.jpg')}

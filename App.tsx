@@ -1,5 +1,6 @@
+import 'react-native-gesture-handler';
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-
 import useCachedResources from './hooks/useCachedResources';
 import Navigation from './navigation/Navigation';
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -22,6 +23,8 @@ import { paperTheme } from './common/paperTheme';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
 import { AppContext } from './context/appContext';
+import { AppRegistry, Platform } from 'react-native';
+import { registerRootComponent } from 'expo';
 
 const httpLink = new HttpLink({
   uri: 'http://192.168.0.103:5000/graphql',
@@ -37,7 +40,7 @@ const getNewToken = async () => {
       mutation: REFRESH_USER_TOKEN,
       variables: { refreshToken },
     })
-    .then((result) => result.data);
+    .then((res) => res.data);
 
   const { accessToken, refreshToken: newRefreshToken } = result.refresh;
 
@@ -168,6 +171,7 @@ export default function App() {
     return (
       <ApolloProvider client={apolloClient}>
         {/* <PaperProvider theme={paperTheme}> */}
+
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
             <AppContext.Provider
@@ -177,7 +181,9 @@ export default function App() {
                 clearSourcesCount,
               }}
             >
+              {/* <GestureHandlerRootView> */}
               <Navigation />
+              {/* </GestureHandlerRootView> */}
               <StatusBar />
             </AppContext.Provider>
           </AuthContext.Provider>
@@ -187,3 +193,11 @@ export default function App() {
     );
   }
 }
+
+// AppRegistry.registerComponent('main', () => App);
+
+// if (Platform.OS === 'web') {
+//   const rootTag =
+//     document.getElementById('root') || document.getElementById('main');
+//   AppRegistry.runApplication('main', { rootTag });
+// }

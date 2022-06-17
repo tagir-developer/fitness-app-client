@@ -4,6 +4,7 @@ import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
 import { InfoCard } from '../../../components/cards/InfoCard';
+import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
 import { AppSearchInput } from '../../../components/formControls/AppSearchInput';
 import { AppFlex } from '../../../components/ui/AppFlex';
@@ -93,17 +94,11 @@ export default function ChooseExerciseForNewProgram({
         onPressLeftButton={() => navigation.goBack()}
       />
 
-      <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
-        <AppSearchInput placeholder='Поиск по названию' mt='100px' />
-        {/* <AppButton
-          title='Добавить упражнение'
-          onPress={() => setIsAddProgramModalOpen(true)}
-          fontSize='17px'
-          mt='100px'
-        /> */}
-      </OpacityDarkness>
-
       <AppFlex flex='1' justify='flex-start'>
+        <AppSearchInput placeholder='Поиск по названию' mt='135px' mb='25px' />
+
+        <FlatlistTopDivider />
+
         <FlatList
           style={{ width: '100%' }}
           data={exercises}
@@ -116,15 +111,13 @@ export default function ChooseExerciseForNewProgram({
                 setActiveCardId(item.id);
               }}
               deleteHandler={() => console.log('Удалить карточку', item.id)}
+              copyHandler={() => console.log('Скопировать карточку', item.id)}
               infoPressHandler={() => console.log('Нажали инфо', item.id)}
               disableSwipeoutButtons={true}
               isActive={activeCardId === item.id}
             />
           )}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={
-            <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
-          }
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }
