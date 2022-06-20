@@ -1,7 +1,7 @@
 import { ActivityIndicator } from 'react-native';
 import { ReactNode } from 'react';
 import styled from 'styled-components/native';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext } from '../../context/app/appContext';
 import { TypeImageBackground } from '../../common/types';
 
 type TypeMainLayoutProps = {

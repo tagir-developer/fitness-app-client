@@ -1,7 +1,7 @@
 import { TouchableOpacityProps } from 'react-native';
 import styled from 'styled-components/native';
 import { TypeImageBackground } from '../../common/types';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext } from '../../context/app/appContext';
 
 type Props = TouchableOpacityProps & {
   icon?: JSX.Element;

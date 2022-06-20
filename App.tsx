@@ -22,9 +22,10 @@ import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
 import { paperTheme } from './common/paperTheme';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
-import { AppContext } from './context/appContext';
+import { AppContext } from './context/app/appContext';
 import { AppRegistry, Platform } from 'react-native';
 import { registerRootComponent } from 'expo';
+import { AppState } from './context/app/appState';
 
 const httpLink = new HttpLink({
   uri: 'http://192.168.0.103:5000/graphql',
@@ -126,17 +127,17 @@ export default function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [sourcesCount, setSourcesCount] = useState(0);
+  // const [sourcesCount, setSourcesCount] = useState(0);
 
-  const addSourcesCount = () => {
-    console.log('Счетчик увеличен +++++');
-    setSourcesCount((prev) => prev + 1);
-  };
+  // const addSourcesCount = () => {
+  //   console.log('Счетчик увеличен +++++');
+  //   setSourcesCount((prev) => prev + 1);
+  // };
 
-  const clearSourcesCount = () => {
-    console.log('Счетчик обнулен ------');
-    setSourcesCount(0);
-  };
+  // const clearSourcesCount = () => {
+  //   console.log('Счетчик обнулен ------');
+  //   setSourcesCount(0);
+  // };
 
   const handleChangeLoginState = (
     loggedInParam = false,
@@ -170,25 +171,22 @@ export default function App() {
   } else {
     return (
       <ApolloProvider client={apolloClient}>
-        {/* <PaperProvider theme={paperTheme}> */}
-
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
-            <AppContext.Provider
+            {/* <AppContext.Provider
               value={{
                 sourcesCount,
                 addSourcesCount,
                 clearSourcesCount,
               }}
-            >
-              {/* <GestureHandlerRootView> */}
+            > */}
+            <AppState>
               <Navigation />
-              {/* </GestureHandlerRootView> */}
               <StatusBar />
-            </AppContext.Provider>
+            </AppState>
+            {/* </AppContext.Provider> */}
           </AuthContext.Provider>
         </ThemeProvider>
-        {/* </PaperProvider> */}
       </ApolloProvider>
     );
   }

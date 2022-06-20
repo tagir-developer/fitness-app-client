@@ -3,7 +3,7 @@ import { cutLongString } from '../../common/helpers/cutLongString';
 import GoBackIcon from '../../common/icons/goBack';
 import { myTheme } from '../../common/theme';
 import { CssSize, TypeImageBackground } from '../../common/types';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext } from '../../context/app/appContext';
 import { HeaderButton } from '../buttons/HeaderButton';
 
 type Props = {

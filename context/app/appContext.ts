@@ -1,15 +1,10 @@
 import { createContext, useContext } from 'react';
-
-type TypeAppContext = {
-  sourcesCount: number;
-  addSourcesCount: () => void;
-  clearSourcesCount: () => void;
-};
+import { TypeAppContext } from './types';
 
 export const AppContext = createContext<TypeAppContext>({
   sourcesCount: 0,
-  addSourcesCount: () => {},
-  clearSourcesCount: () => {},
+  addSourcesCount: () => null,
+  clearSourcesCount: () => null,
 });
 
 export const useAppContext = () => useContext(AppContext);

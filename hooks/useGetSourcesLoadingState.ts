@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useMemo, useState } from 'react';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../context/app/appContext';
 
 export function useGetSourcesLoadingState(screenSourcesCount: number): boolean {
   const { sourcesCount, clearSourcesCount } = useAppContext();

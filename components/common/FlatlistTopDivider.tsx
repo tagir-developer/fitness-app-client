@@ -1,7 +1,7 @@
 import { ViewProps } from 'react-native';
 import styled from 'styled-components/native';
 import { CssSize, MarginProps } from '../../common/types';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext } from '../../context/app/appContext';
 
 type Props = ViewProps &
   MarginProps & {
