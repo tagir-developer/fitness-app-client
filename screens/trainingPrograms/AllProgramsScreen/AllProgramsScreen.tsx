@@ -14,7 +14,7 @@ import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../../navigation/types';
-import { TypeHomeScreenProps } from './types';
+import { TypeHomeScreenProps, TypeTrainingProgram } from './types';
 // const headerImage = require('../assets/images/ui/header-bg.png');
 
 const LIST_TOP_SPACE = 250;
@@ -45,20 +45,53 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
   // if (loading) return <StyledText>Loading...</StyledText>;
 
-  const programs = [
-    { id: '1', title: 'Базовая программа' },
-    { id: '2', title: 'Мощные ноги' },
-    { id: '3', title: 'Чудовищный пресс и программа тренировок ха-ха' },
-    { id: '4', title: 'Очень до жопы длинное название программы' },
-    { id: '5', title: 'Чудовищный пресс' },
-    { id: '6', title: 'Чудовищный пресс' },
-    { id: '7', title: 'Чудовищный пресс' },
-    { id: '8', title: 'Чудовищный пресс' },
-    { id: '9', title: 'Чудовищный пресс' },
-    { id: '10', title: 'Чудовищный пресс' },
-    { id: '11', title: 'Чудовищный пресс' },
-    { id: '12', title: 'Чудовищный пресс' },
+  const initialPrograms: TypeTrainingProgram[] = [
+    {
+      id: '01',
+      title: 'Моя программа',
+      isUserProgram: true,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/userProgram.jpg'),
+    },
+    {
+      id: '102',
+      title: 'Еще одна программа',
+      isUserProgram: true,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/userProgram.jpg'),
+    },
+    {
+      id: '1',
+      title: 'Базовая программа',
+      isUserProgram: false,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
+    },
+    {
+      id: '2',
+      title: 'Мощные ноги',
+      isUserProgram: false,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
+    },
+    {
+      id: '3',
+      title: 'Рельефный пресс',
+      isUserProgram: false,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
+    },
+    {
+      id: '4',
+      title: 'Крепкие руки',
+      isUserProgram: false,
+      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
+      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
+    },
   ];
+
+  const [programs, setPrograms] =
+    useState<TypeTrainingProgram[]>(initialPrograms);
 
   return (
     <MainLayout loading={loading}>
@@ -66,12 +99,13 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<GearIcon />}
-        onPressRightButton={() =>
-          // ! Временно переходим по новым экранам отсюда
-          // navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
-          navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
-            dayName: 'День 1',
-          })
+        onPressRightButton={
+          () =>
+            // ! Временно переходим по новым экранам отсюда
+            navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
+          // navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
+          //   dayName: 'День 1',
+          // })
         }
         // headerImage={headerImage}
       />
@@ -94,6 +128,34 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
               title={item.title}
               isActive={item.id === activeProgramId}
               onCheckHandler={() => setActiveProgramId(item.id)}
+              imgSource={item.img}
+              onPress={
+                item.isUserProgram
+                  ? () =>
+                      navigation.navigate(PageTypes.EDIT_PROGRAM, {
+                        programId: item.id,
+                      })
+                  : () =>
+                      console.log(
+                        'Открыть информацию о дефолтной программе',
+                        item.id
+                      )
+              }
+              deleteHandler={
+                item.isUserProgram
+                  ? () => console.log('Удалить карточку', item.id)
+                  : undefined
+              }
+              copyHandler={
+                item.isUserProgram
+                  ? () => console.log('Скопировать карточку', item.id)
+                  : undefined
+              }
+              editHandler={
+                item.isUserProgram
+                  ? () => console.log('Редактировать карточку', item.id)
+                  : undefined
+              }
             />
           )}
           keyExtractor={(item) => item.id}
@@ -103,6 +165,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }
+          alwaysBounceVertical={false}
         />
       </AppFlex>
 

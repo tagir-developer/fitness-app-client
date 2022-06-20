@@ -1,19 +1,21 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ImageSourcePropType } from 'react-native';
 import {
   PageTypes,
   RootSignedInStackParamList,
 } from '../../../navigation/types';
 
-export type TypeHomeScreenProps = NativeStackScreenProps<
+export type TypeCreateProgramScreenProps = NativeStackScreenProps<
   RootSignedInStackParamList,
-  PageTypes.ALL_PROGRAMS
+  PageTypes.EDIT_PROGRAM
 >;
+
+type TypeMuscleGroup = {
+  id: string;
+  name: string;
+};
 
 export type TypeTrainingProgram = {
   id: string;
   title: string;
-  isUserProgram: boolean;
-  imgUrl: string;
-  img: ImageSourcePropType;
+  muscleGroups: TypeMuscleGroup[];
 };

@@ -19,6 +19,7 @@ export enum PageTypes {
   CREATE_PROGRAM = 'CreateProgram',
   ADD_EXERCISE_TO_PROGRAM = 'AddExerciseToProgram',
   CHOOSE_EXERCISE_FOR_NEW_PROGRAM = 'ChooseExerciseForNewProgram',
+  EDIT_PROGRAM = 'EditProgram',
 }
 
 export type RootSignedInStackParamList = {
@@ -30,6 +31,7 @@ export type RootSignedInStackParamList = {
   [PageTypes.CREATE_PROGRAM]: { programName: string };
   [PageTypes.ADD_EXERCISE_TO_PROGRAM]: { dayName: string };
   [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
+  [PageTypes.EDIT_PROGRAM]: { programId: string };
   //   Home: SomeType | undefined
 };
 

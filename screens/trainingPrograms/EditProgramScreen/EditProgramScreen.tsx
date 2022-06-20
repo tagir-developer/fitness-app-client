@@ -23,11 +23,11 @@ import { TypeCreateProgramScreenProps, TypeTrainingProgram } from './types';
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
-export default function CreateProgramScreen({
+export default function EditProgramScreen({
   route,
   navigation,
 }: TypeCreateProgramScreenProps) {
-  const { programName } = route.params;
+  const { programId } = route.params;
 
   const [dayName, setDayName] = useState('');
 
@@ -128,14 +128,11 @@ export default function CreateProgramScreen({
   return (
     <MainLayout loading={loading}>
       <AppHeader
-        title={programName}
+        // title={programName}
+        title={'Название программы'}
         onPressLeftButton={exitHandler}
         rightButtonIcon={<CheckIcon />}
-        onPressRightButton={() => {
-          saveProgramHandler();
-          // console.log('Сохранить и выйти');
-          // navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, { dayName });
-        }}
+        onPressRightButton={saveProgramHandler}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>

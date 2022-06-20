@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
@@ -16,6 +15,7 @@ import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
+import { PageTypes } from '../../../navigation/types';
 import { TypeAddExerciseToProgram, TypeExercises } from './types';
 
 const LIST_TOP_SPACE = 250;
@@ -27,9 +27,17 @@ export default function AddExerciseToProgram({
 }: TypeAddExerciseToProgram) {
   const { dayName } = route.params;
 
-  const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
+
+  const saveProgram = (): void => {
+    setIsSaveModalOpen(false);
+
+    // ! Здесь будет запрос на сохранение программы в базе
+    console.log('Сохранить программу и выйти');
+    navigation.navigate(PageTypes.ALL_PROGRAMS);
+  };
 
   const exercises: TypeExercises[] = [
     {
@@ -87,7 +95,9 @@ export default function AddExerciseToProgram({
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
         <AppButton
           title='Добавить упражнение'
-          onPress={() => setIsAddProgramModalOpen(true)}
+          onPress={() =>
+            navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM)
+          }
           fontSize='17px'
           mt='100px'
         />
@@ -114,20 +124,13 @@ export default function AddExerciseToProgram({
 
       <OpacityDarkness bottom='0px' h={`${LIST_BOTTOM_SPACE}px`} />
 
-      {/* <ConfirmModal
-        isOpen={isAddProgramModalOpen}
-        title='Новый день'
-        onPressOk={addProgram}
-        onPressCancel={cancelAddProgram}
-        message='Введите название дня'
-      >
-        <AppStyledTextInput
-          value={programName}
-          onChangeText={(value) => setProgramName(value)}
-          placeholder='Название дня'
-          mt='10px'
-        />
-      </ConfirmModal> */}
+      <ConfirmModal
+        isOpen={isSaveModalOpen}
+        title='Сохранение'
+        onPressOk={saveProgram}
+        onPressCancel={() => setIsSaveModalOpen(false)}
+        message='Сохранить программу тренировок?'
+      />
     </MainLayout>
   );
 }

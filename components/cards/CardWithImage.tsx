@@ -1,7 +1,16 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { GestureResponderEvent, TouchableOpacityProps } from 'react-native';
+import {
+  GestureResponderEvent,
+  ImageSourcePropType,
+  TouchableOpacityProps,
+} from 'react-native';
+import Swipeout from 'react-native-swipeout';
 import styled from 'styled-components/native';
 import { cutLongString } from '../../common/helpers/cutLongString';
+import {
+  getLeftSwipeoutButtons,
+  getRightSwipeoutButtons,
+} from '../../common/helpers/getSwipeoutBtns';
 import ActiveGreenCheckbox from '../../common/icons/activeGreenCheckbox';
 import {
   CssSize,
@@ -21,6 +30,10 @@ type Props = TouchableOpacityProps &
     subTitle?: string;
     onCheckHandler: ((event: GestureResponderEvent) => void) | undefined;
     isActive: boolean;
+    imgSource: ImageSourcePropType;
+    deleteHandler?: () => void;
+    copyHandler?: () => void;
+    editHandler?: () => void;
   };
 
 type CardTextProps = TypeThemeProps & {
@@ -76,49 +89,65 @@ const CardContent = styled.View`
   align-items: center;
 `;
 
-export const CardWithImage: React.FC<Props> = (props) => (
-  <CardContainer {...props} activeOpacity={1}>
-    <StyledImageBackground
-      source={require('../../assets/images/ui/w-100-steel-bg.jpg')}
-      resizeMode='repeat'
+export const CardWithImage: React.FC<Props> = (props) => {
+  const rightButtons = getRightSwipeoutButtons(
+    props.copyHandler,
+    props.deleteHandler
+  );
+
+  const leftButtons = getLeftSwipeoutButtons(props.editHandler);
+
+  return (
+    <Swipeout
+      right={rightButtons}
+      left={leftButtons}
+      disabled={!rightButtons.length && !leftButtons.length}
     >
-      <CardContent>
-        <AppFlex flex='0.2'>
-          <ShapeWithGradientBorder w='52px' h='52px'>
-            <CardImage
-              source={require('../../assets/images/ui/card-icons/programs/basic.jpg')}
-              resizeMode='cover'
-            />
-          </ShapeWithGradientBorder>
-        </AppFlex>
+      <CardContainer {...props} activeOpacity={1}>
+        <StyledImageBackground
+          source={require('../../assets/images/ui/w-100-steel-bg.jpg')}
+          resizeMode='repeat'
+        >
+          <CardContent>
+            <AppFlex flex='0.2'>
+              <ShapeWithGradientBorder w='52px' h='52px'>
+                <CardImage
+                  // source={require('../../assets/images/ui/card-icons/programs/basic.jpg')}
+                  source={props.imgSource}
+                  resizeMode='cover'
+                />
+              </ShapeWithGradientBorder>
+            </AppFlex>
 
-        <AppFlex flex='0.6' align='flex-start'>
-          <CardText color={props.color} fontSize={props.fontSize}>
-            {cutLongString(props.title, 42)}
-          </CardText>
-        </AppFlex>
+            <AppFlex flex='0.6' align='flex-start'>
+              <CardText color={props.color} fontSize={props.fontSize}>
+                {cutLongString(props.title, 42)}
+              </CardText>
+            </AppFlex>
 
-        <AppFlex flex='0.2'>
-          <ShapeWithGradientBorder
-            onPress={props.onCheckHandler}
-            w='35px'
-            h='35px'
-          >
-            <LinearGradient
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              colors={['#414141', '#5f5f5f']}
-            >
-              {props.isActive && <ActiveGreenCheckbox />}
-            </LinearGradient>
-          </ShapeWithGradientBorder>
-        </AppFlex>
-      </CardContent>
-    </StyledImageBackground>
-  </CardContainer>
-);
+            <AppFlex flex='0.2'>
+              <ShapeWithGradientBorder
+                onPress={props.onCheckHandler}
+                w='35px'
+                h='35px'
+              >
+                <LinearGradient
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  colors={['#414141', '#5f5f5f']}
+                >
+                  {props.isActive && <ActiveGreenCheckbox />}
+                </LinearGradient>
+              </ShapeWithGradientBorder>
+            </AppFlex>
+          </CardContent>
+        </StyledImageBackground>
+      </CardContainer>
+    </Swipeout>
+  );
+};

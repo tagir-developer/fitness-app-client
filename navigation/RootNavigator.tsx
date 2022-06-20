@@ -18,6 +18,7 @@ import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/All
 import CreateProgramScreen from '../screens/trainingPrograms/CreateProgramScreen/CreateProgramScreen';
 import AddExerciseToProgram from '../screens/trainingPrograms/AddExerciseToProgram/AddExerciseToProgram';
 import ChooseExerciseForNewProgram from '../screens/trainingPrograms/ChooseExerciseForNewProgram/ChooseExerciseForNewProgram';
+import EditProgramScreen from '../screens/trainingPrograms/EditProgramScreen/EditProgramScreen';
 
 const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
@@ -68,6 +69,10 @@ export default function RootNavigator() {
             <Stack.Screen
               name={PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM}
               component={ChooseExerciseForNewProgram}
+            />
+            <Stack.Screen
+              name={PageTypes.EDIT_PROGRAM}
+              component={EditProgramScreen}
             />
           </Stack.Group>
 
