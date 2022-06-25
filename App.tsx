@@ -1,9 +1,7 @@
 import 'react-native-gesture-handler';
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import useCachedResources from './hooks/useCachedResources';
 import Navigation from './navigation/Navigation';
-import { Provider as PaperProvider } from 'react-native-paper';
 import {
   InMemoryCache,
   ApolloClient,
@@ -13,18 +11,14 @@ import {
   NormalizedCacheObject,
   Observable,
 } from '@apollo/client';
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getToken, signIn, signOut } from './storage/asyncStorage';
 import { AuthContext } from './context/authContext';
 import { setContext } from 'apollo-link-context';
 import { onError } from '@apollo/client/link/error';
 import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
-import { paperTheme } from './common/paperTheme';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
-import { AppContext } from './context/app/appContext';
-import { AppRegistry, Platform } from 'react-native';
-import { registerRootComponent } from 'expo';
 import { AppState } from './context/app/appState';
 
 const httpLink = new HttpLink({
@@ -127,18 +121,6 @@ export default function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // const [sourcesCount, setSourcesCount] = useState(0);
-
-  // const addSourcesCount = () => {
-  //   console.log('Счетчик увеличен +++++');
-  //   setSourcesCount((prev) => prev + 1);
-  // };
-
-  // const clearSourcesCount = () => {
-  //   console.log('Счетчик обнулен ------');
-  //   setSourcesCount(0);
-  // };
-
   const handleChangeLoginState = (
     loggedInParam = false,
     accessToken?: string,
@@ -173,29 +155,13 @@ export default function App() {
       <ApolloProvider client={apolloClient}>
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
-            {/* <AppContext.Provider
-              value={{
-                sourcesCount,
-                addSourcesCount,
-                clearSourcesCount,
-              }}
-            > */}
             <AppState>
               <Navigation />
               <StatusBar />
             </AppState>
-            {/* </AppContext.Provider> */}
           </AuthContext.Provider>
         </ThemeProvider>
       </ApolloProvider>
     );
   }
 }
-
-// AppRegistry.registerComponent('main', () => App);
-
-// if (Platform.OS === 'web') {
-//   const rootTag =
-//     document.getElementById('root') || document.getElementById('main');
-//   AppRegistry.runApplication('main', { rootTag });
-// }
