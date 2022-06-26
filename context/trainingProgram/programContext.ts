@@ -1,10 +1,24 @@
 import { createContext, useContext } from 'react';
+import { initialProgramState } from './trainingProgramState';
 import { TypeProgramContext } from './types';
 
-export const AppContext = createContext<TypeProgramContext>({
-  sourcesCount: 0,
-  addSourcesCount: () => null,
-  clearSourcesCount: () => null,
-});
+export const ProgramContext = createContext<TypeProgramContext>(
+  {} as TypeProgramContext
+);
+// export const ProgramContext = createContext<TypeProgramContext>({
+//   trainingProgram: initialProgramState.trainingProgram,
+//   activeDay: initialProgramState.activeDay,
+//   setActiveProgram: () => null,
+//   setNewProgramData: () => null,
+//   addTrainingDay: () => null,
+//   changeDaysOrder: () => null,
+//   deleteDay: () => null,
+//   copyDay: () => null,
+//   addExerciseToDay: () => null,
+//   renameDay: () => null,
+//   deleteExercise: () => null,
+//   changeExercisesOrder: () => null,
+//   setActiveDay: () => null,
+// });
 
-export const useAppContext = () => useContext(AppContext);
+export const useProgramContext = () => useContext(ProgramContext);

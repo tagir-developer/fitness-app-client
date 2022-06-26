@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import 'react-native-get-random-values';
 import { StatusBar } from 'expo-status-bar';
 import useCachedResources from './hooks/useCachedResources';
 import Navigation from './navigation/Navigation';
@@ -20,6 +21,7 @@ import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
 import { AppState } from './context/app/appState';
+import { TrainingProgramState } from './context/trainingProgram/trainingProgramState';
 
 const httpLink = new HttpLink({
   uri: 'http://192.168.0.103:5000/graphql',
@@ -156,8 +158,10 @@ export default function App() {
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
             <AppState>
-              <Navigation />
-              <StatusBar />
+              <TrainingProgramState>
+                <Navigation />
+                <StatusBar />
+              </TrainingProgramState>
             </AppState>
           </AuthContext.Provider>
         </ThemeProvider>

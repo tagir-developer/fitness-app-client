@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
+import { cutLongString } from '../../../common/helpers/cutLongString';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
 import { SimpleCard } from '../../../components/cards/SimpleCard';
@@ -16,9 +17,11 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
+import { useProgramContext } from '../../../context/trainingProgram/programContext';
+import { TypeTrainingDay } from '../../../context/trainingProgram/types';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../../navigation/types';
-import { TypeCreateProgramScreenProps, TypeTrainingProgram } from './types';
+import { TypeCreateProgramScreenProps } from './types';
 
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
@@ -29,15 +32,34 @@ export default function CreateProgramScreen({
 }: TypeCreateProgramScreenProps) {
   const { programName } = route.params;
 
+  const {
+    trainingProgram,
+    setNewProgramData,
+    changeDaysOrder,
+    deleteDay,
+    copyDay,
+    renameDay,
+    setActiveDay,
+    addTrainingDay,
+  } = useProgramContext();
+
   const [dayName, setDayName] = useState('');
 
   const [isAddDayModalOpen, setIsAddDayModalOpen] = useState(false);
+  const [isChangeDayNameModalOpen, setIsChangeDayNameModalOpen] =
+    useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
+  const [activeDayId, setActiveDayId] = useState('');
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
   const addDay = (): void => {
+    if (!dayName.length) {
+      // ! Добавить уведомление что поле не может быть пустым
+      return console.log('7777777777');
+    }
+    addTrainingDay(dayName);
     setIsAddDayModalOpen(false);
     setDayName('');
   };
@@ -78,48 +100,59 @@ export default function CreateProgramScreen({
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
-  const initialPrograms: TypeTrainingProgram[] = [
-    {
-      id: '1',
-      title: 'День 1',
-      muscleGroups: [
-        { id: '1', name: 'Бицепс' },
-        { id: '2', name: 'Трицепс' },
-      ],
-    },
-    {
-      id: '2',
-      title: 'День 2',
-      muscleGroups: [
-        { id: '1', name: 'Ноги' },
-        { id: '2', name: 'Грудь' },
-        { id: '2', name: 'Плечи' },
-      ],
-    },
-    {
-      id: '3',
-      title: 'День 3',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-  ];
+  const cardPressHandler = (id: string, name: string): void => {
+    setActiveDay(id);
+    navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
+      dayName: name,
+    });
+  };
 
-  const [programs, setPrograms] =
-    useState<TypeTrainingProgram[]>(initialPrograms);
+  const openChangeProgramNameModal = (dayId: string): void => {
+    setActiveDayId(dayId);
+    setIsChangeDayNameModalOpen(true);
+  };
+
+  const changeDayName = (): void => {
+    renameDay(activeDayId, dayName);
+    setIsChangeDayNameModalOpen(false);
+    setDayName('');
+  };
+
+  const createMuscleGroupsDescription = (day: TypeTrainingDay): string => {
+    const muscleGroups: string[] = [];
+
+    for (const exercise of day.exercises) {
+      for (const muscleGroup of exercise.muscleGroups) {
+        if (!muscleGroups.includes(muscleGroup)) {
+          muscleGroups.push(muscleGroup);
+        }
+      }
+    }
+
+    return cutLongString(muscleGroups.join(', '), 40);
+  };
+
+  useEffect(() => {
+    setNewProgramData(programName);
+  }, []);
+
+  // console.log('PROGRAM', trainingProgram);
 
   const renderItem = ({
-    item,
+    item: day,
     drag,
-  }: RenderItemParams<TypeTrainingProgram>) => {
+  }: RenderItemParams<TypeTrainingDay>) => {
     return (
       <ScaleDecorator>
         <SimpleCard
           onLongPress={drag}
-          title={item.title}
-          description={item.muscleGroups.map((i) => i.name).join(', ')}
-          onPress={() => console.log('Нажали на карточку', item.id)}
-          deleteHandler={() => console.log('Удалить карточку', item.id)}
-          copyHandler={() => console.log('Скопировать карточку', item.id)}
-          editHandler={() => console.log('Редактировать карточку', item.id)}
+          title={day.name}
+          // description={day.muscleGroups.join(', ')}
+          description={createMuscleGroupsDescription(day)}
+          onPress={() => cardPressHandler(day.id, day.name)}
+          deleteHandler={() => deleteDay(day.id)}
+          copyHandler={() => copyDay(day.id)}
+          editHandler={() => openChangeProgramNameModal(day.id)}
         />
       </ScaleDecorator>
     );
@@ -131,11 +164,7 @@ export default function CreateProgramScreen({
         title={programName}
         onPressLeftButton={exitHandler}
         rightButtonIcon={<CheckIcon />}
-        onPressRightButton={() => {
-          saveProgramHandler();
-          // console.log('Сохранить и выйти');
-          // navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, { dayName });
-        }}
+        onPressRightButton={saveProgramHandler}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
@@ -149,8 +178,8 @@ export default function CreateProgramScreen({
 
       <AppFlex flex='1' align='stretch' justify='flex-start'>
         <DraggableFlatList
-          data={programs}
-          onDragEnd={({ data }) => setPrograms(data)}
+          data={trainingProgram.days}
+          onDragEnd={({ data }) => changeDaysOrder(data)}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           ListHeaderComponent={
@@ -170,14 +199,29 @@ export default function CreateProgramScreen({
 
       <ConfirmModal
         isOpen={isAddDayModalOpen}
-        title='Новый день'
+        title='Добавить новый день'
         onPressOk={addDay}
         onPressCancel={cancelAddDay}
         message='Введите название дня'
       >
         <AppStyledTextInput
           value={dayName}
-          onChangeText={(value) => setDayName(value)}
+          onChangeText={setDayName}
+          placeholder='Название дня'
+          mt='10px'
+        />
+      </ConfirmModal>
+
+      <ConfirmModal
+        isOpen={isChangeDayNameModalOpen}
+        title='Изменить название дня'
+        onPressOk={changeDayName}
+        onPressCancel={() => setIsChangeDayNameModalOpen(false)}
+        message='Введите название дня'
+      >
+        <AppStyledTextInput
+          value={dayName}
+          onChangeText={setDayName}
           placeholder='Название дня'
           mt='10px'
         />

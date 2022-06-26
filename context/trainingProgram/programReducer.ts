@@ -15,6 +15,11 @@ export const appReducer = (
         ...state,
         trainingProgram: action.payload,
       };
+    case ProgramContextActionTypes.SET_ACTIVE_DAY:
+      return {
+        ...state,
+        activeDay: action.payload,
+      };
     case ProgramContextActionTypes.SET_NEW_PROGRAM_DATA:
       return {
         ...state,

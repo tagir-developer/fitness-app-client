@@ -8,10 +8,8 @@ import {
   TypeThemeProps,
 } from '../../common/types';
 import { AppFlex } from '../ui/AppFlex';
-import Swipeout, { SwipeoutButtonProperties } from 'react-native-swipeout';
-import DeleteCardIcon from '../../common/icons/DeleteCardIcon';
+import Swipeout from 'react-native-swipeout';
 import { cutLongString } from '../../common/helpers/cutLongString';
-import CopyCardIcon from '../../common/icons/CopyCardIcon';
 import {
   getLeftSwipeoutButtons,
   getRightSwipeoutButtons,
@@ -96,6 +94,7 @@ export const SimpleCard: React.FC<Props> = (props) => {
       right={rightButtons}
       left={leftButtons}
       disabled={!rightButtons.length && !leftButtons.length}
+      autoClose={true}
     >
       <CardContainer {...props} activeOpacity={1}>
         <StyledImageBackground

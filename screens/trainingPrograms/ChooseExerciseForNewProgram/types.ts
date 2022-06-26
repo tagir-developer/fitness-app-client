@@ -9,13 +9,8 @@ export type TypeChooseExerciseForProgram = NativeStackScreenProps<
   PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM
 >;
 
-type TypeMuscleGroup = {
+export type TypeExerciseListItem = {
   id: string;
   name: string;
-};
-
-export type TypeExercises = {
-  id: string;
-  title: string;
-  muscleGroups: TypeMuscleGroup[];
+  muscleGroups: string[];
 };

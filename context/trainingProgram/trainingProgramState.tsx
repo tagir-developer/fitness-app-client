@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { AppContext } from './programContext';
+import { ProgramContext } from './programContext';
 import { appReducer } from './programReducer';
 import {
   ProgramContextActionTypes,
@@ -10,16 +10,17 @@ import {
 } from './types';
 import { v4 } from 'uuid';
 
-export const initialState: TypeProgramContextState = {
+export const initialProgramState: TypeProgramContextState = {
   trainingProgram: {
     id: '',
     name: '',
     days: [],
   },
+  activeDay: null,
 };
 
-export const AppState = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+export const TrainingProgramState = ({ children }) => {
+  const [state, dispatch] = useReducer(appReducer, initialProgramState);
 
   const setActiveProgram = (program: TypeTrainingProgram): void => {
     dispatch({
@@ -61,9 +62,12 @@ export const AppState = ({ children }) => {
   const copyDay = (id: string): void => {
     const copiedDay = state.trainingProgram.days.find((day) => day.id === id);
 
+    const dayId = v4();
+
     if (copiedDay) {
       const newDay: TypeTrainingDay = {
         ...copiedDay,
+        id: dayId,
         name: copiedDay.name + ' (копия)',
       };
 
@@ -112,10 +116,21 @@ export const AppState = ({ children }) => {
     });
   };
 
+  const setActiveDay = (dayId: string | null): void => {
+    const activeDay =
+      state.trainingProgram.days.find((day) => day.id === dayId) ?? null;
+
+    dispatch({
+      type: ProgramContextActionTypes.SET_ACTIVE_DAY,
+      payload: activeDay,
+    });
+  };
+
   return (
-    <AppContext.Provider
+    <ProgramContext.Provider
       value={{
         trainingProgram: state.trainingProgram,
+        activeDay: state.activeDay,
         setActiveProgram,
         setNewProgramData,
         addTrainingDay,
@@ -126,9 +141,10 @@ export const AppState = ({ children }) => {
         renameDay,
         deleteExercise,
         changeExercisesOrder,
+        setActiveDay,
       }}
     >
       {children}
-    </AppContext.Provider>
+    </ProgramContext.Provider>
   );
 };

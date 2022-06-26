@@ -2,8 +2,9 @@ import { ActionMap } from '../../common/types';
 
 export enum ProgramContextActionTypes {
   SET_ACTIVE_PROGRAM = 'SET_ACTIVE_PROGRAM',
+  SET_ACTIVE_DAY = 'SET_ACTIVE_DAY',
   ADD_DAY = 'ADD_DAY',
-  RENAME_DAY = 'RENAME_DAY', // ! Добавить для этой операции функцию
+  RENAME_DAY = 'RENAME_DAY',
   DELETE_DAY = 'DELETE_DAY',
   COPY_DAY = 'COPY_DAY',
   CHANGE_DAYS_ORDER = 'CHANGE_DAYS_ORDER',
@@ -15,6 +16,7 @@ export enum ProgramContextActionTypes {
 
 export type TypeExercise = {
   id: string;
+  exerciseId: string;
   name: string;
   muscleGroups: string[];
 };
@@ -34,6 +36,7 @@ export type TypeTrainingProgram = {
 
 export type TypeProgramContextState = {
   trainingProgram: TypeTrainingProgram;
+  activeDay: TypeTrainingDay | null;
 };
 
 export type ProgramPayload = {
@@ -61,13 +64,13 @@ export type ProgramPayload = {
     dayId: string;
     exercises: TypeExercise[];
   };
+  [ProgramContextActionTypes.SET_ACTIVE_DAY]: TypeTrainingDay | null;
 };
 
 export type TypeProgramContextAction =
   ActionMap<ProgramPayload>[keyof ActionMap<ProgramPayload>];
 
-export type TypeProgramContext = {
-  trainingProgram: TypeTrainingProgram;
+export type TypeProgramContext = TypeProgramContextState & {
   setActiveProgram: (program: TypeTrainingProgram) => void;
   setNewProgramData: (name: string) => void;
   addTrainingDay: (name: string) => void;
@@ -78,4 +81,5 @@ export type TypeProgramContext = {
   renameDay: (id: string, name: string) => void;
   deleteExercise: (dayId: string, exerciseId: string) => void;
   changeExercisesOrder: (dayId: string, exercises: TypeExercise[]) => void;
+  setActiveDay: (dayId: string | null) => void;
 };

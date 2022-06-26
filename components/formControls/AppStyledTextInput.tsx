@@ -4,7 +4,6 @@ import pick from 'lodash.pick';
 import { TextInputProps } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { CssSize, MarginProps } from '../../common/types';
-// const InsetShadow = require('react-native-inset-shadow');
 
 const INPUT_WRAPPER_PROPS_LIST = ['mt', 'mb', 'ml', 'mr', 'w', 'h'];
 

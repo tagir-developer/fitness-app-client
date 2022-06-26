@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { FlatList, View } from 'react-native';
+import { v4 } from 'uuid';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
-import CheckIcon from '../../../common/icons/checkIcon';
-import { AppButton } from '../../../components/buttons/AppButton';
 import { InfoCard } from '../../../components/cards/InfoCard';
 import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
 import { AppSearchInput } from '../../../components/formControls/AppSearchInput';
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
-import { AppTextInput } from '../../../components/ui/AppTextInput';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
+import { useProgramContext } from '../../../context/trainingProgram/programContext';
+import { TypeExercise } from '../../../context/trainingProgram/types';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { TypeChooseExerciseForProgram, TypeExercises } from './types';
+import { PageTypes } from '../../../navigation/types';
+import { TypeChooseExerciseForProgram, TypeExerciseListItem } from './types';
 
-const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
 export default function ChooseExerciseForNewProgram({
@@ -23,69 +23,41 @@ export default function ChooseExerciseForNewProgram({
 }: TypeChooseExerciseForProgram) {
   const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
 
-  const [activeCardId, setActiveCardId] = useState('');
+  const { activeDay, addExerciseToDay, setActiveDay } = useProgramContext();
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
-  const exercises: TypeExercises[] = [
+  // ! Загружаем список упражнений с сервера
+  const exercises: TypeExerciseListItem[] = [
     {
       id: '1',
-      title: 'Жим лежа',
-      muscleGroups: [
-        { id: '1', name: 'Бицепс' },
-        { id: '2', name: 'Трицепс' },
-      ],
+      name: 'Жим лежа',
+      muscleGroups: ['Грудь', 'Трицепс'],
     },
     {
       id: '2',
-      title: 'Приседания',
-      muscleGroups: [
-        { id: '1', name: 'Ноги' },
-        { id: '2', name: 'Грудь' },
-        { id: '2', name: 'Плечи' },
-      ],
+      name: 'Приседания',
+      muscleGroups: ['Ноги', 'Ягодицы', 'Голени'],
     },
     {
       id: '3',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '4',
-      title: 'Жим штанги на скамье с наклоном вверх',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '5',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '6',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '7',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '8',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '9',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-    {
-      id: '10',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
+      name: 'Подтягивания',
+      muscleGroups: ['Спина', 'Бицепс', 'Предплечия'],
     },
   ];
+
+  if (!activeDay) return null;
+
+  const cardPressHandler = (exercise: TypeExerciseListItem) => {
+    const dayExercise: TypeExercise = {
+      id: v4(),
+      exerciseId: exercise.id,
+      name: exercise.name,
+      muscleGroups: exercise.muscleGroups,
+    };
+    addExerciseToDay(activeDay.id, dayExercise);
+    navigation.goBack();
+  };
 
   return (
     <MainLayout loading={loading}>
@@ -102,19 +74,13 @@ export default function ChooseExerciseForNewProgram({
         <FlatList
           style={{ width: '100%' }}
           data={exercises}
-          renderItem={({ item }) => (
+          renderItem={({ item: exercise }) => (
             <InfoCard
-              title={item.title}
-              description={item.muscleGroups.map((i) => i.name).join(', ')}
-              onPress={() => {
-                console.log('Нажали на карточку', item.id);
-                setActiveCardId(item.id);
-              }}
-              deleteHandler={() => console.log('Удалить карточку', item.id)}
-              copyHandler={() => console.log('Скопировать карточку', item.id)}
-              infoPressHandler={() => console.log('Нажали инфо', item.id)}
+              title={exercise.name}
+              description={exercise.muscleGroups.join(', ')}
+              onPress={() => cardPressHandler(exercise)}
+              infoPressHandler={() => console.log('Нажали инфо', exercise.id)}
               disableSwipeoutButtons={true}
-              isActive={activeCardId === item.id}
             />
           )}
           keyExtractor={(item) => item.id}

@@ -119,7 +119,11 @@ export const InfoCard: React.FC<Props> = (props) => {
   );
 
   return (
-    <Swipeout right={rightButtons} disabled={!rightButtons.length}>
+    <Swipeout
+      right={rightButtons}
+      disabled={!rightButtons.length}
+      autoClose={true}
+    >
       <CardContainer {...props} activeOpacity={1}>
         <StyledImageBackground
           source={require('../../assets/images/ui/w-100-steel-bg.jpg')}

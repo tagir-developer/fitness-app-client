@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -14,6 +14,8 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
+import { useProgramContext } from '../../../context/trainingProgram/programContext';
+import { TypeExercise } from '../../../context/trainingProgram/types';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../../navigation/types';
 import { TypeAddExerciseToProgram, TypeExercises } from './types';
@@ -31,6 +33,9 @@ export default function AddExerciseToProgram({
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
+  const { activeDay, changeExercisesOrder, deleteExercise, trainingProgram } =
+    useProgramContext();
+
   const saveProgram = (): void => {
     setIsSaveModalOpen(false);
 
@@ -39,47 +44,33 @@ export default function AddExerciseToProgram({
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
-  const exercises: TypeExercises[] = [
-    {
-      id: '1',
-      title: 'Жим лежа',
-      muscleGroups: [
-        { id: '1', name: 'Бицепс' },
-        { id: '2', name: 'Трицепс' },
-      ],
-    },
-    {
-      id: '2',
-      title: 'Приседания',
-      muscleGroups: [
-        { id: '1', name: 'Ноги' },
-        { id: '2', name: 'Грудь' },
-        { id: '2', name: 'Плечи' },
-      ],
-    },
-    {
-      id: '3',
-      title: 'Подтягивания',
-      muscleGroups: [{ id: '1', name: 'Ноги' }],
-    },
-  ];
+  const exercises = useMemo(
+    () =>
+      trainingProgram.days.find((day) => day.id === activeDay?.id)?.exercises ??
+      [],
+    [trainingProgram]
+  );
 
-  const [data, setData] = useState<TypeExercises[]>(exercises);
+  console.log('EXERCISES', exercises);
 
-  const renderItem = ({ item, drag }: RenderItemParams<TypeExercises>) => {
+  if (!activeDay) return <Text>День не найден</Text>;
+
+  const renderItem = ({ item, drag }: RenderItemParams<TypeExercise>) => {
     return (
       <ScaleDecorator>
         <InfoCard
           onLongPress={drag}
-          title={item.title}
-          description={item.muscleGroups.map((i) => i.name).join(', ')}
+          title={item.name}
+          description={item.muscleGroups.join(', ')}
           onPress={() => console.log('Нажали на карточку', item.id)}
-          deleteHandler={() => console.log('Удалить карточку', item.id)}
+          deleteHandler={() => deleteExercise(activeDay.id, item.id)}
           infoPressHandler={() => console.log('Нажали инфо', item.id)}
         />
       </ScaleDecorator>
     );
   };
+
+  console.log('ACTIVE DAY', activeDay.exercises);
 
   return (
     <MainLayout loading={loading}>
@@ -105,8 +96,8 @@ export default function AddExerciseToProgram({
 
       <AppFlex flex='1' align='stretch' justify='flex-start'>
         <DraggableFlatList
-          data={data}
-          onDragEnd={({ data }) => setData(data)}
+          data={exercises}
+          onDragEnd={({ data }) => changeExercisesOrder(activeDay.id, data)}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           ListHeaderComponent={
