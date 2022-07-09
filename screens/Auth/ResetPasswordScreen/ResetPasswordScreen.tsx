@@ -8,7 +8,7 @@ import { AuthScreenTitle } from '../../../components/typography/AuthScreenTitle'
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
-import { RESET_USER_PASSWORD } from '../../../graphql/mutations/user';
+import { RESET_USER_PASSWORD } from '../../../graphql/auth/mutations/user';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { SignedOutPageTypes } from '../../../navigation/types';
 import {

@@ -1,3 +1,4 @@
+import isEqual from 'lodash.isequal';
 import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import DraggableFlatList, {
@@ -33,8 +34,13 @@ export default function AddExerciseToProgram({
 
   const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
 
-  const { activeDay, changeExercisesOrder, deleteExercise, trainingProgram } =
-    useProgramContext();
+  const {
+    activeDay,
+    changeExercisesOrder,
+    deleteExercise,
+    trainingProgram,
+    initialProgramData,
+  } = useProgramContext();
 
   const saveProgram = (): void => {
     setIsSaveModalOpen(false);
@@ -51,9 +57,17 @@ export default function AddExerciseToProgram({
     [trainingProgram]
   );
 
+  const saveProgramHandler = (): void => {
+    const isProgramChanged = !isEqual(trainingProgram, initialProgramData);
+    if (isProgramChanged) {
+      return setIsSaveModalOpen(true);
+    }
+    navigation.navigate(PageTypes.ALL_PROGRAMS);
+  };
+
   console.log('EXERCISES', exercises);
 
-  if (!activeDay) return <Text>День не найден</Text>;
+  if (!activeDay) return null;
 
   const renderItem = ({ item, drag }: RenderItemParams<TypeExercise>) => {
     return (
@@ -78,9 +92,7 @@ export default function AddExerciseToProgram({
         title={dayName}
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<CheckIcon />}
-        onPressRightButton={() => {
-          console.log('Сохранить и выйти');
-        }}
+        onPressRightButton={saveProgramHandler}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>

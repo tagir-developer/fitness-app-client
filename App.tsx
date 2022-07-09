@@ -17,7 +17,7 @@ import { getToken, signIn, signOut } from './storage/asyncStorage';
 import { AuthContext } from './context/authContext';
 import { setContext } from 'apollo-link-context';
 import { onError } from '@apollo/client/link/error';
-import { REFRESH_USER_TOKEN } from './graphql/mutations/user';
+import { REFRESH_USER_TOKEN } from './graphql/auth/mutations/user';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
 import { AppState } from './context/app/appState';

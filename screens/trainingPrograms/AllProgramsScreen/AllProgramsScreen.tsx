@@ -1,7 +1,7 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, ImageSourcePropType, Text, View } from 'react-native';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, FlatList, ImageSourcePropType, Text, View } from 'react-native';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import GearIcon from '../../../common/icons/gearIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
@@ -12,26 +12,53 @@ import { ConfirmModal } from '../../../components/modals/ConfirmModal';
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
+import { useProgramContext } from '../../../context/trainingProgram/programContext';
+import {
+  DELETE_PROGRAM,
+  RENAME_PROGRAM,
+} from '../../../graphql/programs/programMutations';
+import { GET_ALL_USER_PROGRAMS } from '../../../graphql/programs/programQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../../navigation/types';
-import { TypeHomeScreenProps, TypeTrainingProgram } from './types';
-// const headerImage = require('../assets/images/ui/header-bg.png');
+import { transformDataToListFormat } from './helpers';
+import {
+  TypeHomeScreenProps,
+  TypeProgramData,
+  TypeTransformedProgramData,
+} from './types';
 
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
 
 export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
-  const [users, setUsers] = useState<{ email: string }[]>([]);
+  const [programs, setPrograms] = useState<TypeTransformedProgramData[]>([]);
+
+  const { data, loading, error, refetch } = useQuery<{
+    getAllUserPrograms: TypeProgramData[];
+  }>(GET_ALL_USER_PROGRAMS);
+
+  const [deleteProgram] = useMutation(DELETE_PROGRAM);
+  const [renameProgram] = useMutation(RENAME_PROGRAM);
 
   const [activeProgramId, setActiveProgramId] = useState<string | null>('1');
   const [programName, setProgramName] = useState('');
 
   const [isAddProgramModalOpen, setIsAddProgramModalOpen] = useState(false);
+  const [isRenameProgramModalOpen, setIsRenameProgramModalOpen] =
+    useState(false);
 
-  const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
+  const sourcesLoading = useGetSourcesLoadingState(
+    DEFAULT_SCREEN_SOURCES_COUNT
+  );
+
+  const { setNewProgramData } = useProgramContext();
 
   const addProgram = (): void => {
-    console.log('Новая программа - ', programName);
+    if (!programName.length) {
+      return Alert.alert('Ошибка', 'Введите название программы');
+    }
+    setNewProgramData(programName);
+
     setIsAddProgramModalOpen(false);
     setProgramName('');
 
@@ -43,58 +70,97 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     setProgramName('');
   };
 
-  // if (loading) return <StyledText>Loading...</StyledText>;
+  const cancelRenameProgram = (): void => {
+    setIsRenameProgramModalOpen(false);
+    setProgramName('');
+  };
 
-  const initialPrograms: TypeTrainingProgram[] = [
-    {
-      id: '01',
-      title: 'Моя программа',
-      isUserProgram: true,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/userProgram.jpg'),
-    },
-    {
-      id: '102',
-      title: 'Еще одна программа',
-      isUserProgram: true,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/userProgram.jpg'),
-    },
-    {
-      id: '1',
-      title: 'Базовая программа',
-      isUserProgram: false,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
-    },
-    {
-      id: '2',
-      title: 'Мощные ноги',
-      isUserProgram: false,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
-    },
-    {
-      id: '3',
-      title: 'Рельефный пресс',
-      isUserProgram: false,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
-    },
-    {
-      id: '4',
-      title: 'Крепкие руки',
-      isUserProgram: false,
-      imgUrl: '../../../assets/images/ui/card-icons/programs/basic.jpg',
-      img: require('../../../assets/images/ui/card-icons/programs/basic.jpg'),
-    },
-  ];
+  useEffect(() => {
+    if (!loading && data) {
+      console.log('SET SERVER DATA');
+      const transformedData = transformDataToListFormat(
+        data.getAllUserPrograms
+      );
+      setPrograms(transformedData);
+    }
+  }, [data]);
 
-  const [programs, setPrograms] =
-    useState<TypeTrainingProgram[]>(initialPrograms);
+  const deleteProgramHandler = async (programId: string): Promise<void> => {
+    try {
+      const resultMessage: string = await deleteProgram({
+        variables: {
+          programId,
+        },
+      }).then(({ data: result }) => result.deleteProgram);
+
+      console.log('resultMessage на удаление', resultMessage);
+
+      Alert.alert('Успешное удаление', resultMessage);
+
+      setPrograms((prev) => prev.filter((program) => program.id !== programId));
+    } catch (e) {
+      const errorMessage: string =
+        e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+      Alert.alert('Ошибка удаления программы', errorMessage);
+    }
+  };
+
+  const renameProgramHandler = async (
+    programId: string | null,
+    name: string
+  ): Promise<void> => {
+    if (!programId) return;
+    if (!name) {
+      return Alert.alert(
+        'Ошибка валидации',
+        'Имя программы не может быть пустым'
+      );
+    }
+
+    try {
+      const changedProgram: TypeTransformedProgramData = await renameProgram({
+        variables: {
+          programId,
+          name,
+        },
+      }).then(({ data: result }) => result.changeProgramName);
+
+      console.log('changedProgram+++++', changedProgram);
+
+      Alert.alert('Успешная операция', 'Имя программы успешно изменено');
+
+      setPrograms((prev) =>
+        prev.map((program) => {
+          if (program.id === programId) {
+            return {
+              ...program,
+              name: changedProgram.name,
+            };
+          }
+          return program;
+        })
+      );
+    } catch (e) {
+      const errorMessage: string =
+        e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+      Alert.alert('Ошибка изменения имени', errorMessage);
+    } finally {
+      setIsRenameProgramModalOpen(false);
+      setProgramName('');
+    }
+  };
+
+  const openChangeProgramNameModal = (programId: string): void => {
+    setActiveProgramId(programId);
+    setIsRenameProgramModalOpen(true);
+  };
+
+  console.log('SERVER DATA', programs);
 
   return (
-    <MainLayout loading={loading}>
+    <MainLayout loading={sourcesLoading || loading}>
       <AppHeader
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}
@@ -120,53 +186,55 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       </OpacityDarkness>
 
       <AppFlex flex='1' justify='flex-start'>
-        <FlatList
-          style={{ width: '100%' }}
-          data={programs}
-          renderItem={({ item }) => (
-            <CardWithImage
-              title={item.title}
-              isActive={item.id === activeProgramId}
-              onCheckHandler={() => setActiveProgramId(item.id)}
-              imgSource={item.img}
-              onPress={
-                item.isUserProgram
-                  ? () =>
-                      navigation.navigate(PageTypes.EDIT_PROGRAM, {
-                        programId: item.id,
-                      })
-                  : () =>
-                      console.log(
-                        'Открыть информацию о дефолтной программе',
-                        item.id
-                      )
-              }
-              deleteHandler={
-                item.isUserProgram
-                  ? () => console.log('Удалить карточку', item.id)
-                  : undefined
-              }
-              copyHandler={
-                item.isUserProgram
-                  ? () => console.log('Скопировать карточку', item.id)
-                  : undefined
-              }
-              editHandler={
-                item.isUserProgram
-                  ? () => console.log('Редактировать карточку', item.id)
-                  : undefined
-              }
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={
-            <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
-          }
-          ListFooterComponent={
-            <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
-          }
-          alwaysBounceVertical={false}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <FlatList
+            style={{ width: '100%' }}
+            data={programs}
+            renderItem={({ item }) => (
+              <CardWithImage
+                title={item.name}
+                isActive={item.id === activeProgramId}
+                onCheckHandler={() => setActiveProgramId(item.id)}
+                imgSource={item.previewImage}
+                onPress={
+                  item.isUserProgram
+                    ? () =>
+                        navigation.navigate(PageTypes.EDIT_PROGRAM, {
+                          programId: item.id,
+                        })
+                    : () =>
+                        console.log(
+                          'Открыть информацию о дефолтной программе',
+                          item.id
+                        )
+                }
+                deleteHandler={
+                  item.isUserProgram
+                    ? async () => await deleteProgramHandler(item.id)
+                    : undefined
+                }
+                copyHandler={
+                  item.isUserProgram
+                    ? () => console.log('Скопировать карточку', item.id)
+                    : undefined
+                }
+                editHandler={
+                  item.isUserProgram
+                    ? async () => await openChangeProgramNameModal(item.id)
+                    : undefined
+                }
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={
+              <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
+            }
+            ListFooterComponent={
+              <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
+            }
+            alwaysBounceVertical={false}
+          />
+        </Suspense>
       </AppFlex>
 
       <OpacityDarkness bottom='0px' h={`${LIST_BOTTOM_SPACE}px`} />
@@ -177,6 +245,21 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         onPressOk={addProgram}
         onPressCancel={cancelAddProgram}
         message='Введите название программы'
+      >
+        <AppStyledTextInput
+          value={programName}
+          onChangeText={(value) => setProgramName(value)}
+          placeholder='Название программы'
+          mt='10px'
+        />
+      </ConfirmModal>
+
+      <ConfirmModal
+        isOpen={isRenameProgramModalOpen}
+        title='Изменить название программы'
+        onPressOk={() => renameProgramHandler(activeProgramId, programName)}
+        onPressCancel={cancelRenameProgram}
+        message='Введите новое название программы'
       >
         <AppStyledTextInput
           value={programName}

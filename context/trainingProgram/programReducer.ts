@@ -8,7 +8,7 @@ import {
 export const appReducer = (
   state: TypeProgramContextState,
   action: TypeProgramContextAction
-) => {
+): TypeProgramContextState => {
   switch (action.type) {
     case ProgramContextActionTypes.SET_ACTIVE_PROGRAM:
       return {
@@ -25,6 +25,11 @@ export const appReducer = (
         ...state,
         trainingProgram: {
           ...state.trainingProgram,
+          id: action.payload.id,
+          name: action.payload.name,
+        },
+        initialProgramData: {
+          ...state.initialProgramData,
           id: action.payload.id,
           name: action.payload.name,
         },

@@ -8,7 +8,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useAuthContext } from '../../../context/authContext';
-import { REGISTER_NEW_USER } from '../../../graphql/mutations/user';
+import { REGISTER_NEW_USER } from '../../../graphql/auth/mutations/user';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { SignedOutPageTypes } from '../../../navigation/types';
 import {

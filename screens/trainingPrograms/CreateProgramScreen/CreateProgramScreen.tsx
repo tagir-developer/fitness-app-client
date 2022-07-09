@@ -1,5 +1,6 @@
+import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -41,6 +42,7 @@ export default function CreateProgramScreen({
     renameDay,
     setActiveDay,
     addTrainingDay,
+    initialProgramData,
   } = useProgramContext();
 
   const [dayName, setDayName] = useState('');
@@ -56,8 +58,7 @@ export default function CreateProgramScreen({
 
   const addDay = (): void => {
     if (!dayName.length) {
-      // ! Добавить уведомление что поле не может быть пустым
-      return console.log('7777777777');
+      return Alert.alert('Ошибка', 'Введите название дня');
     }
     addTrainingDay(dayName);
     setIsAddDayModalOpen(false);
@@ -80,23 +81,18 @@ export default function CreateProgramScreen({
 
   const saveProgramHandler = (): void => {
     // ! проверяем, была ли изменена программа, если нет, то просто выходим, если да, то открываем конфирм
-    const isProgramChanged = true;
-
+    const isProgramChanged = !isEqual(trainingProgram, initialProgramData);
     if (isProgramChanged) {
       return setIsSaveModalOpen(true);
     }
-
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
   const exitHandler = (): void => {
-    // ! проверяем, была ли изменена программа, если нет, то просто выходим, если да, то открываем конфирм
-    const isProgramChanged = true;
-
+    const isProgramChanged = !isEqual(trainingProgram, initialProgramData);
     if (isProgramChanged) {
       return setIsExitModalOpen(true);
     }
-
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
@@ -132,11 +128,13 @@ export default function CreateProgramScreen({
     return cutLongString(muscleGroups.join(', '), 40);
   };
 
-  useEffect(() => {
-    setNewProgramData(programName);
-  }, []);
+  // useEffect(() => {
+  //   setNewProgramData(programName);
+  // }, []);
 
-  // console.log('PROGRAM', trainingProgram);
+  // console.log('trainingProgram', trainingProgram);
+  // console.log('initialProgramData', initialProgramData);
+  // console.log('RESULT', isEqual(trainingProgram, initialProgramData));
 
   const renderItem = ({
     item: day,
@@ -147,7 +145,6 @@ export default function CreateProgramScreen({
         <SimpleCard
           onLongPress={drag}
           title={day.name}
-          // description={day.muscleGroups.join(', ')}
           description={createMuscleGroupsDescription(day)}
           onPress={() => cardPressHandler(day.id, day.name)}
           deleteHandler={() => deleteDay(day.id)}
@@ -237,7 +234,7 @@ export default function CreateProgramScreen({
 
       <YesNoModal
         isOpen={isExitModalOpen}
-        title='Выход'
+        title='Выход из программы'
         message='Сохранить программу тренировок перед тем как выйти?'
         onPressYes={saveProgram}
         onPressNo={() => navigation.navigate(PageTypes.ALL_PROGRAMS)}

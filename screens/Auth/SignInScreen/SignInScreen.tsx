@@ -7,7 +7,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppTextInput } from '../../../components/ui/AppTextInput';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useAuthContext } from '../../../context/authContext';
-import { LOGIN_USER } from '../../../graphql/mutations/user';
+import { LOGIN_USER } from '../../../graphql/auth/mutations/user';
 import {
   registerServerValidationErrorHandler,
   registerValidationErrorHandler,

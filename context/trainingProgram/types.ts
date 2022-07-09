@@ -24,18 +24,20 @@ export type TypeExercise = {
 export type TypeTrainingDay = {
   id: string;
   name: string;
-  muscleGroups: string[];
   exercises: TypeExercise[];
 };
 
 export type TypeTrainingProgram = {
   id: string;
   name: string;
+  isUserProgram: boolean;
+  previewImage: string;
   days: TypeTrainingDay[];
 };
 
 export type TypeProgramContextState = {
   trainingProgram: TypeTrainingProgram;
+  initialProgramData: TypeTrainingProgram;
   activeDay: TypeTrainingDay | null;
 };
 

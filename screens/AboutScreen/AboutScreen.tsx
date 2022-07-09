@@ -1,10 +1,9 @@
 import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Alert, Button, StyleSheet, View } from 'react-native';
-import { StyledButton } from '../../components/ui/StyledButton';
 import { StyledText } from '../../components/ui/StyledText';
 import { useAuthContext } from '../../context/authContext';
-import { GET_USER_BY_EMAIL } from '../../graphql/query/user';
+import { GET_USER_BY_EMAIL } from '../../graphql/auth/query/user';
 import { TypeAboutScreenProps } from './types';
 
 export default function AboutScreen({ navigation }: TypeAboutScreenProps) {
