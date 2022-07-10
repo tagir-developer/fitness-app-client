@@ -14,6 +14,8 @@ import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useProgramContext } from '../../../context/trainingProgram/programContext';
 import {
+  CHANGE_USER_ACTIVE_PROGRAM,
+  COPY_PROGRAM,
   DELETE_PROGRAM,
   RENAME_PROGRAM,
 } from '../../../graphql/programs/programMutations';
@@ -39,6 +41,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
   const [deleteProgram] = useMutation(DELETE_PROGRAM);
   const [renameProgram] = useMutation(RENAME_PROGRAM);
+  const [copyProgram] = useMutation(COPY_PROGRAM);
+  const [changeUserActiveProgram] = useMutation(CHANGE_USER_ACTIVE_PROGRAM);
 
   const [activeProgramId, setActiveProgramId] = useState<string | null>('1');
   const [programName, setProgramName] = useState('');
@@ -98,6 +102,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       Alert.alert('Успешное удаление', resultMessage);
 
       setPrograms((prev) => prev.filter((program) => program.id !== programId));
+
+      refetch();
     } catch (e) {
       const errorMessage: string =
         e?.networkError?.result?.errors?.[0]?.message ?? '';
@@ -141,6 +147,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
           return program;
         })
       );
+
+      refetch();
     } catch (e) {
       const errorMessage: string =
         e?.networkError?.result?.errors?.[0]?.message ?? '';
@@ -152,10 +160,64 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     }
   };
 
+  const copyProgramHandler = async (
+    programId: string | null
+  ): Promise<void> => {
+    if (!programId) return;
+    try {
+      const newProgram: TypeTransformedProgramData = await copyProgram({
+        variables: {
+          programId,
+        },
+      }).then(({ data: result }) => result.copyProgram);
+
+      Alert.alert('Успешная операция', 'Программа скопирована');
+
+      setPrograms((prev) => [...prev, newProgram]);
+
+      refetch();
+    } catch (e) {
+      const errorMessage: string =
+        e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+      Alert.alert('Ошибка копирования программы', errorMessage);
+    }
+  };
+
+  const changeActiveProgramHandler = async (
+    programId: string
+  ): Promise<void> => {
+    try {
+      const resultMessage: string = await changeUserActiveProgram({
+        variables: {
+          programId,
+        },
+      }).then(({ data: result }) => result.setActiveUserProgram);
+
+      console.log('Изменение программы', resultMessage);
+
+      refetch();
+    } catch (e) {
+      const errorMessage: string =
+        e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+      Alert.alert('Ошибка изменения программы пользователя', errorMessage);
+    }
+  };
+
   const openChangeProgramNameModal = (programId: string): void => {
     setActiveProgramId(programId);
     setIsRenameProgramModalOpen(true);
   };
+
+  useEffect(() => {
+    if (!loading && error) {
+      Alert.alert(
+        'Ошибка',
+        'Не удалось загрузить список программ, попробуйте зайти на страницу позже'
+      );
+    }
+  }, [loading]);
 
   console.log('SERVER DATA', programs);
 
@@ -186,55 +248,55 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       </OpacityDarkness>
 
       <AppFlex flex='1' justify='flex-start'>
-        <Suspense fallback={<div>Loading...</div>}>
-          <FlatList
-            style={{ width: '100%' }}
-            data={programs}
-            renderItem={({ item }) => (
-              <CardWithImage
-                title={item.name}
-                isActive={item.id === activeProgramId}
-                onCheckHandler={() => setActiveProgramId(item.id)}
-                imgSource={item.previewImage}
-                onPress={
-                  item.isUserProgram
-                    ? () =>
-                        navigation.navigate(PageTypes.EDIT_PROGRAM, {
-                          programId: item.id,
-                        })
-                    : () =>
-                        console.log(
-                          'Открыть информацию о дефолтной программе',
-                          item.id
-                        )
-                }
-                deleteHandler={
-                  item.isUserProgram
-                    ? async () => await deleteProgramHandler(item.id)
-                    : undefined
-                }
-                copyHandler={
-                  item.isUserProgram
-                    ? () => console.log('Скопировать карточку', item.id)
-                    : undefined
-                }
-                editHandler={
-                  item.isUserProgram
-                    ? async () => await openChangeProgramNameModal(item.id)
-                    : undefined
-                }
-              />
-            )}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={
-              <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
-            }
-            ListFooterComponent={
-              <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
-            }
-            alwaysBounceVertical={false}
-          />
-        </Suspense>
+        <FlatList
+          style={{ width: '100%' }}
+          data={programs}
+          renderItem={({ item }) => (
+            <CardWithImage
+              title={item.name}
+              isActive={item.isUserActiveProgram}
+              onCheckHandler={async () =>
+                await changeActiveProgramHandler(item.id)
+              }
+              imgSource={item.previewImage}
+              onPress={
+                item.isUserProgram
+                  ? () =>
+                      navigation.navigate(PageTypes.EDIT_PROGRAM, {
+                        programId: item.id,
+                      })
+                  : () =>
+                      console.log(
+                        'Открыть информацию о дефолтной программе',
+                        item.id
+                      )
+              }
+              deleteHandler={
+                item.isUserProgram
+                  ? async () => await deleteProgramHandler(item.id)
+                  : undefined
+              }
+              copyHandler={
+                item.isUserProgram
+                  ? async () => await copyProgramHandler(item.id)
+                  : undefined
+              }
+              editHandler={
+                item.isUserProgram
+                  ? async () => await openChangeProgramNameModal(item.id)
+                  : undefined
+              }
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
+          }
+          ListFooterComponent={
+            <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
+          }
+          alwaysBounceVertical={false}
+        />
       </AppFlex>
 
       <OpacityDarkness bottom='0px' h={`${LIST_BOTTOM_SPACE}px`} />

@@ -10,11 +10,6 @@ export const appReducer = (
   action: TypeProgramContextAction
 ): TypeProgramContextState => {
   switch (action.type) {
-    case ProgramContextActionTypes.SET_ACTIVE_PROGRAM:
-      return {
-        ...state,
-        trainingProgram: action.payload,
-      };
     case ProgramContextActionTypes.SET_ACTIVE_DAY:
       return {
         ...state,

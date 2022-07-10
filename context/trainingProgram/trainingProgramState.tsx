@@ -10,36 +10,23 @@ import {
 } from './types';
 import { v4 } from 'uuid';
 
+const defaultProgramData: TypeTrainingProgram = {
+  id: '',
+  name: '',
+  isUserProgram: true,
+  isUserActiveProgram: false,
+  previewImage: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
+  days: [],
+};
+
 export const initialProgramState: TypeProgramContextState = {
-  trainingProgram: {
-    id: '',
-    name: '',
-    isUserProgram: true,
-    previewImage:
-      '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
-    days: [],
-  },
-  initialProgramData: {
-    id: '',
-    name: '',
-    isUserProgram: true,
-    previewImage:
-      '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
-    days: [],
-  },
+  trainingProgram: defaultProgramData,
+  initialProgramData: defaultProgramData,
   activeDay: null,
 };
 
 export const TrainingProgramState = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialProgramState);
-
-  // ! Возможно не нужна эта функция, нигде не используем
-  const setActiveProgram = (program: TypeTrainingProgram): void => {
-    dispatch({
-      type: ProgramContextActionTypes.SET_ACTIVE_PROGRAM,
-      payload: program,
-    });
-  };
 
   const setNewProgramData = (name: string): void => {
     const programId = v4();
@@ -143,7 +130,6 @@ export const TrainingProgramState = ({ children }) => {
         trainingProgram: state.trainingProgram,
         initialProgramData: state.initialProgramData,
         activeDay: state.activeDay,
-        setActiveProgram,
         setNewProgramData,
         addTrainingDay,
         changeDaysOrder,
