@@ -102,6 +102,7 @@ export const CardWithImage: React.FC<Props> = (props) => {
       right={rightButtons}
       left={leftButtons}
       disabled={!rightButtons.length && !leftButtons.length}
+      autoClose={true}
     >
       <CardContainer {...props} activeOpacity={1}>
         <StyledImageBackground

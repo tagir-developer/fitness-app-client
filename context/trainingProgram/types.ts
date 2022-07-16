@@ -2,6 +2,7 @@ import { ActionMap } from '../../common/types';
 
 export enum ProgramContextActionTypes {
   SET_NEW_PROGRAM_DATA = 'SET_NEW_PROGRAM_DATA',
+  SET_EDITED_PROGRAM_DATA = 'SET_EDITED_PROGRAM_DATA',
   SET_ACTIVE_DAY = 'SET_ACTIVE_DAY',
   ADD_DAY = 'ADD_DAY',
   RENAME_DAY = 'RENAME_DAY',
@@ -29,9 +30,9 @@ export type TypeTrainingDay = {
 export type TypeTrainingProgram = {
   id: string;
   name: string;
-  isUserProgram: boolean;
-  isUserActiveProgram: boolean;
-  previewImage: string;
+  // isUserProgram: boolean;
+  // isUserActiveProgram: boolean;
+  // previewImage: string;
   days: TypeTrainingDay[];
 };
 
@@ -47,6 +48,7 @@ export type ProgramPayload = {
     id: string;
     name: string;
   };
+  [ProgramContextActionTypes.SET_EDITED_PROGRAM_DATA]: TypeTrainingProgram;
   [ProgramContextActionTypes.CHANGE_DAYS_ORDER]: TypeTrainingDay[];
   [ProgramContextActionTypes.DELETE_DAY]: string;
   [ProgramContextActionTypes.RENAME_DAY]: {
@@ -73,6 +75,7 @@ export type TypeProgramContextAction =
 
 export type TypeProgramContext = TypeProgramContextState & {
   setNewProgramData: (name: string) => void;
+  setEditedProgramData: (program: TypeTrainingProgram) => void;
   addTrainingDay: (name: string) => void;
   changeDaysOrder: (days: TypeTrainingDay[]) => void;
   deleteDay: (id: string) => void;

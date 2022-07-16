@@ -1,5 +1,6 @@
+import { useLazyQuery } from '@apollo/client';
 import isEqual from 'lodash.isequal';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -19,9 +20,16 @@ import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useProgramContext } from '../../../context/trainingProgram/programContext';
-import { TypeTrainingDay } from '../../../context/trainingProgram/types';
+import {
+  TypeTrainingDay,
+  TypeTrainingProgram,
+} from '../../../context/trainingProgram/types';
+import { GET_PROGRAM_BY_ID } from '../../../graphql/programs/programQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { PageTypes } from '../../../navigation/types';
+import {
+  PageTypes,
+  TypeCreateExercisePageTypes,
+} from '../../../navigation/types';
 import { TypeCreateProgramScreenProps } from './types';
 
 const LIST_TOP_SPACE = 250;
@@ -31,11 +39,12 @@ export default function CreateProgramScreen({
   route,
   navigation,
 }: TypeCreateProgramScreenProps) {
-  const { programName } = route.params;
+  const { programName, programId, pageType } = route.params;
 
   const {
     trainingProgram,
     setNewProgramData,
+    setEditedProgramData,
     changeDaysOrder,
     deleteDay,
     copyDay,
@@ -54,7 +63,13 @@ export default function CreateProgramScreen({
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const [activeDayId, setActiveDayId] = useState('');
 
-  const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
+  const sourcesLoading = useGetSourcesLoadingState(
+    DEFAULT_SCREEN_SOURCES_COUNT
+  );
+
+  const [getProgramData, { loading, error, data }] = useLazyQuery<{
+    getProgramById: TypeTrainingProgram;
+  }>(GET_PROGRAM_BY_ID);
 
   const addDay = (): void => {
     if (!dayName.length) {
@@ -128,6 +143,44 @@ export default function CreateProgramScreen({
     return cutLongString(muscleGroups.join(', '), 40);
   };
 
+  useEffect(() => {
+    if (programName && pageType === TypeCreateExercisePageTypes.CREATE) {
+      setNewProgramData(programName);
+    }
+
+    if (programId && pageType === TypeCreateExercisePageTypes.EDIT) {
+      getProgramData({
+        variables: {
+          programId,
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('DATA DATA', data);
+    if (!loading && data && pageType === TypeCreateExercisePageTypes.CREATE) {
+      setEditedProgramData(data.getProgramById);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Ошибка', 'Не удалось загрузить данные программы');
+      navigation.goBack();
+    }
+  }, [error]);
+
+  const headerTitle = useMemo(() => {
+    if (programName && pageType === TypeCreateExercisePageTypes.CREATE)
+      return programName;
+
+    if (!loading && data && pageType === TypeCreateExercisePageTypes.EDIT)
+      return data.getProgramById.name;
+
+    return '';
+  }, [data]);
+
   // useEffect(() => {
   //   setNewProgramData(programName);
   // }, []);
@@ -156,9 +209,9 @@ export default function CreateProgramScreen({
   };
 
   return (
-    <MainLayout loading={loading}>
+    <MainLayout loading={sourcesLoading}>
       <AppHeader
-        title={programName}
+        title={headerTitle}
         onPressLeftButton={exitHandler}
         rightButtonIcon={<CheckIcon />}
         onPressRightButton={saveProgramHandler}
@@ -176,7 +229,7 @@ export default function CreateProgramScreen({
       <AppFlex flex='1' align='stretch' justify='flex-start'>
         <DraggableFlatList
           data={trainingProgram.days}
-          onDragEnd={({ data }) => changeDaysOrder(data)}
+          onDragEnd={({ data: renderedData }) => changeDaysOrder(renderedData)}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           ListHeaderComponent={

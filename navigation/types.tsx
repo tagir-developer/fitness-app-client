@@ -22,16 +22,25 @@ export enum PageTypes {
   EDIT_PROGRAM = 'EditProgram',
 }
 
+export enum TypeCreateExercisePageTypes {
+  CREATE = 'CREATE',
+  EDIT = 'EDIT',
+}
+
 export type RootSignedInStackParamList = {
   // Root: NavigatorScreenParams<RootTabParamList> | undefined;
   [PageTypes.HOME]: undefined;
   [PageTypes.ABOUT]: undefined;
   [PageTypes.NOT_FOUND]: undefined;
   [PageTypes.ALL_PROGRAMS]: undefined;
-  [PageTypes.CREATE_PROGRAM]: { programName: string };
+  [PageTypes.CREATE_PROGRAM]: {
+    programName?: string;
+    programId?: string;
+    pageType: TypeCreateExercisePageTypes;
+  };
   [PageTypes.ADD_EXERCISE_TO_PROGRAM]: { dayName: string };
   [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
-  [PageTypes.EDIT_PROGRAM]: { programId: string };
+  [PageTypes.EDIT_PROGRAM]: { programId: string }; // ! потом удалим
   //   Home: SomeType | undefined
 };
 

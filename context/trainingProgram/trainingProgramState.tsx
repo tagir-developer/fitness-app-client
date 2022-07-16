@@ -13,9 +13,9 @@ import { v4 } from 'uuid';
 const defaultProgramData: TypeTrainingProgram = {
   id: '',
   name: '',
-  isUserProgram: true,
-  isUserActiveProgram: false,
-  previewImage: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
+  // isUserProgram: true,
+  // isUserActiveProgram: false,
+  // previewImage: '../../../assets/images/ui/card-icons/programs/userProgram.jpg',
   days: [],
 };
 
@@ -34,6 +34,13 @@ export const TrainingProgramState = ({ children }) => {
     dispatch({
       type: ProgramContextActionTypes.SET_NEW_PROGRAM_DATA,
       payload: { name, id: programId },
+    });
+  };
+
+  const setEditedProgramData = (program: TypeTrainingProgram): void => {
+    dispatch({
+      type: ProgramContextActionTypes.SET_EDITED_PROGRAM_DATA,
+      payload: program,
     });
   };
 
@@ -131,6 +138,7 @@ export const TrainingProgramState = ({ children }) => {
         initialProgramData: state.initialProgramData,
         activeDay: state.activeDay,
         setNewProgramData,
+        setEditedProgramData,
         addTrainingDay,
         changeDaysOrder,
         deleteDay,

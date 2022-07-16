@@ -21,8 +21,11 @@ import {
 } from '../../../graphql/programs/programMutations';
 import { GET_ALL_USER_PROGRAMS } from '../../../graphql/programs/programQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { PageTypes } from '../../../navigation/types';
-import { transformDataToListFormat } from './helpers';
+import {
+  PageTypes,
+  TypeCreateExercisePageTypes,
+} from '../../../navigation/types';
+import { transformDataToListFormat, transformProgramData } from './helpers';
 import {
   TypeHomeScreenProps,
   TypeProgramData,
@@ -66,7 +69,10 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     setIsAddProgramModalOpen(false);
     setProgramName('');
 
-    navigation.navigate(PageTypes.CREATE_PROGRAM, { programName });
+    navigation.navigate(PageTypes.CREATE_PROGRAM, {
+      programName,
+      pageType: TypeCreateExercisePageTypes.CREATE,
+    });
   };
 
   const cancelAddProgram = (): void => {
@@ -81,7 +87,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
   useEffect(() => {
     if (!loading && data) {
-      console.log('SET SERVER DATA');
+      console.log('SET SERVER DATA', data.getAllUserPrograms);
       const transformedData = transformDataToListFormat(
         data.getAllUserPrograms
       );
@@ -125,16 +131,18 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     }
 
     try {
-      const changedProgram: TypeTransformedProgramData = await renameProgram({
+      const changedProgram: TypeProgramData = await renameProgram({
         variables: {
           programId,
           name,
         },
       }).then(({ data: result }) => result.changeProgramName);
 
-      console.log('changedProgram+++++', changedProgram);
+      // console.log('changedProgram+++++', changedProgram);
 
       Alert.alert('Успешная операция', 'Имя программы успешно изменено');
+
+      // const transformedProgram = transformProgramData(changedProgram);
 
       setPrograms((prev) =>
         prev.map((program) => {
@@ -165,15 +173,17 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
   ): Promise<void> => {
     if (!programId) return;
     try {
-      const newProgram: TypeTransformedProgramData = await copyProgram({
+      const newProgram: TypeProgramData = await copyProgram({
         variables: {
           programId,
         },
       }).then(({ data: result }) => result.copyProgram);
 
-      Alert.alert('Успешная операция', 'Программа скопирована');
+      const transformedProgram = transformProgramData(newProgram);
 
-      setPrograms((prev) => [...prev, newProgram]);
+      setPrograms((prev) => [transformedProgram, ...prev]);
+
+      Alert.alert('Успешная операция', 'Программа скопирована');
 
       refetch();
     } catch (e) {
@@ -226,16 +236,15 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       <AppHeader
         title='Программы тренировок'
         onPressLeftButton={() => navigation.goBack()}
-        rightButtonIcon={<GearIcon />}
-        onPressRightButton={
-          () =>
-            // ! Временно переходим по новым экранам отсюда
-            navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
-          // navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
-          //   dayName: 'День 1',
-          // })
-        }
-        // headerImage={headerImage}
+        // rightButtonIcon={<GearIcon />}
+        // onPressRightButton={
+        //   () =>
+        //     // ! Временно переходим по новым экранам отсюда
+        //     navigation.navigate(PageTypes.CREATE_PROGRAM, { programName })
+        //   // navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
+        //   //   dayName: 'День 1',
+        //   // })
+        // }
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
@@ -262,8 +271,9 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
               onPress={
                 item.isUserProgram
                   ? () =>
-                      navigation.navigate(PageTypes.EDIT_PROGRAM, {
+                      navigation.navigate(PageTypes.CREATE_PROGRAM, {
                         programId: item.id,
+                        pageType: TypeCreateExercisePageTypes.EDIT,
                       })
                   : () =>
                       console.log(

@@ -6,6 +6,7 @@ export const GET_ALL_USER_PROGRAMS = gql`
       id
       name
       isUserProgram
+      isUserActiveProgram
       previewImage
     }
   }
@@ -16,9 +17,9 @@ export const GET_PROGRAM_BY_ID = gql`
     getProgramById(programId: $programId) {
       id
       name
-      description
-      isUserProgram
-      previewImage
+      # description
+      # isUserProgram
+      # previewImage
       days {
         id
         name

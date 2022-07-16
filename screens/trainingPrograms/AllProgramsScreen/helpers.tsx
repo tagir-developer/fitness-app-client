@@ -13,3 +13,14 @@ export const transformDataToListFormat = (
     return newProgram;
   });
 };
+
+export const transformProgramData = (
+  program: TypeProgramData
+): TypeTransformedProgramData => {
+  const newProgram: TypeTransformedProgramData = {
+    ...program,
+    previewImage: programImages.cardPreviewImages[program.previewImage],
+  };
+
+  return newProgram;
+};

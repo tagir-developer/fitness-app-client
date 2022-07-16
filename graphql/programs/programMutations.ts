@@ -40,7 +40,7 @@ export const DELETE_PROGRAM = gql`
 `;
 
 export const CHANGE_USER_ACTIVE_PROGRAM = gql`
-  mutation setActiveUserProgram(programId: String!) {
+  mutation setActiveUserProgram($programId: String!) {
     setActiveUserProgram(programId: $programId)
   }
 `;

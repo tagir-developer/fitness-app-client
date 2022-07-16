@@ -11,7 +11,14 @@ export type TypeHomeScreenProps = NativeStackScreenProps<
   PageTypes.ALL_PROGRAMS
 >;
 
-export type TypeProgramData = Omit<TypeTrainingProgram, 'days'>;
+// export type TypeProgramData = Omit<TypeTrainingProgram, 'days'>;
+export type TypeProgramData = {
+  id: string;
+  name: string;
+  isUserProgram: boolean;
+  isUserActiveProgram: boolean;
+  previewImage: string;
+};
 
 export type TypeTransformedProgramData = Omit<
   TypeProgramData,
