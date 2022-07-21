@@ -33,3 +33,14 @@ export const GET_PROGRAM_BY_ID = gql`
     }
   }
 `;
+
+export const GET_PROGRAM_DESCRIPTION_BY_ID = gql`
+  query getProgramById($programId: String!) {
+    getProgramById(programId: $programId) {
+      id
+      name
+      description
+      descriptionImages
+    }
+  }
+`;

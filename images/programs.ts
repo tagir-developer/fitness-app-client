@@ -5,6 +5,8 @@ export const programImages: TypeProgramImages = {
     userProgram: require('../assets/images/ui/card-icons/programs/userProgram.jpg'),
   },
   programDescriptionImages: {
-    userProgram: require('../assets/images/ui/card-icons/programs/userProgram.jpg'),
+    notFound: require('../assets/images/ui/card-icons/programs/userProgram.jpg'),
+    'p-1-content-img-1': require('../assets/images/ui/card-icons/programs/userProgram.jpg'),
+    'p-1-content-img-2': require('../assets/images/ui/card-icons/programs/userProgram.jpg'),
   },
 };

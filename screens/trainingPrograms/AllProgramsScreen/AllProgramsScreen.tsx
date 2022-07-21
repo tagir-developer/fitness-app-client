@@ -60,6 +60,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
   const { setNewProgramData } = useProgramContext();
 
+  // handlers --------
+
   const addProgram = (): void => {
     if (!programName.length) {
       return Alert.alert('Ошибка', 'Введите название программы');
@@ -84,16 +86,6 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     setIsRenameProgramModalOpen(false);
     setProgramName('');
   };
-
-  useEffect(() => {
-    if (!loading && data) {
-      console.log('SET SERVER DATA', data.getAllUserPrograms);
-      const transformedData = transformDataToListFormat(
-        data.getAllUserPrograms
-      );
-      setPrograms(transformedData);
-    }
-  }, [data]);
 
   const deleteProgramHandler = async (programId: string): Promise<void> => {
     try {
@@ -220,6 +212,17 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     setIsRenameProgramModalOpen(true);
   };
 
+  // useEffect --------
+
+  useEffect(() => {
+    if (!loading && data) {
+      const transformedData = transformDataToListFormat(
+        data.getAllUserPrograms
+      );
+      setPrograms(transformedData);
+    }
+  }, [data]);
+
   useEffect(() => {
     if (!loading && error) {
       Alert.alert(
@@ -229,7 +232,12 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     }
   }, [loading]);
 
-  console.log('SERVER DATA', programs);
+  useFocusEffect(() => {
+    console.log('Перезапрос списка программ в useFocusEffect');
+    refetch();
+  });
+
+  // console.log('SERVER DATA', programs);
 
   return (
     <MainLayout loading={sourcesLoading || loading}>
@@ -276,10 +284,9 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
                         pageType: TypeCreateExercisePageTypes.EDIT,
                       })
                   : () =>
-                      console.log(
-                        'Открыть информацию о дефолтной программе',
-                        item.id
-                      )
+                      navigation.navigate(PageTypes.PROGRAM_DETAIL, {
+                        programId: item.id,
+                      })
               }
               deleteHandler={
                 item.isUserProgram

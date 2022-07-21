@@ -5,19 +5,18 @@ export const CREATE_PROGRAM = gql`
     createProgram(program: $program) {
       id
       name
-      isUserProgram
-      previewImage
     }
   }
 `;
 
 export const UPDATE_PROGRAM = gql`
-  mutation updateProgram($programId: String!, $program: ProgramInput!) {
-    updateProgram(programId: $programId, program: $program) {
+  mutation updateProgram(
+    $programId: String!
+    $trainingDays: [TrainingDayInput!]!
+  ) {
+    updateProgram(programId: $programId, trainingDays: $trainingDays) {
       id
       name
-      isUserProgram
-      previewImage
     }
   }
 `;

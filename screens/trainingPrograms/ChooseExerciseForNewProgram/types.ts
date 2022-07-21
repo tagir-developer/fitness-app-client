@@ -12,5 +12,5 @@ export type TypeChooseExerciseForProgram = NativeStackScreenProps<
 export type TypeExerciseListItem = {
   id: string;
   name: string;
-  muscleGroups: string[];
+  muscleGroups: string;
 };

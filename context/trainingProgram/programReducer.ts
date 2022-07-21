@@ -19,14 +19,14 @@ export const appReducer = (
       return {
         ...state,
         trainingProgram: {
-          ...state.trainingProgram,
           id: action.payload.id,
           name: action.payload.name,
+          days: [],
         },
         initialProgramData: {
-          ...state.initialProgramData,
           id: action.payload.id,
           name: action.payload.name,
+          days: [],
         },
       };
     case ProgramContextActionTypes.SET_EDITED_PROGRAM_DATA:

@@ -1,6 +1,7 @@
+import { useMutation } from '@apollo/client';
 import isEqual from 'lodash.isequal';
 import { useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -16,9 +17,19 @@ import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useProgramContext } from '../../../context/trainingProgram/programContext';
-import { TypeExercise } from '../../../context/trainingProgram/types';
+import {
+  TypeExercise,
+  TypeTrainingProgram,
+} from '../../../context/trainingProgram/types';
+import {
+  CREATE_PROGRAM,
+  UPDATE_PROGRAM,
+} from '../../../graphql/programs/programMutations';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { PageTypes } from '../../../navigation/types';
+import {
+  PageTypes,
+  TypeCreateExercisePageTypes,
+} from '../../../navigation/types';
 import { TypeAddExerciseToProgram, TypeExercises } from './types';
 
 const LIST_TOP_SPACE = 250;
@@ -28,11 +39,16 @@ export default function AddExerciseToProgram({
   route,
   navigation,
 }: TypeAddExerciseToProgram) {
-  const { dayName } = route.params;
+  const { dayName, pageType } = route.params;
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
-  const loading = useGetSourcesLoadingState(DEFAULT_SCREEN_SOURCES_COUNT);
+  const sourcesLoading = useGetSourcesLoadingState(
+    DEFAULT_SCREEN_SOURCES_COUNT
+  );
+
+  const [createProgram] = useMutation(CREATE_PROGRAM);
+  const [updateProgram] = useMutation(UPDATE_PROGRAM);
 
   const {
     activeDay,
@@ -42,11 +58,49 @@ export default function AddExerciseToProgram({
     initialProgramData,
   } = useProgramContext();
 
-  const saveProgram = (): void => {
+  const saveProgram = async (): Promise<void> => {
     setIsSaveModalOpen(false);
 
-    // ! Здесь будет запрос на сохранение программы в базе
-    console.log('Сохранить программу и выйти');
+    if (pageType === TypeCreateExercisePageTypes.CREATE) {
+      // const data: TypeTrainingProgram = { ...trainingProgram };
+      try {
+        const program = await createProgram({
+          variables: {
+            program: trainingProgram,
+          },
+        }).then(({ data: result }) => result.createProgram);
+
+        console.log('СОЗДАННАЯ ПРОГРАММА', program);
+
+        Alert.alert('Программа создана');
+      } catch (e) {
+        const errorMessage: string =
+          e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+        Alert.alert('Ошибка создания программы', errorMessage);
+      }
+    }
+
+    if (pageType === TypeCreateExercisePageTypes.EDIT) {
+      try {
+        const program = await updateProgram({
+          variables: {
+            programId: trainingProgram.id,
+            trainingDays: trainingProgram.days,
+          },
+        }).then(({ data: result }) => result.updateProgram);
+
+        console.log('ОБНОВЛЕННАЯ ПРОГРАММА', program);
+
+        Alert.alert('Программа обновлена');
+      } catch (e) {
+        const errorMessage: string =
+          e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+        Alert.alert('Ошибка обновления программы', errorMessage);
+      }
+    }
+
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
@@ -75,7 +129,7 @@ export default function AddExerciseToProgram({
         <InfoCard
           onLongPress={drag}
           title={item.name}
-          description={item.muscleGroups.join(', ')}
+          description={item.muscleGroups}
           onPress={() => console.log('Нажали на карточку', item.id)}
           deleteHandler={() => deleteExercise(activeDay.id, item.id)}
           infoPressHandler={() => console.log('Нажали инфо', item.id)}
@@ -84,10 +138,20 @@ export default function AddExerciseToProgram({
     );
   };
 
+  // const headerTitle = useMemo(() => {
+  //   if (dayName && pageType === TypeCreateExercisePageTypes.CREATE)
+  //     return dayName;
+
+  //   if (pageType === TypeCreateExercisePageTypes.EDIT)
+  //     return data.getProgramById.name;
+
+  //   return '';
+  // }, []);
+
   console.log('ACTIVE DAY', activeDay.exercises);
 
   return (
-    <MainLayout loading={loading}>
+    <MainLayout loading={sourcesLoading}>
       <AppHeader
         title={dayName}
         onPressLeftButton={() => navigation.goBack()}
@@ -130,7 +194,7 @@ export default function AddExerciseToProgram({
       <ConfirmModal
         isOpen={isSaveModalOpen}
         title='Сохранение'
-        onPressOk={saveProgram}
+        onPressOk={async () => await saveProgram}
         onPressCancel={() => setIsSaveModalOpen(false)}
         message='Сохранить программу тренировок?'
       />

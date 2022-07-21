@@ -18,7 +18,7 @@ export type TypeExercise = {
   id: string;
   exerciseId: string;
   name: string;
-  muscleGroups: string[];
+  muscleGroups: string;
 };
 
 export type TypeTrainingDay = {

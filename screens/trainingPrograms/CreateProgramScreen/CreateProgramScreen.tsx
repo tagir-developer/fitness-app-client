@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, View } from 'react-native';
@@ -24,12 +24,17 @@ import {
   TypeTrainingDay,
   TypeTrainingProgram,
 } from '../../../context/trainingProgram/types';
+import {
+  CREATE_PROGRAM,
+  UPDATE_PROGRAM,
+} from '../../../graphql/programs/programMutations';
 import { GET_PROGRAM_BY_ID } from '../../../graphql/programs/programQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import {
   PageTypes,
   TypeCreateExercisePageTypes,
 } from '../../../navigation/types';
+import { createMuscleGroupsDescription } from './helpers';
 import { TypeCreateProgramScreenProps } from './types';
 
 const LIST_TOP_SPACE = 250;
@@ -71,6 +76,9 @@ export default function CreateProgramScreen({
     getProgramById: TypeTrainingProgram;
   }>(GET_PROGRAM_BY_ID);
 
+  const [createProgram] = useMutation(CREATE_PROGRAM);
+  const [updateProgram] = useMutation(UPDATE_PROGRAM);
+
   const addDay = (): void => {
     if (!dayName.length) {
       return Alert.alert('Ошибка', 'Введите название дня');
@@ -85,17 +93,53 @@ export default function CreateProgramScreen({
     setDayName('');
   };
 
-  const saveProgram = (): void => {
+  const saveProgram = async (): Promise<void> => {
     setIsSaveModalOpen(false);
     setIsExitModalOpen(false);
 
-    // ! Здесь будет запрос на сохранение программы в базе
-    console.log('Сохранить программу и выйти');
+    if (pageType === TypeCreateExercisePageTypes.CREATE) {
+      try {
+        const program = await createProgram({
+          variables: {
+            program: trainingProgram,
+          },
+        }).then(({ data: result }) => result.createProgram);
+
+        console.log('СОЗДАННАЯ ПРОГРАММА', program);
+
+        Alert.alert('Программа создана');
+      } catch (e) {
+        const errorMessage: string =
+          e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+        Alert.alert('Ошибка создания программы', errorMessage);
+      }
+    }
+
+    if (pageType === TypeCreateExercisePageTypes.EDIT) {
+      try {
+        const program = await updateProgram({
+          variables: {
+            programId: trainingProgram.id,
+            trainingDays: trainingProgram.days,
+          },
+        }).then(({ data: result }) => result.updateProgram);
+
+        console.log('ОБНОВЛЕННАЯ ПРОГРАММА', program);
+
+        Alert.alert('Программа обновлена');
+      } catch (e) {
+        const errorMessage: string =
+          e?.networkError?.result?.errors?.[0]?.message ?? '';
+
+        Alert.alert('Ошибка обновления программы', errorMessage);
+      }
+    }
+
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
   const saveProgramHandler = (): void => {
-    // ! проверяем, была ли изменена программа, если нет, то просто выходим, если да, то открываем конфирм
     const isProgramChanged = !isEqual(trainingProgram, initialProgramData);
     if (isProgramChanged) {
       return setIsSaveModalOpen(true);
@@ -115,6 +159,7 @@ export default function CreateProgramScreen({
     setActiveDay(id);
     navigation.navigate(PageTypes.ADD_EXERCISE_TO_PROGRAM, {
       dayName: name,
+      pageType,
     });
   };
 
@@ -129,19 +174,19 @@ export default function CreateProgramScreen({
     setDayName('');
   };
 
-  const createMuscleGroupsDescription = (day: TypeTrainingDay): string => {
-    const muscleGroups: string[] = [];
+  // const createMuscleGroupsDescription = (day: TypeTrainingDay): string => {
+  //   const dayMuscleGroups: string[] = [];
+  //   for (const exercise of day.exercises) {
+  //     const exerciseMuscleGroups = exercise.muscleGroups.split(', ');
 
-    for (const exercise of day.exercises) {
-      for (const muscleGroup of exercise.muscleGroups) {
-        if (!muscleGroups.includes(muscleGroup)) {
-          muscleGroups.push(muscleGroup);
-        }
-      }
-    }
-
-    return cutLongString(muscleGroups.join(', '), 40);
-  };
+  //     exerciseMuscleGroups.forEach((muscleGroup) => {
+  //       if (!dayMuscleGroups.includes(muscleGroup)) {
+  //         dayMuscleGroups.push(muscleGroup);
+  //       }
+  //     });
+  //   }
+  //   return cutLongString(dayMuscleGroups.join(', '), 40);
+  // };
 
   useEffect(() => {
     if (programName && pageType === TypeCreateExercisePageTypes.CREATE) {
@@ -155,11 +200,10 @@ export default function CreateProgramScreen({
         },
       });
     }
-  }, []);
+  }, [pageType]);
 
   useEffect(() => {
-    console.log('DATA DATA', data);
-    if (!loading && data && pageType === TypeCreateExercisePageTypes.CREATE) {
+    if (!loading && data && pageType === TypeCreateExercisePageTypes.EDIT) {
       setEditedProgramData(data.getProgramById);
     }
   }, [data]);
@@ -181,13 +225,7 @@ export default function CreateProgramScreen({
     return '';
   }, [data]);
 
-  // useEffect(() => {
-  //   setNewProgramData(programName);
-  // }, []);
-
-  // console.log('trainingProgram', trainingProgram);
-  // console.log('initialProgramData', initialProgramData);
-  // console.log('RESULT', isEqual(trainingProgram, initialProgramData));
+  console.log('trainingProgram FINAL ----------', trainingProgram);
 
   const renderItem = ({
     item: day,
@@ -209,7 +247,7 @@ export default function CreateProgramScreen({
   };
 
   return (
-    <MainLayout loading={sourcesLoading}>
+    <MainLayout loading={sourcesLoading || loading}>
       <AppHeader
         title={headerTitle}
         onPressLeftButton={exitHandler}
@@ -280,6 +318,7 @@ export default function CreateProgramScreen({
       <ConfirmModal
         isOpen={isSaveModalOpen}
         title='Сохранение'
+        // onPressOk={async () => await saveProgram}
         onPressOk={saveProgram}
         onPressCancel={() => setIsSaveModalOpen(false)}
         message='Сохранить программу тренировок?'
