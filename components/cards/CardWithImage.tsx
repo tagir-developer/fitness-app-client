@@ -112,11 +112,7 @@ export const CardWithImage: React.FC<Props> = (props) => {
           <CardContent>
             <AppFlex flex='0.2'>
               <ShapeWithGradientBorder w='52px' h='52px'>
-                <CardImage
-                  // source={require('../../assets/images/ui/card-icons/programs/basic.jpg')}
-                  source={props.imgSource}
-                  resizeMode='cover'
-                />
+                <CardImage source={props.imgSource} resizeMode='cover' />
               </ShapeWithGradientBorder>
             </AppFlex>
 

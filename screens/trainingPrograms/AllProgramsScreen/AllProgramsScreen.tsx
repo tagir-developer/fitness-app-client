@@ -58,7 +58,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     DEFAULT_SCREEN_SOURCES_COUNT
   );
 
-  const { setNewProgramData } = useProgramContext();
+  const { setNewProgramData, setLoading } = useProgramContext();
 
   // handlers --------
 
@@ -95,8 +95,6 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         },
       }).then(({ data: result }) => result.deleteProgram);
 
-      console.log('resultMessage на удаление', resultMessage);
-
       Alert.alert('Успешное удаление', resultMessage);
 
       setPrograms((prev) => prev.filter((program) => program.id !== programId));
@@ -130,11 +128,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
         },
       }).then(({ data: result }) => result.changeProgramName);
 
-      // console.log('changedProgram+++++', changedProgram);
-
       Alert.alert('Успешная операция', 'Имя программы успешно изменено');
-
-      // const transformedProgram = transformProgramData(changedProgram);
 
       setPrograms((prev) =>
         prev.map((program) => {
@@ -190,13 +184,11 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     programId: string
   ): Promise<void> => {
     try {
-      const resultMessage: string = await changeUserActiveProgram({
+      await changeUserActiveProgram({
         variables: {
           programId,
         },
-      }).then(({ data: result }) => result.setActiveUserProgram);
-
-      console.log('Изменение программы', resultMessage);
+      });
 
       refetch();
     } catch (e) {
@@ -232,12 +224,12 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
     }
   }, [loading]);
 
-  useFocusEffect(() => {
-    console.log('Перезапрос списка программ в useFocusEffect');
-    refetch();
-  });
-
-  // console.log('SERVER DATA', programs);
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+      setLoading(true);
+    }, [])
+  );
 
   return (
     <MainLayout loading={sourcesLoading || loading}>

@@ -19,6 +19,7 @@ import MainLayout from '../../../components/ui/MainLayout';
 import { useProgramContext } from '../../../context/trainingProgram/programContext';
 import {
   TypeExercise,
+  TypeTrainingDay,
   TypeTrainingProgram,
 } from '../../../context/trainingProgram/types';
 import {
@@ -62,15 +63,17 @@ export default function AddExerciseToProgram({
     setIsSaveModalOpen(false);
 
     if (pageType === TypeCreateExercisePageTypes.CREATE) {
-      // const data: TypeTrainingProgram = { ...trainingProgram };
+      const programData: TypeTrainingProgram = {
+        ...trainingProgram,
+        isUserProgram: true,
+      };
+
       try {
-        const program = await createProgram({
+        await createProgram({
           variables: {
-            program: trainingProgram,
+            program: programData,
           },
         }).then(({ data: result }) => result.createProgram);
-
-        console.log('СОЗДАННАЯ ПРОГРАММА', program);
 
         Alert.alert('Программа создана');
       } catch (e) {
@@ -83,14 +86,36 @@ export default function AddExerciseToProgram({
 
     if (pageType === TypeCreateExercisePageTypes.EDIT) {
       try {
-        const program = await updateProgram({
+        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(
+          (day) => {
+            const dayExercises: TypeExercise[] = day.exercises.map(
+              (exercise) => {
+                const transformedExercise: TypeExercise = {
+                  id: exercise.id,
+                  exerciseId: exercise.exerciseId,
+                  name: exercise.name,
+                  muscleGroups: exercise.muscleGroups,
+                };
+
+                return transformedExercise;
+              }
+            );
+
+            const transformedDay: TypeTrainingDay = {
+              id: day.id,
+              name: day.name,
+              exercises: dayExercises,
+            };
+
+            return transformedDay;
+          }
+        );
+        await updateProgram({
           variables: {
             programId: trainingProgram.id,
-            trainingDays: trainingProgram.days,
+            trainingDays: updatedDays,
           },
-        }).then(({ data: result }) => result.updateProgram);
-
-        console.log('ОБНОВЛЕННАЯ ПРОГРАММА', program);
+        });
 
         Alert.alert('Программа обновлена');
       } catch (e) {
@@ -119,8 +144,6 @@ export default function AddExerciseToProgram({
     navigation.navigate(PageTypes.ALL_PROGRAMS);
   };
 
-  console.log('EXERCISES', exercises);
-
   if (!activeDay) return null;
 
   const renderItem = ({ item, drag }: RenderItemParams<TypeExercise>) => {
@@ -137,18 +160,6 @@ export default function AddExerciseToProgram({
       </ScaleDecorator>
     );
   };
-
-  // const headerTitle = useMemo(() => {
-  //   if (dayName && pageType === TypeCreateExercisePageTypes.CREATE)
-  //     return dayName;
-
-  //   if (pageType === TypeCreateExercisePageTypes.EDIT)
-  //     return data.getProgramById.name;
-
-  //   return '';
-  // }, []);
-
-  console.log('ACTIVE DAY', activeDay.exercises);
 
   return (
     <MainLayout loading={sourcesLoading}>
@@ -194,7 +205,7 @@ export default function AddExerciseToProgram({
       <ConfirmModal
         isOpen={isSaveModalOpen}
         title='Сохранение'
-        onPressOk={async () => await saveProgram}
+        onPressOk={saveProgram}
         onPressCancel={() => setIsSaveModalOpen(false)}
         message='Сохранить программу тренировок?'
       />

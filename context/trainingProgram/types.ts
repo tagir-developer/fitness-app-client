@@ -1,6 +1,7 @@
 import { ActionMap } from '../../common/types';
 
 export enum ProgramContextActionTypes {
+  SET_LOADING = 'SET_LOADING',
   SET_NEW_PROGRAM_DATA = 'SET_NEW_PROGRAM_DATA',
   SET_EDITED_PROGRAM_DATA = 'SET_EDITED_PROGRAM_DATA',
   SET_ACTIVE_DAY = 'SET_ACTIVE_DAY',
@@ -30,13 +31,14 @@ export type TypeTrainingDay = {
 export type TypeTrainingProgram = {
   id: string;
   name: string;
-  // isUserProgram: boolean;
+  isUserProgram?: boolean;
   // isUserActiveProgram: boolean;
   // previewImage: string;
   days: TypeTrainingDay[];
 };
 
 export type TypeProgramContextState = {
+  loading: boolean;
   trainingProgram: TypeTrainingProgram;
   initialProgramData: TypeTrainingProgram;
   activeDay: TypeTrainingDay | null;
@@ -68,6 +70,7 @@ export type ProgramPayload = {
     exercises: TypeExercise[];
   };
   [ProgramContextActionTypes.SET_ACTIVE_DAY]: TypeTrainingDay | null;
+  [ProgramContextActionTypes.SET_LOADING]: boolean;
 };
 
 export type TypeProgramContextAction =
@@ -85,4 +88,5 @@ export type TypeProgramContext = TypeProgramContextState & {
   deleteExercise: (dayId: string, exerciseId: string) => void;
   changeExercisesOrder: (dayId: string, exercises: TypeExercise[]) => void;
   setActiveDay: (dayId: string | null) => void;
+  setLoading: (value: boolean) => void;
 };

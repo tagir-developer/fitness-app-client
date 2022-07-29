@@ -8,14 +8,3 @@ export type TypeCreateProgramScreenProps = NativeStackScreenProps<
   RootSignedInStackParamList,
   PageTypes.CREATE_PROGRAM
 >;
-
-// type TypeMuscleGroup = {
-//   id: string;
-//   name: string;
-// };
-
-// export type TypeTrainingProgram = {
-//   id: string;
-//   title: string;
-//   muscleGroups: TypeMuscleGroup[];
-// };

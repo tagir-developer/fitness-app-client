@@ -21,6 +21,7 @@ import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useProgramContext } from '../../../context/trainingProgram/programContext';
 import {
+  TypeExercise,
   TypeTrainingDay,
   TypeTrainingProgram,
 } from '../../../context/trainingProgram/types';
@@ -47,6 +48,7 @@ export default function CreateProgramScreen({
   const { programName, programId, pageType } = route.params;
 
   const {
+    loading: programLoading,
     trainingProgram,
     setNewProgramData,
     setEditedProgramData,
@@ -98,14 +100,17 @@ export default function CreateProgramScreen({
     setIsExitModalOpen(false);
 
     if (pageType === TypeCreateExercisePageTypes.CREATE) {
-      try {
-        const program = await createProgram({
-          variables: {
-            program: trainingProgram,
-          },
-        }).then(({ data: result }) => result.createProgram);
+      const programData: TypeTrainingProgram = {
+        ...trainingProgram,
+        isUserProgram: true,
+      };
 
-        console.log('СОЗДАННАЯ ПРОГРАММА', program);
+      try {
+        await createProgram({
+          variables: {
+            program: programData,
+          },
+        });
 
         Alert.alert('Программа создана');
       } catch (e) {
@@ -118,14 +123,36 @@ export default function CreateProgramScreen({
 
     if (pageType === TypeCreateExercisePageTypes.EDIT) {
       try {
-        const program = await updateProgram({
+        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(
+          (day) => {
+            const dayExercises: TypeExercise[] = day.exercises.map(
+              (exercise) => {
+                const transformedExercise: TypeExercise = {
+                  id: exercise.id,
+                  exerciseId: exercise.exerciseId,
+                  name: exercise.name,
+                  muscleGroups: exercise.muscleGroups,
+                };
+
+                return transformedExercise;
+              }
+            );
+
+            const transformedDay: TypeTrainingDay = {
+              id: day.id,
+              name: day.name,
+              exercises: dayExercises,
+            };
+
+            return transformedDay;
+          }
+        );
+        await updateProgram({
           variables: {
             programId: trainingProgram.id,
-            trainingDays: trainingProgram.days,
+            trainingDays: updatedDays,
           },
-        }).then(({ data: result }) => result.updateProgram);
-
-        console.log('ОБНОВЛЕННАЯ ПРОГРАММА', program);
+        });
 
         Alert.alert('Программа обновлена');
       } catch (e) {
@@ -174,20 +201,6 @@ export default function CreateProgramScreen({
     setDayName('');
   };
 
-  // const createMuscleGroupsDescription = (day: TypeTrainingDay): string => {
-  //   const dayMuscleGroups: string[] = [];
-  //   for (const exercise of day.exercises) {
-  //     const exerciseMuscleGroups = exercise.muscleGroups.split(', ');
-
-  //     exerciseMuscleGroups.forEach((muscleGroup) => {
-  //       if (!dayMuscleGroups.includes(muscleGroup)) {
-  //         dayMuscleGroups.push(muscleGroup);
-  //       }
-  //     });
-  //   }
-  //   return cutLongString(dayMuscleGroups.join(', '), 40);
-  // };
-
   useEffect(() => {
     if (programName && pageType === TypeCreateExercisePageTypes.CREATE) {
       setNewProgramData(programName);
@@ -225,8 +238,6 @@ export default function CreateProgramScreen({
     return '';
   }, [data]);
 
-  console.log('trainingProgram FINAL ----------', trainingProgram);
-
   const renderItem = ({
     item: day,
     drag,
@@ -247,7 +258,7 @@ export default function CreateProgramScreen({
   };
 
   return (
-    <MainLayout loading={sourcesLoading || loading}>
+    <MainLayout loading={sourcesLoading || loading || programLoading}>
       <AppHeader
         title={headerTitle}
         onPressLeftButton={exitHandler}

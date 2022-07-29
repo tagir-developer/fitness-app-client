@@ -21,6 +21,8 @@ export type PaddingProps = {
   pb?: CssSize;
   pl?: CssSize;
   pr?: CssSize;
+  pHorizontal?: CssSize;
+  pVertical?: CssSize;
 };
 
 export type PositionProps = {
@@ -72,4 +74,10 @@ export type ActionMap<M extends { [index: string]: any }> = {
         type: Key;
         payload: M[Key];
       };
+};
+
+export type TypeArticleSection = {
+  title: string | null;
+  subTitle: string | null;
+  text: string | null;
 };

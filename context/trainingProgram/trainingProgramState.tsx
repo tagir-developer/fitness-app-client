@@ -20,6 +20,7 @@ const defaultProgramData: TypeTrainingProgram = {
 };
 
 export const initialProgramState: TypeProgramContextState = {
+  loading: true,
   trainingProgram: defaultProgramData,
   initialProgramData: defaultProgramData,
   activeDay: null,
@@ -27,6 +28,13 @@ export const initialProgramState: TypeProgramContextState = {
 
 export const TrainingProgramState = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialProgramState);
+
+  const setLoading = (value: boolean) => {
+    dispatch({
+      type: ProgramContextActionTypes.SET_LOADING,
+      payload: value,
+    });
+  };
 
   const setNewProgramData = (name: string): void => {
     const programId = v4();
@@ -134,6 +142,7 @@ export const TrainingProgramState = ({ children }) => {
   return (
     <ProgramContext.Provider
       value={{
+        loading: state.loading,
         trainingProgram: state.trainingProgram,
         initialProgramData: state.initialProgramData,
         activeDay: state.activeDay,
@@ -148,6 +157,7 @@ export const TrainingProgramState = ({ children }) => {
         deleteExercise,
         changeExercisesOrder,
         setActiveDay,
+        setLoading,
       }}
     >
       {children}

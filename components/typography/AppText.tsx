@@ -10,17 +10,25 @@ type Props = TextProps &
     lineHeight?: CssSize;
     textAlign?: TypeTextAlign;
     color?: string;
+    fontWeight?: 'bold' | 'medium';
   };
 
 export const AppText = styled.Text<Props>`
   width: ${(props) => props.w ?? '100%'};
 
-  font-family: ${(props) => props.theme.fonts.normal};
+  font-family: ${(props) => {
+    if (props.fontWeight === 'bold') {
+      return props.theme.fonts.bold;
+    }
+    if (props.fontWeight === 'medium') {
+      return props.theme.fonts.normal;
+    }
+    return props.theme.fonts.light;
+  }};
   font-size: ${(props) => props.size ?? '16px'};
   color: ${(props) => props.color ?? props.theme.colors.primaryText};
   line-height: ${(props) => props.lineHeight ?? '24px'};
   text-align: ${(props) => props.textAlign ?? 'left'};
-  font-weight: 300;
 
   margin-top: ${(props) => props.mt ?? '0px'};
   margin-bottom: ${(props) => props.mb ?? '0px'};
@@ -29,6 +37,8 @@ export const AppText = styled.Text<Props>`
 
   padding-top: ${(props) => props.pt ?? '0px'};
   padding-bottom: ${(props) => props.pb ?? '0px'};
-  padding-left: ${(props) => props.pl ?? '0px'};
-  padding-right: ${(props) => props.pr ?? '0px'};
+  padding-left: ${(props) =>
+    props.pHorizontal ? props.pHorizontal : props.pl ?? '0px'};
+  padding-right: ${(props) =>
+    props.pHorizontal ? props.pHorizontal : props.pr ?? '0px'};
 `;
