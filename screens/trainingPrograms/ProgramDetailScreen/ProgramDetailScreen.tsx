@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { Alert, ImageSourcePropType } from 'react-native';
+import { Alert } from 'react-native';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
@@ -13,8 +13,6 @@ import {
   TypeTransformedProgramData,
 } from './types';
 import { Article } from '../../../components/typography/Article';
-import { TypeArticleSection } from '../../../common/types';
-import { programImages } from '../../../images/programs';
 import { AppText } from '../../../components/typography/AppText';
 
 export default function ProgramDetailScreen({
@@ -50,18 +48,18 @@ export default function ProgramDetailScreen({
 
   console.log('SERVER DATA PROGRAM DETAIL DESCRIPTION', program);
 
-  const articleSections: TypeArticleSection[] = [
-    {
-      title: 'Заголовок',
-      subTitle: 'Подзаголовок',
-      text: 'Банальные, но неопровержимые выводы, а также акционеры крупнейших компаний заблокированы в рамках своих собственных рациональных ограничений. Как принято считать, ключевые особенности структуры проекта набирают популярность среди определенных слоев населения, а значит, должны быть своевременно верифицированы.',
-    },
-    {
-      title: null,
-      subTitle: null,
-      text: 'В своём стремлении улучшить пользовательский опыт мы упускаем, что ключевые особенности структуры проекта набирают популярность среди определенных слоев населения, а значит, должны быть указаны как претенденты на роль ключевых факторов. Безусловно, сплочённость команды профессионалов выявляет срочную потребность новых принципов формирования материально-технической и кадровой базы. Следует отметить, что синтетическое тестирование создаёт необходимость включения в производственный план целого ряда внеочередных мероприятий с учётом комплекса соответствующих условий активизации.',
-    },
-  ];
+  // const articleSections: TypeArticleSection[] = [
+  //   {
+  //     title: 'Заголовок',
+  //     subTitle: 'Подзаголовок',
+  //     text: 'Банальные, но неопровержимые выводы, а также акционеры крупнейших компаний заблокированы в рамках своих собственных рациональных ограничений. Как принято считать, ключевые особенности структуры проекта набирают популярность среди определенных слоев населения, а значит, должны быть своевременно верифицированы.',
+  //   },
+  //   {
+  //     title: null,
+  //     subTitle: null,
+  //     text: 'В своём стремлении улучшить пользовательский опыт мы упускаем, что ключевые особенности структуры проекта набирают популярность среди определенных слоев населения, а значит, должны быть указаны как претенденты на роль ключевых факторов. Безусловно, сплочённость команды профессионалов выявляет срочную потребность новых принципов формирования материально-технической и кадровой базы. Следует отметить, что синтетическое тестирование создаёт необходимость включения в производственный план целого ряда внеочередных мероприятий с учётом комплекса соответствующих условий активизации.',
+  //   },
+  // ];
 
   // // ! не понадобится, так как мы уже трансформировали данные с сервера ранее
   // const carouselImagesData: ImageSourcePropType[] = [
@@ -77,7 +75,10 @@ export default function ProgramDetailScreen({
 
       {program ? (
         // <Article content={articleSections} images={carouselImagesData} />
-        <Article content={articleSections} images={program.descriptionImages} />
+        <Article
+          content={program.description}
+          images={program.descriptionImages}
+        />
       ) : (
         <AppText
           size='24px'

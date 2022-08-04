@@ -1,4 +1,4 @@
-import { TouchableOpacityProps } from 'react-native';
+import { ImageSourcePropType, TouchableOpacityProps } from 'react-native';
 import styled from 'styled-components/native';
 import RightArrow from '../../common/icons/rightArrow';
 import {
@@ -14,6 +14,7 @@ import {
   getLeftSwipeoutButtons,
   getRightSwipeoutButtons,
 } from '../../common/helpers/getSwipeoutBtns';
+import { ShapeWithGradientBorder } from '../common/ShapeWithGradientBorder';
 
 type Props = TouchableOpacityProps &
   MarginProps & {
@@ -22,10 +23,11 @@ type Props = TouchableOpacityProps &
     fontSize?: CssSize;
     w?: CssSize;
     isActive?: boolean;
-    description: string;
+    description?: string;
     deleteHandler?: () => void;
     copyHandler?: () => void;
     editHandler?: () => void;
+    img?: ImageSourcePropType;
   };
 
 type CardTextProps = TypeThemeProps & {
@@ -73,6 +75,11 @@ const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
   height: 59px;
 `;
 
+const CardImage = styled.ImageBackground`
+  width: 100%;
+  height: 100%;
+`;
+
 const CardContent = styled.View`
   flex: 1;
   display: flex;
@@ -102,19 +109,36 @@ export const SimpleCard: React.FC<Props> = (props) => {
           resizeMode='repeat'
         >
           <CardContent>
-            <AppFlex flex='0.85' align='flex-start'>
-              <AppFlex direction='column' align='flex-start' pl='20px'>
+            {props.img && (
+              <AppFlex flex='0.2'>
+                <ShapeWithGradientBorder w='52px' h='52px'>
+                  <CardImage source={props.img} resizeMode='cover' />
+                </ShapeWithGradientBorder>
+              </AppFlex>
+            )}
+
+            <AppFlex flex={props.img ? '0.7' : '0.85'} align='flex-start'>
+              <AppFlex
+                direction='column'
+                align='flex-start'
+                pl={props.img ? '0px' : '20px'}
+              >
                 <CardTitle color={props.color} fontSize={props.fontSize}>
                   {cutLongString(props.title, 28)}
                 </CardTitle>
 
-                <CardDescription color={props.color} fontSize={props.fontSize}>
-                  {props.description}
-                </CardDescription>
+                {props.description && (
+                  <CardDescription
+                    color={props.color}
+                    fontSize={props.fontSize}
+                  >
+                    {props.description}
+                  </CardDescription>
+                )}
               </AppFlex>
             </AppFlex>
 
-            <AppFlex flex='0.15'>
+            <AppFlex flex={props.img ? '0.1' : '0.15'}>
               <RightArrow />
             </AppFlex>
           </CardContent>

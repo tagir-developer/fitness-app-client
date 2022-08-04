@@ -79,5 +79,5 @@ export type ActionMap<M extends { [index: string]: any }> = {
 export type TypeArticleSection = {
   title: string | null;
   subTitle: string | null;
-  text: string | null;
+  text: string;
 };

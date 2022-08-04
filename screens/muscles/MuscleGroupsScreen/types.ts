@@ -1,6 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ImageSourcePropType } from 'react-native';
-import { TypeArticleSection } from '../../../common/types';
 import {
   PageTypes,
   RootSignedInStackParamList,
@@ -8,19 +7,18 @@ import {
 
 export type TypeScreenProps = NativeStackScreenProps<
   RootSignedInStackParamList,
-  PageTypes.PROGRAM_DETAIL
+  PageTypes.MUSCLE_GROUPS
 >;
 
-export type TypeProgramDetailData = {
+export type TypeMuscleGroupData = {
   id: string;
   name: string;
-  description: TypeArticleSection[];
-  descriptionImages: string[];
+  previewImage: string;
 };
 
-export type TypeTransformedProgramData = Omit<
-  TypeProgramDetailData,
-  'descriptionImages'
+export type TypeTransformedMuscleGroupData = Omit<
+  TypeMuscleGroupData,
+  'previewImage'
 > & {
-  descriptionImages: ImageSourcePropType[];
+  previewImage: ImageSourcePropType;
 };

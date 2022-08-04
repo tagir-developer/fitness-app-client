@@ -17,9 +17,6 @@ export const GET_PROGRAM_BY_ID = gql`
     getProgramById(programId: $programId) {
       id
       name
-      # description
-      # isUserProgram
-      # previewImage
       days {
         id
         name
@@ -39,8 +36,12 @@ export const GET_PROGRAM_DESCRIPTION_BY_ID = gql`
     getProgramById(programId: $programId) {
       id
       name
-      description
       descriptionImages
+      description {
+        title
+        subTitle
+        text
+      }
     }
   }
 `;

@@ -21,6 +21,10 @@ export enum PageTypes {
   CHOOSE_EXERCISE_FOR_NEW_PROGRAM = 'ChooseExerciseForNewProgram',
   EDIT_PROGRAM = 'EditProgram',
   PROGRAM_DETAIL = 'ProgramDetail',
+  MUSCLE_GROUPS = 'MuscleGroups',
+  ALL_MUSCLES = 'AllMuscles',
+  MUSCLE_GROUP_MUSCLES = 'MuscleGroupMuscles',
+  MUSCLE_DETAIL = 'MuscleDetail',
 }
 
 export enum TypeCreateExercisePageTypes {
@@ -46,7 +50,14 @@ export type RootSignedInStackParamList = {
   [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
   [PageTypes.PROGRAM_DETAIL]: { programId: string };
   [PageTypes.EDIT_PROGRAM]: { programId: string }; // ! потом удалим
-  //   Home: SomeType | undefined
+  [PageTypes.MUSCLE_GROUPS]: undefined;
+  [PageTypes.ALL_MUSCLES]: undefined;
+  [PageTypes.MUSCLE_GROUP_MUSCLES]: {
+    muscleGroupId: string;
+  };
+  [PageTypes.MUSCLE_DETAIL]: {
+    muscleId: string;
+  };
 };
 
 export type RootSignedOutStackParamList = {
