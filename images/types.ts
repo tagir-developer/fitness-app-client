@@ -21,3 +21,10 @@ export type TypeMusclesImages = {
   };
   descriptionImages: TypeContentImages;
 };
+
+export type TypeExercisesImages = {
+  cardPreviewImages: {
+    exercises: TypeContentImages;
+  };
+  descriptionImages: TypeContentImages;
+};

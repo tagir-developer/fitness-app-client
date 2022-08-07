@@ -2,7 +2,11 @@ import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, View } from 'react-native';
 import { v4 } from 'uuid';
-import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
+import {
+  DEFAULT_SCREEN_SOURCES_COUNT,
+  SEARCH_INPUT_DELAY,
+} from '../../../common/constants';
+import { useDebounce } from '../../../common/hooks/useDebounce';
 import { InfoCard } from '../../../components/cards/InfoCard';
 import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
@@ -15,21 +19,29 @@ import { useProgramContext } from '../../../context/trainingProgram/programConte
 import { TypeExercise } from '../../../context/trainingProgram/types';
 import { GET_ALL_EXERCISES } from '../../../graphql/exercises/exerciseQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { transformExercisesDataToListFormat } from './helpers';
-import { TypeChooseExerciseForProgram, TypeExerciseListItem } from './types';
+import { transformExerciseDataToListFormat } from '../../exercises/AllExercisesScreen/helpers';
+import {
+  TypeExerciseData,
+  TypeTransformedExerciseData,
+} from '../../exercises/AllExercisesScreen/types';
+import { TypeChooseExerciseForProgram } from './types';
 
 const LIST_BOTTOM_SPACE = 150;
 
 export default function ChooseExerciseForNewProgram({
   navigation,
 }: TypeChooseExerciseForProgram) {
-  const [exercises, setExercises] = useState<TypeExerciseListItem[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+
+  const debouncedSearchValue = useDebounce(searchValue, SEARCH_INPUT_DELAY);
+
+  const [exercises, setExercises] = useState<TypeTransformedExerciseData[]>([]);
 
   const { activeDay, addExerciseToDay } = useProgramContext();
 
-  const { data, loading, error } = useQuery<{
-    getAllExercises: Omit<TypeExerciseListItem, 'muscleGroups'>[];
-  }>(GET_ALL_EXERCISES);
+  const { data, loading, error, refetch } = useQuery<{
+    getAllExercises: TypeExerciseData[];
+  }>(GET_ALL_EXERCISES, { variables: { searchText: '' } });
 
   const sourcesLoading = useGetSourcesLoadingState(
     DEFAULT_SCREEN_SOURCES_COUNT
@@ -37,12 +49,12 @@ export default function ChooseExerciseForNewProgram({
 
   if (!activeDay) return null;
 
-  const cardPressHandler = (exercise: TypeExerciseListItem) => {
+  const cardPressHandler = (exercise: TypeTransformedExerciseData) => {
     const dayExercise: TypeExercise = {
       id: v4(),
       exerciseId: exercise.id,
       name: exercise.name,
-      muscleGroups: exercise.muscleGroups,
+      muscleGroups: exercise.muscles,
     };
 
     addExerciseToDay(activeDay.id, dayExercise);
@@ -52,8 +64,7 @@ export default function ChooseExerciseForNewProgram({
 
   useEffect(() => {
     if (!loading && data) {
-      // ! TODO: Временный хэлпер, пока нету muscle groups
-      const transformedData = transformExercisesDataToListFormat(
+      const transformedData = transformExerciseDataToListFormat(
         data.getAllExercises
       );
       setExercises(transformedData);
@@ -66,6 +77,10 @@ export default function ChooseExerciseForNewProgram({
     }
   }, [loading]);
 
+  useEffect(() => {
+    refetch({ searchText: debouncedSearchValue });
+  }, [debouncedSearchValue]);
+
   return (
     <MainLayout loading={sourcesLoading}>
       <AppHeader
@@ -74,7 +89,13 @@ export default function ChooseExerciseForNewProgram({
       />
 
       <AppFlex flex='1' justify='flex-start'>
-        <AppSearchInput placeholder='Поиск по названию' mt='135px' mb='25px' />
+        <AppSearchInput
+          value={searchValue}
+          onChangeText={setSearchValue}
+          placeholder='Поиск по названию'
+          mt='135px'
+          mb='25px'
+        />
 
         <FlatlistTopDivider />
 
@@ -84,7 +105,7 @@ export default function ChooseExerciseForNewProgram({
           renderItem={({ item: exercise }) => (
             <InfoCard
               title={exercise.name}
-              description={exercise.muscleGroups}
+              description={exercise.muscles}
               onPress={() => cardPressHandler(exercise)}
               infoPressHandler={() =>
                 console.log('Переходим в детальку упражнения', exercise.id)

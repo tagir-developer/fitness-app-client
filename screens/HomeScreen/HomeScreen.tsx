@@ -114,7 +114,9 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
             />
             <HomeMenuItem
               title='Упражнения'
-              onPress={() => console.log('sdsdsd')}
+              onPress={() =>
+                navigation.navigate(PageTypes.EXERCISES_MUSCLE_GROUPS)
+              }
             />
             <HomeMenuItem
               title='Мышечные группы'

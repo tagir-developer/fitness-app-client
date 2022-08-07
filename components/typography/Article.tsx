@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { Dimensions, ImageSourcePropType, ScrollView } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import styled from 'styled-components/native';
@@ -12,6 +12,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
 type Props = MarginPaddingProps & {
   content: TypeArticleSection[];
   images?: ImageSourcePropType[];
+  children?: ReactNode;
 };
 
 const StyledCardView = styled.View`
@@ -38,6 +39,7 @@ const StyledImage = styled.Image`
 export const Article: React.FC<Props> = ({
   content,
   images,
+  children,
   ...props
 }: Props) => {
   const isCarousel = useRef<any>();
@@ -134,6 +136,8 @@ export const Article: React.FC<Props> = ({
             </>
           );
         })}
+
+        {children}
       </ScrollView>
     </AppFlex>
   );

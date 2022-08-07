@@ -15,16 +15,23 @@ export enum PageTypes {
   HOME = 'Home',
   ABOUT = 'About',
   NOT_FOUND = 'NotFound',
+  // training program
   ALL_PROGRAMS = 'AllPrograms',
   CREATE_PROGRAM = 'CreateProgram',
   ADD_EXERCISE_TO_PROGRAM = 'AddExerciseToProgram',
   CHOOSE_EXERCISE_FOR_NEW_PROGRAM = 'ChooseExerciseForNewProgram',
   EDIT_PROGRAM = 'EditProgram',
   PROGRAM_DETAIL = 'ProgramDetail',
+  // muscles
   MUSCLE_GROUPS = 'MuscleGroups',
   ALL_MUSCLES = 'AllMuscles',
   MUSCLE_GROUP_MUSCLES = 'MuscleGroupMuscles',
   MUSCLE_DETAIL = 'MuscleDetail',
+  // exercises
+  EXERCISES_MUSCLE_GROUPS = 'ExerciseGroups',
+  ALL_EXERCISES = 'AllExercises',
+  MUSCLE_GROUP_EXERCISES = 'MuscleGroupExercises',
+  EXERCISE_DETAIL = 'ExerciseDetail',
 }
 
 export enum TypeCreateExercisePageTypes {
@@ -37,6 +44,7 @@ export type RootSignedInStackParamList = {
   [PageTypes.HOME]: undefined;
   [PageTypes.ABOUT]: undefined;
   [PageTypes.NOT_FOUND]: undefined;
+  // training programs
   [PageTypes.ALL_PROGRAMS]: undefined;
   [PageTypes.CREATE_PROGRAM]: {
     programName?: string;
@@ -49,7 +57,7 @@ export type RootSignedInStackParamList = {
   };
   [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
   [PageTypes.PROGRAM_DETAIL]: { programId: string };
-  [PageTypes.EDIT_PROGRAM]: { programId: string }; // ! потом удалим
+  // muscles
   [PageTypes.MUSCLE_GROUPS]: undefined;
   [PageTypes.ALL_MUSCLES]: undefined;
   [PageTypes.MUSCLE_GROUP_MUSCLES]: {
@@ -57,6 +65,15 @@ export type RootSignedInStackParamList = {
   };
   [PageTypes.MUSCLE_DETAIL]: {
     muscleId: string;
+  };
+  // exercises
+  [PageTypes.EXERCISES_MUSCLE_GROUPS]: undefined;
+  [PageTypes.ALL_EXERCISES]: undefined;
+  [PageTypes.MUSCLE_GROUP_EXERCISES]: {
+    muscleGroupId: string;
+  };
+  [PageTypes.EXERCISE_DETAIL]: {
+    exerciseId: string;
   };
 };
 

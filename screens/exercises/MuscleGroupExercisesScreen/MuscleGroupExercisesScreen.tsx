@@ -8,35 +8,42 @@ import {
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { transformDataToListFormat } from './helpers';
-import {
-  TypeMuscleData,
-  TypeScreenProps,
-  TypeTransformedMuscleData,
-} from './types';
+import { TypeScreenProps } from './types';
 
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
 import { SimpleCard } from '../../../components/cards/SimpleCard';
-import { GET_ALL_MUSCLES } from '../../../graphql/muscles/musclesQuery';
 import { AppSearchInput } from '../../../components/formControls/AppSearchInput';
 import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import { PageTypes } from '../../../navigation/types';
+import { GET_MUSCLE_GROUP_EXERCISES } from '../../../graphql/exercises/exerciseQuery';
+import {
+  TypeExerciseData,
+  TypeTransformedExerciseData,
+} from '../AllExercisesScreen/types';
+import { transformExerciseDataToListFormat } from '../AllExercisesScreen/helpers';
 
 const LIST_BOTTOM_SPACE = 150;
 
-export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
+export default function MuscleGroupExercisesScreen({
+  route,
+  navigation,
+}: TypeScreenProps) {
+  const { muscleGroupId } = route.params;
+
   const [searchValue, setSearchValue] = useState('');
 
   const debouncedSearchValue = useDebounce(searchValue, SEARCH_INPUT_DELAY);
 
   const { data, loading, error, refetch } = useQuery<{
-    getAllMuscles: TypeMuscleData[];
-  }>(GET_ALL_MUSCLES, { variables: { searchText: '' } });
+    getAllExercises: TypeExerciseData[];
+  }>(GET_MUSCLE_GROUP_EXERCISES, {
+    variables: { muscleGroupId, searchText: '' },
+  });
 
-  const [muscles, setMuscles] = useState<TypeTransformedMuscleData[]>([]);
+  const [exercises, setExercises] = useState<TypeTransformedExerciseData[]>([]);
 
   const sourcesLoading = useGetSourcesLoadingState(
     DEFAULT_SCREEN_SOURCES_COUNT
@@ -44,14 +51,16 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
 
   useEffect(() => {
     if (!loading && data) {
-      const transformedData = transformDataToListFormat(data.getAllMuscles);
-      setMuscles(transformedData);
+      const transformedData = transformExerciseDataToListFormat(
+        data.getAllExercises
+      );
+      setExercises(transformedData);
     }
   }, [data]);
 
   useEffect(() => {
     if (!loading && error) {
-      Alert.alert('Ошибка', 'Не удалось загрузить список мышц');
+      Alert.alert('Ошибка', 'Не удалось загрузить список упражнений');
     }
   }, [loading]);
 
@@ -61,7 +70,10 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
 
   return (
     <MainLayout loading={sourcesLoading || loading}>
-      <AppHeader title='Мышцы' onPressLeftButton={() => navigation.goBack()} />
+      <AppHeader
+        title='Упражнения'
+        onPressLeftButton={() => navigation.goBack()}
+      />
 
       <AppSearchInput
         value={searchValue}
@@ -76,14 +88,14 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
       <AppFlex flex='1' justify='flex-start'>
         <FlatList
           style={{ width: '100%' }}
-          data={muscles}
+          data={exercises}
           renderItem={({ item }) => (
             <SimpleCard
               title={item.name}
               img={item.previewImage}
               onPress={() =>
-                navigation.navigate(PageTypes.MUSCLE_DETAIL, {
-                  muscleId: item.id,
+                navigation.navigate(PageTypes.EXERCISE_DETAIL, {
+                  exerciseId: item.id,
                 })
               }
             />

@@ -19,7 +19,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
 import { SimpleCard } from '../../../components/cards/SimpleCard';
-import { GET_ALL_MUSCLES } from '../../../graphql/muscles/musclesQuery';
+import { GET_MUSCLE_GROUP_MUSCLES } from '../../../graphql/muscles/musclesQuery';
 import { AppSearchInput } from '../../../components/formControls/AppSearchInput';
 import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { useDebounce } from '../../../common/hooks/useDebounce';
@@ -27,14 +27,21 @@ import { PageTypes } from '../../../navigation/types';
 
 const LIST_BOTTOM_SPACE = 150;
 
-export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
+export default function MuscleGroupMusclesScreen({
+  route,
+  navigation,
+}: TypeScreenProps) {
+  const { muscleGroupId } = route.params;
+
   const [searchValue, setSearchValue] = useState('');
 
   const debouncedSearchValue = useDebounce(searchValue, SEARCH_INPUT_DELAY);
 
   const { data, loading, error, refetch } = useQuery<{
-    getAllMuscles: TypeMuscleData[];
-  }>(GET_ALL_MUSCLES, { variables: { searchText: '' } });
+    getMusclesByMuscleGroupId: TypeMuscleData[];
+  }>(GET_MUSCLE_GROUP_MUSCLES, {
+    variables: { muscleGroupId, searchText: '' },
+  });
 
   const [muscles, setMuscles] = useState<TypeTransformedMuscleData[]>([]);
 
@@ -44,7 +51,9 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
 
   useEffect(() => {
     if (!loading && data) {
-      const transformedData = transformDataToListFormat(data.getAllMuscles);
+      const transformedData = transformDataToListFormat(
+        data.getMusclesByMuscleGroupId
+      );
       setMuscles(transformedData);
     }
   }, [data]);

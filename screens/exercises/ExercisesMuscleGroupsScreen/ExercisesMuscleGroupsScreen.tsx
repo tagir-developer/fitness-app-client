@@ -22,7 +22,9 @@ import { PageTypes } from '../../../navigation/types';
 
 const LIST_BOTTOM_SPACE = 150;
 
-export default function MuscleGroupsScreen({ navigation }: TypeScreenProps) {
+export default function ExercisesMuscleGroupsScreen({
+  navigation,
+}: TypeScreenProps) {
   const { data, loading, error } = useQuery<{
     getMuscleGroups: TypeMuscleGroupData[];
   }>(GET_MUSCLE_GROUPS);
@@ -51,7 +53,7 @@ export default function MuscleGroupsScreen({ navigation }: TypeScreenProps) {
   return (
     <MainLayout loading={sourcesLoading || loading}>
       <AppHeader
-        title='Мышечные группы'
+        title='Упражнения'
         onPressLeftButton={() => navigation.goBack()}
       />
 
@@ -64,7 +66,7 @@ export default function MuscleGroupsScreen({ navigation }: TypeScreenProps) {
               title={item.name}
               img={item.previewImage}
               onPress={() =>
-                navigation.navigate(PageTypes.MUSCLE_GROUP_MUSCLES, {
+                navigation.navigate(PageTypes.MUSCLE_GROUP_EXERCISES, {
                   muscleGroupId: item.id,
                 })
               }
@@ -73,17 +75,15 @@ export default function MuscleGroupsScreen({ navigation }: TypeScreenProps) {
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
             <SimpleCard
-              title='Все мышцы'
+              title='Все упражнения'
               img={musclesImages.cardPreviewImages.muscleGroups.allGroups}
-              onPress={() => navigation.navigate(PageTypes.ALL_MUSCLES)}
+              onPress={() => navigation.navigate(PageTypes.ALL_EXERCISES)}
             />
           }
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }
-          ListEmptyComponent={
-            <EmptyList message='Нет упражнений. Добавьте первое упражнение.' />
-          }
+          ListEmptyComponent={<EmptyList message='Нет мышечных групп' />}
           alwaysBounceVertical={false}
         />
       </AppFlex>

@@ -4,7 +4,7 @@ import {
   RootSignedInStackParamList,
 } from '../../../navigation/types';
 
-export type TypeChooseExerciseForProgram = NativeStackScreenProps<
+export type TypeScreenProps = NativeStackScreenProps<
   RootSignedInStackParamList,
-  PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM
+  PageTypes.MUSCLE_GROUP_EXERCISES
 >;

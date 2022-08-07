@@ -22,6 +22,12 @@ import EditProgramScreen from '../screens/trainingPrograms/EditProgramScreen/Edi
 import ProgramDetailScreen from '../screens/trainingPrograms/ProgramDetailScreen/ProgramDetailScreen';
 import MuscleGroupsScreen from '../screens/muscles/MuscleGroupsScreen/MuscleGroupsScreen';
 import AllMusclesScreen from '../screens/muscles/AllMusclesScreen/AllMusclesScreen';
+import MuscleDetailScreen from '../screens/muscles/MuscleDetailScreen/MuscleDetailScreen';
+import MuscleGroupMusclesScreen from '../screens/muscles/MuscleGroupMusclesScreen/MuscleGroupMusclesScreen';
+import ExercisesMuscleGroupsScreen from '../screens/exercises/ExercisesMuscleGroupsScreen/ExercisesMuscleGroupsScreen';
+import AllExercisesScreen from '../screens/exercises/AllExercisesScreen/AllExercisesScreen';
+import MuscleGroupExercisesScreen from '../screens/exercises/MuscleGroupExercisesScreen/MuscleGroupExercisesScreen';
+import ExerciseDetailScreen from '../screens/exercises/ExerciseDetailScreen/ExerciseDetailScreen';
 
 const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
@@ -74,12 +80,27 @@ export default function RootNavigator() {
               component={ChooseExerciseForNewProgram}
             />
             <Stack.Screen
-              name={PageTypes.EDIT_PROGRAM}
-              component={EditProgramScreen}
-            />
-            <Stack.Screen
               name={PageTypes.PROGRAM_DETAIL}
               component={ProgramDetailScreen}
+            />
+          </Stack.Group>
+
+          <Stack.Group>
+            <Stack.Screen
+              name={PageTypes.EXERCISES_MUSCLE_GROUPS}
+              component={ExercisesMuscleGroupsScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.ALL_EXERCISES}
+              component={AllExercisesScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.MUSCLE_GROUP_EXERCISES}
+              component={MuscleGroupExercisesScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.EXERCISE_DETAIL}
+              component={ExerciseDetailScreen}
             />
           </Stack.Group>
 
@@ -91,6 +112,14 @@ export default function RootNavigator() {
             <Stack.Screen
               name={PageTypes.ALL_MUSCLES}
               component={AllMusclesScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.MUSCLE_GROUP_MUSCLES}
+              component={MuscleGroupMusclesScreen}
+            />
+            <Stack.Screen
+              name={PageTypes.MUSCLE_DETAIL}
+              component={MuscleDetailScreen}
             />
           </Stack.Group>
 

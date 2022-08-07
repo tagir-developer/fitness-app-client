@@ -1,6 +1,7 @@
 // styled-component types
 
 import { ReactNode } from 'react';
+import { ImageSourcePropType } from 'react-native';
 import { DefaultTheme } from 'styled-components';
 
 export type TypeThemeProps = {
@@ -80,4 +81,16 @@ export type TypeArticleSection = {
   title: string | null;
   subTitle: string | null;
   text: string;
+};
+
+export type TypeExerciseCardData = {
+  id: string;
+  name: string;
+  previewImage: string;
+};
+
+export type TypeTransformedExerciseCardData = {
+  id: string;
+  name: string;
+  previewImage: ImageSourcePropType;
 };
