@@ -32,6 +32,8 @@ export enum PageTypes {
   ALL_EXERCISES = 'AllExercises',
   MUSCLE_GROUP_EXERCISES = 'MuscleGroupExercises',
   EXERCISE_DETAIL = 'ExerciseDetail',
+  // workout
+  CHOOSE_WORKOUT_DAY = 'ChooseWorkoutDay',
 }
 
 export enum TypeCreateExercisePageTypes {
@@ -75,6 +77,8 @@ export type RootSignedInStackParamList = {
   [PageTypes.EXERCISE_DETAIL]: {
     exerciseId: string;
   };
+  // workout
+  [PageTypes.CHOOSE_WORKOUT_DAY]: undefined;
 };
 
 export type RootSignedOutStackParamList = {

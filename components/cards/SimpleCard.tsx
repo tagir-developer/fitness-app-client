@@ -39,7 +39,7 @@ const CardContainer = styled.TouchableOpacity<Props>`
   width: 100%;
   height: 63px;
 
-  background: ${(props) => props.theme.colors.empty};
+  background: ${props => props.theme.colors.empty};
 
   border-top-width: 2px;
   border-bottom-width: 2px;
@@ -48,26 +48,26 @@ const CardContainer = styled.TouchableOpacity<Props>`
 
   overflow: hidden;
 
-  margin-top: ${(props) => props.mt ?? '0px'};
-  margin-bottom: ${(props) => props.mb ?? '0px'};
-  margin-left: ${(props) => props.ml ?? '0px'};
-  margin-right: ${(props) => props.mr ?? '0px'};
+  margin-top: ${props => props.mt ?? '0px'};
+  margin-bottom: ${props => props.mb ?? '0px'};
+  margin-left: ${props => props.ml ?? '0px'};
+  margin-right: ${props => props.mr ?? '0px'};
 `;
 
 const CardTitle = styled.Text<CardTextProps>`
-  font-family: ${(props) => props.theme.fonts.bold};
+  font-family: ${props => props.theme.fonts.bold};
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;
-  color: ${(props) => props.color ?? props.theme.colors.primaryText};
+  color: ${props => props.color ?? props.theme.colors.primaryText};
 `;
 
 const CardDescription = styled.Text<CardTextProps>`
-  font-family: ${(props) => props.theme.fonts.normal};
+  font-family: ${props => props.theme.fonts.normal};
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: ${(props) => props.color ?? props.theme.colors.secondaryText};
+  color: ${props => props.color ?? props.theme.colors.secondaryText};
 `;
 
 const StyledImageBackground = styled.ImageBackground<TypeImageBackground>`
@@ -88,7 +88,7 @@ const CardContent = styled.View`
   align-items: center;
 `;
 
-export const SimpleCard: React.FC<Props> = (props) => {
+export const SimpleCard: React.FC<Props> = props => {
   const rightButtons = getRightSwipeoutButtons(
     props.copyHandler,
     props.deleteHandler
@@ -127,14 +127,14 @@ export const SimpleCard: React.FC<Props> = (props) => {
                   {cutLongString(props.title, 28)}
                 </CardTitle>
 
-                {props.description && (
+                {props.description ? (
                   <CardDescription
                     color={props.color}
                     fontSize={props.fontSize}
                   >
                     {props.description}
                   </CardDescription>
-                )}
+                ) : null}
               </AppFlex>
             </AppFlex>
 

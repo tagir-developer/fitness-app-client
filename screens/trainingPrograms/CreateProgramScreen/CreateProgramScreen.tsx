@@ -123,30 +123,26 @@ export default function CreateProgramScreen({
 
     if (pageType === TypeCreateExercisePageTypes.EDIT) {
       try {
-        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(
-          (day) => {
-            const dayExercises: TypeExercise[] = day.exercises.map(
-              (exercise) => {
-                const transformedExercise: TypeExercise = {
-                  id: exercise.id,
-                  exerciseId: exercise.exerciseId,
-                  name: exercise.name,
-                  muscleGroups: exercise.muscleGroups,
-                };
-
-                return transformedExercise;
-              }
-            );
-
-            const transformedDay: TypeTrainingDay = {
-              id: day.id,
-              name: day.name,
-              exercises: dayExercises,
+        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(day => {
+          const dayExercises: TypeExercise[] = day.exercises.map(exercise => {
+            const transformedExercise: TypeExercise = {
+              id: exercise.id,
+              exerciseId: exercise.exerciseId,
+              name: exercise.name,
+              muscleGroups: exercise.muscleGroups,
             };
 
-            return transformedDay;
-          }
-        );
+            return transformedExercise;
+          });
+
+          const transformedDay: TypeTrainingDay = {
+            id: day.id,
+            name: day.name,
+            exercises: dayExercises,
+          };
+
+          return transformedDay;
+        });
         await updateProgram({
           variables: {
             programId: trainingProgram.id,
@@ -279,7 +275,7 @@ export default function CreateProgramScreen({
         <DraggableFlatList
           data={trainingProgram.days}
           onDragEnd={({ data: renderedData }) => changeDaysOrder(renderedData)}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           ListHeaderComponent={
             <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
@@ -329,7 +325,6 @@ export default function CreateProgramScreen({
       <ConfirmModal
         isOpen={isSaveModalOpen}
         title='Сохранение'
-        // onPressOk={async () => await saveProgram}
         onPressOk={saveProgram}
         onPressCancel={() => setIsSaveModalOpen(false)}
         message='Сохранить программу тренировок?'

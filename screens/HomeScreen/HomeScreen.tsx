@@ -80,7 +80,9 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
                 <AppButton
                   title='Продолжить тренировку'
                   subTitle='Базовая программа'
-                  onPress={() => {}}
+                  onPress={() =>
+                    navigation.navigate(PageTypes.CHOOSE_WORKOUT_DAY)
+                  }
                   mb='25px'
                   fontSize='17px'
                 />
@@ -96,7 +98,9 @@ export default function HomeScreen({ navigation }: TypeHomeScreenProps) {
               <AppButton
                 title='Начать тренировку'
                 subTitle='Базовая программа'
-                onPress={() => {}}
+                onPress={() =>
+                  navigation.navigate(PageTypes.CHOOSE_WORKOUT_DAY)
+                }
                 mb='25px'
                 fontSize='17px'
               />

@@ -18,7 +18,10 @@ import { AppSearchInput } from '../../../components/formControls/AppSearchInput'
 import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import { PageTypes } from '../../../navigation/types';
-import { GET_MUSCLE_GROUP_EXERCISES } from '../../../graphql/exercises/exerciseQuery';
+import {
+  GET_ALL_EXERCISES,
+  GET_MUSCLE_GROUP_EXERCISES,
+} from '../../../graphql/exercises/exerciseQuery';
 import {
   TypeExerciseData,
   TypeTransformedExerciseData,
@@ -37,8 +40,10 @@ export default function MuscleGroupExercisesScreen({
 
   const debouncedSearchValue = useDebounce(searchValue, SEARCH_INPUT_DELAY);
 
+  console.log('muscleGroupId -------------', muscleGroupId);
+
   const { data, loading, error, refetch } = useQuery<{
-    getAllExercises: TypeExerciseData[];
+    getExercisesByMuscleGroupId: TypeExerciseData[];
   }>(GET_MUSCLE_GROUP_EXERCISES, {
     variables: { muscleGroupId, searchText: '' },
   });
@@ -51,8 +56,9 @@ export default function MuscleGroupExercisesScreen({
 
   useEffect(() => {
     if (!loading && data) {
+      console.log('DATA -------------', data);
       const transformedData = transformExerciseDataToListFormat(
-        data.getAllExercises
+        data.getExercisesByMuscleGroupId
       );
       setExercises(transformedData);
     }
@@ -93,6 +99,7 @@ export default function MuscleGroupExercisesScreen({
             <SimpleCard
               title={item.name}
               img={item.previewImage}
+              description={item.muscles}
               onPress={() =>
                 navigation.navigate(PageTypes.EXERCISE_DETAIL, {
                   exerciseId: item.id,
@@ -100,7 +107,7 @@ export default function MuscleGroupExercisesScreen({
               }
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }

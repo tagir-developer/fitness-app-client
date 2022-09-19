@@ -18,7 +18,6 @@ import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/All
 import CreateProgramScreen from '../screens/trainingPrograms/CreateProgramScreen/CreateProgramScreen';
 import AddExerciseToProgram from '../screens/trainingPrograms/AddExerciseToProgram/AddExerciseToProgram';
 import ChooseExerciseForNewProgram from '../screens/trainingPrograms/ChooseExerciseForNewProgram/ChooseExerciseForNewProgram';
-import EditProgramScreen from '../screens/trainingPrograms/EditProgramScreen/EditProgramScreen';
 import ProgramDetailScreen from '../screens/trainingPrograms/ProgramDetailScreen/ProgramDetailScreen';
 import MuscleGroupsScreen from '../screens/muscles/MuscleGroupsScreen/MuscleGroupsScreen';
 import AllMusclesScreen from '../screens/muscles/AllMusclesScreen/AllMusclesScreen';
@@ -28,6 +27,7 @@ import ExercisesMuscleGroupsScreen from '../screens/exercises/ExercisesMuscleGro
 import AllExercisesScreen from '../screens/exercises/AllExercisesScreen/AllExercisesScreen';
 import MuscleGroupExercisesScreen from '../screens/exercises/MuscleGroupExercisesScreen/MuscleGroupExercisesScreen';
 import ExerciseDetailScreen from '../screens/exercises/ExerciseDetailScreen/ExerciseDetailScreen';
+import ChooseWorkoutDayScreen from '../screens/workouts/ChooseWorkoutDayScreen/ChooseWorkoutDayScreen';
 
 const Stack = createNativeStackNavigator<RootSignedInStackParamList>();
 const SignedOutStack =
@@ -60,6 +60,13 @@ export default function RootNavigator() {
           >
             <Stack.Screen name={PageTypes.HOME} component={HomeScreen} />
             <Stack.Screen name={PageTypes.ABOUT} component={AboutScreen} />
+          </Stack.Group>
+
+          <Stack.Group>
+            <Stack.Screen
+              name={PageTypes.CHOOSE_WORKOUT_DAY}
+              component={ChooseWorkoutDayScreen}
+            />
           </Stack.Group>
 
           <Stack.Group>

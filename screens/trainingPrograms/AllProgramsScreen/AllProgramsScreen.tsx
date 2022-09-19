@@ -97,7 +97,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
       Alert.alert('Успешное удаление', resultMessage);
 
-      setPrograms((prev) => prev.filter((program) => program.id !== programId));
+      setPrograms(prev => prev.filter(program => program.id !== programId));
 
       refetch();
     } catch (e) {
@@ -130,8 +130,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
       Alert.alert('Успешная операция', 'Имя программы успешно изменено');
 
-      setPrograms((prev) =>
-        prev.map((program) => {
+      setPrograms(prev =>
+        prev.map(program => {
           if (program.id === programId) {
             return {
               ...program,
@@ -167,7 +167,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
 
       const transformedProgram = transformProgramData(newProgram);
 
-      setPrograms((prev) => [transformedProgram, ...prev]);
+      setPrograms(prev => [transformedProgram, ...prev]);
 
       Alert.alert('Успешная операция', 'Программа скопирована');
 
@@ -230,6 +230,8 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       setLoading(true);
     }, [])
   );
+
+  console.log('programs------', programs);
 
   return (
     <MainLayout loading={sourcesLoading || loading}>
@@ -297,7 +299,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
               }
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListHeaderComponent={
             <View style={{ width: '100%', height: LIST_TOP_SPACE }} />
           }
@@ -319,7 +321,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       >
         <AppStyledTextInput
           value={programName}
-          onChangeText={(value) => setProgramName(value)}
+          onChangeText={value => setProgramName(value)}
           placeholder='Название программы'
           mt='10px'
         />
@@ -334,7 +336,7 @@ export default function AllProgramsScreen({ navigation }: TypeHomeScreenProps) {
       >
         <AppStyledTextInput
           value={programName}
-          onChangeText={(value) => setProgramName(value)}
+          onChangeText={value => setProgramName(value)}
           placeholder='Название программы'
           mt='10px'
         />

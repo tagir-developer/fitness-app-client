@@ -44,6 +44,7 @@ export default function AllExercisesScreen({ navigation }: TypeScreenProps) {
 
   useEffect(() => {
     if (!loading && data) {
+      console.log('DATA -------', data);
       const transformedData = transformExerciseDataToListFormat(
         data.getAllExercises
       );
@@ -94,7 +95,7 @@ export default function AllExercisesScreen({ navigation }: TypeScreenProps) {
               }
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }

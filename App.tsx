@@ -22,9 +22,12 @@ import { ThemeProvider } from 'styled-components';
 import { myTheme } from './common/theme';
 import { AppState } from './context/app/appState';
 import { TrainingProgramState } from './context/trainingProgram/trainingProgramState';
+import { WorkoutState } from './context/workoutContext/workoutState';
 
+// ? чтобы узнать правильный ip нужно выполнить команду ipconfig в cmd
 const httpLink = new HttpLink({
-  uri: 'http://192.168.0.103:5000/graphql',
+  // uri: 'http://192.168.0.103:5000/graphql',
+  uri: 'http://192.168.1.66:5000/graphql',
 });
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -37,7 +40,7 @@ const getNewToken = async () => {
       mutation: REFRESH_USER_TOKEN,
       variables: { refreshToken },
     })
-    .then((res) => res.data);
+    .then(res => res.data);
 
   const { accessToken, refreshToken: newRefreshToken } = result.refresh;
 
@@ -56,9 +59,9 @@ const errorLink = onError(
   ({ graphQLErrors, networkError, operation, forward }) => {
     // User access token has expired
     if (graphQLErrors && graphQLErrors[0].message === 'Unauthorized') {
-      return new Observable((observer) => {
+      return new Observable(observer => {
         getNewToken()
-          .then((accessToken) => {
+          .then(accessToken => {
             operation.setContext(({ headers = {} }) => ({
               headers: {
                 ...headers,
@@ -158,10 +161,12 @@ export default function App() {
         <ThemeProvider theme={myTheme}>
           <AuthContext.Provider value={{ loggedIn, handleChangeLoginState }}>
             <AppState>
-              <TrainingProgramState>
-                <Navigation />
-                <StatusBar />
-              </TrainingProgramState>
+              <WorkoutState>
+                <TrainingProgramState>
+                  <Navigation />
+                  <StatusBar />
+                </TrainingProgramState>
+              </WorkoutState>
             </AppState>
           </AuthContext.Provider>
         </ThemeProvider>

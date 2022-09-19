@@ -16,6 +16,7 @@ import { AppText } from '../../../components/typography/AppText';
 import { AppFlex } from '../../../components/ui/AppFlex';
 import { SimpleCard } from '../../../components/cards/SimpleCard';
 import { GET_MUSCLE_DETAIL_DATA } from '../../../graphql/muscles/musclesQuery';
+import { PageTypes } from '../../../navigation/types';
 
 export default function MuscleDetailScreen({
   route,
@@ -73,8 +74,9 @@ export default function MuscleDetailScreen({
                 Упражнения
               </AppText>
 
-              {muscleData.exercises.map((item) => (
+              {muscleData.exercises.map(item => (
                 <SimpleCard
+                  key={item.id}
                   title={item.name}
                   img={item.previewImage}
                   // onPress={() =>
@@ -82,6 +84,11 @@ export default function MuscleDetailScreen({
                   //     muscleId: item.id,
                   //   })
                   // }
+                  onPress={() =>
+                    navigation.navigate(PageTypes.EXERCISE_DETAIL, {
+                      exerciseId: item.id,
+                    })
+                  }
                 />
               ))}
             </AppFlex>

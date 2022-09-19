@@ -59,6 +59,8 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
     refetch({ searchText: debouncedSearchValue });
   }, [debouncedSearchValue]);
 
+  console.log('muscles -------', muscles);
+
   return (
     <MainLayout loading={sourcesLoading || loading}>
       <AppHeader title='Мышцы' onPressLeftButton={() => navigation.goBack()} />
@@ -88,7 +90,7 @@ export default function AllMusclesScreen({ navigation }: TypeScreenProps) {
               }
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }
