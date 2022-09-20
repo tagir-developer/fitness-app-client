@@ -48,6 +48,13 @@ export default function ChooseWorkoutDayScreen({
   const cardPressHandler = (dayId: string, dayName: string): void => {
     console.log('dayId---', dayId);
     console.log('dayName---', dayName);
+
+    // ! Создаем в контекст стейте сущность тренировки
+
+    navigation.navigate(PageTypes.CHOOSE_EXERCISE_AND_START, {
+      dayId,
+      dayName,
+    });
   };
 
   // useEffect --------
