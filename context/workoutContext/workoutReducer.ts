@@ -32,6 +32,29 @@ export const appReducer = (
           ? { ...state.activeWorkout, startDateTime: action.payload }
           : null,
       };
+    case WorkoutContextActionTypes.STOP_WORKOUT:
+      return {
+        ...state,
+        workoutTime: null,
+        activeWorkout: state.activeWorkout
+          ? { ...state.activeWorkout, endDateTime: action.payload }
+          : null,
+      };
+    case WorkoutContextActionTypes.SET_WORKOUT_TIME:
+      return {
+        ...state,
+        workoutTime: action.payload,
+      };
+    case WorkoutContextActionTypes.INCREASE_WORKOUT_TIME:
+      return {
+        ...state,
+        workoutTime: (state.workoutTime ?? 0) + 1,
+      };
+    case WorkoutContextActionTypes.SET_INTERVAL_ID:
+      return {
+        ...state,
+        intervalId: action.payload,
+      };
     case WorkoutContextActionTypes.ADD_EXERCISE:
       return {
         ...state,

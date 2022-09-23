@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/client';
+import { differenceInMinutes } from 'date-fns';
 import isEqual from 'lodash.isequal';
-import { useState } from 'react';
-import { View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -33,6 +34,9 @@ export default function ChooseExerciseAndStartScreen({
 }: TypeScreenProps) {
   const { dayName, dayId } = route.params;
 
+  // const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
+  // const [workoutTime, setWorkoutTime] = useState<number | null>(null);
+
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const sourcesLoading = useGetSourcesLoadingState(
@@ -41,8 +45,16 @@ export default function ChooseExerciseAndStartScreen({
 
   const [createWorkout] = useMutation(CREATE_WORKOUT);
 
-  const { activeWorkout, changeExercisesOrder, deleteExercise, addExercise } =
-    useWorkoutContext();
+  const {
+    activeWorkout,
+    changeExercisesOrder,
+    deleteExercise,
+    addExercise,
+    workoutTime,
+    startWorkout,
+    stopWorkout,
+    intervalId,
+  } = useWorkoutContext();
 
   const saveWorkout = async (): Promise<void> => {
     setIsSaveModalOpen(false);
@@ -86,7 +98,28 @@ export default function ChooseExerciseAndStartScreen({
     navigation.goBack();
   };
 
+  const startWorkoutHandler = (): void => {
+    if (activeWorkout) {
+      startWorkout();
+    }
+  };
+
+  const stopWorkoutHandler = (): void => {
+    if (intervalId && activeWorkout) {
+      stopWorkout();
+      clearInterval(intervalId);
+    }
+  };
+
   if (!activeWorkout) return null;
+
+  // const isWorkoutStarted = Boolean(activeWorkout.startDateTime);
+
+  // const workoutTime = activeWorkout.startDateTime
+  //   ? differenceInMinutes(new Date(activeWorkout.startDateTime), new Date())
+  //   : null;
+
+  console.log('workoutTime -----', workoutTime);
 
   const renderItem = ({
     item,
@@ -117,22 +150,40 @@ export default function ChooseExerciseAndStartScreen({
         onPressLeftButton={() => navigation.goBack()}
         rightButtonIcon={<CheckIcon />}
         // onPressRightButton={saveProgramHandler}
-        onPressRightButton={() => {}}
+        onPressRightButton={stopWorkoutHandler}
       />
 
       <OpacityDarkness top='0px' h={`${LIST_TOP_SPACE}px`} reverse={true}>
-        <AppButton
-          title='Начать тренировку'
-          onPress={() =>
-            navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM, {
-              callback: () => {
-                console.log('sd');
-              },
-            })
-          }
-          fontSize='17px'
-          mt='100px'
-        />
+        {workoutTime === null ? ( // ! для отладки === (должно быть !==) !!!!!
+          // <Text style={{ color: 'white' }}>{`${workoutTime} мин.`}</Text>
+          <AppFlex flex='1' direction='row'>
+            <AppButton
+              title='Тест'
+              onPress={startWorkoutHandler}
+              fontSize='14px'
+              mt='100px'
+              w='120px'
+              h='50px'
+              mr='10px'
+            />
+
+            <AppButton
+              title='Завершить тренировку'
+              onPress={startWorkoutHandler}
+              fontSize='14px'
+              mt='100px'
+              w='220px'
+              h='50px'
+            />
+          </AppFlex>
+        ) : (
+          <AppButton
+            title='Начать тренировку'
+            onPress={startWorkoutHandler}
+            fontSize='17px'
+            mt='100px'
+          />
+        )}
       </OpacityDarkness>
 
       <AppFlex flex='1' align='stretch' justify='flex-start'>

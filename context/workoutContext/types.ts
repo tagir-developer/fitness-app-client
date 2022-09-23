@@ -1,17 +1,21 @@
 import { ActionMap } from '../../common/types';
 import { TypeTransformedExerciseData } from '../../screens/exercises/AllExercisesScreen/types';
-import { TypeExercise, TypeTrainingDay } from '../trainingProgram/types';
+import { TypeTrainingDay } from '../trainingProgram/types';
 
 export enum WorkoutContextActionTypes {
   SET_LOADING = 'SET_LOADING',
   SET_NEW_WORKOUT_DATA = 'SET_NEW_WORKOUT_DATA',
   START_WORKOUT = 'START_WORKOUT',
+  STOP_WORKOUT = 'STOP_WORKOUT',
   ADD_EXERCISE = 'ADD_EXERCISE',
   DELETE_EXERCISE = 'DELETE_EXERCISE',
   CHANGE_EXERCISES_ORDER = 'CHANGE_EXERCISES_ORDER',
   ADD_SET = 'ADD_SET',
   COPY_SET = 'COPY_SET',
   DELETE_SET = 'DELETE_SET',
+  SET_WORKOUT_TIME = 'SET_WORKOUT_TIME',
+  INCREASE_WORKOUT_TIME = 'INCREASE_WORKOUT_TIME',
+  SET_INTERVAL_ID = 'SET_INTERVAL_ID',
 }
 
 export type TypeWorkoutSet = {
@@ -43,12 +47,18 @@ export type TypeWorkoutContextState = {
   activeWorkout: TypeWorkout | null;
   activeExercise: TypeWorkoutExercise | null;
   timerCount: number | null;
+  workoutTime: number | null;
+  intervalId: NodeJS.Timer | null;
 };
 
 export type WorkoutPayload = {
   [WorkoutContextActionTypes.SET_LOADING]: boolean;
   [WorkoutContextActionTypes.SET_NEW_WORKOUT_DATA]: TypeWorkout;
   [WorkoutContextActionTypes.START_WORKOUT]: string;
+  [WorkoutContextActionTypes.STOP_WORKOUT]: string;
+  [WorkoutContextActionTypes.SET_WORKOUT_TIME]: number | null;
+  [WorkoutContextActionTypes.INCREASE_WORKOUT_TIME]: undefined;
+  [WorkoutContextActionTypes.SET_INTERVAL_ID]: NodeJS.Timer | null;
   [WorkoutContextActionTypes.ADD_EXERCISE]: TypeWorkoutExercise;
   [WorkoutContextActionTypes.DELETE_EXERCISE]: string;
   [WorkoutContextActionTypes.CHANGE_EXERCISES_ORDER]: TypeWorkoutExercise[];
@@ -82,4 +92,5 @@ export type TypeWorkoutContext = TypeWorkoutContextState & {
   deleteSet: (exerciseId: string, setId: string) => void;
   setLoading: (value: boolean) => void;
   startWorkout: () => void;
+  stopWorkout: () => void;
 };

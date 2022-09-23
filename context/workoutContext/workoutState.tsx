@@ -23,6 +23,8 @@ export const initialWorkoutState: TypeWorkoutContextState = {
   activeWorkout: null,
   activeExercise: null,
   timerCount: null,
+  workoutTime: null,
+  intervalId: null,
 };
 
 export const WorkoutState = ({ children }) => {
@@ -74,6 +76,32 @@ export const WorkoutState = ({ children }) => {
       type: WorkoutContextActionTypes.START_WORKOUT,
       payload: startDateTime,
     });
+
+    dispatch({
+      type: WorkoutContextActionTypes.SET_WORKOUT_TIME,
+      payload: 0,
+    });
+
+    // изменяем счетчик раз в минуту
+    const intervalId = setInterval(() => {
+      dispatch({
+        type: WorkoutContextActionTypes.INCREASE_WORKOUT_TIME,
+      });
+    }, 60 * 1000);
+
+    dispatch({
+      type: WorkoutContextActionTypes.SET_INTERVAL_ID,
+      payload: intervalId,
+    });
+  };
+
+  const stopWorkout = (): void => {
+    const endDateTime = formatISO(new Date());
+
+    dispatch({
+      type: WorkoutContextActionTypes.STOP_WORKOUT,
+      payload: endDateTime,
+    });
   };
 
   const addExercise = (exercise: TypeTransformedExerciseData) => {
@@ -90,21 +118,6 @@ export const WorkoutState = ({ children }) => {
       payload: exerciseData,
     });
   };
-
-  // const addExercise = (exercise: TypeExercise) => {
-  //   const exerciseData: TypeWorkoutExercise = {
-  //     id: v4(),
-  //     exerciseId: exercise.exerciseId,
-  //     name: exercise.name,
-  //     muscleGroups: exercise.muscleGroups,
-  //     sets: [],
-  //   };
-
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.ADD_EXERCISE,
-  //     payload: exerciseData,
-  //   });
-  // };
 
   const deleteExercise = (exerciseId: string) => {
     dispatch({
@@ -151,8 +164,11 @@ export const WorkoutState = ({ children }) => {
         activeWorkout: state.activeWorkout,
         activeExercise: state.activeExercise,
         timerCount: state.timerCount,
+        workoutTime: state.workoutTime,
+        intervalId: state.intervalId,
         setNewWorkoutData,
         startWorkout,
+        stopWorkout,
         addExercise,
         deleteExercise,
         changeExercisesOrder,

@@ -17,7 +17,7 @@ import NewPasswordScreen from '../screens/Auth/NewPasswordScreen/NewPasswordScre
 import AllProgramsScreen from '../screens/trainingPrograms/AllProgramsScreen/AllProgramsScreen';
 import CreateProgramScreen from '../screens/trainingPrograms/CreateProgramScreen/CreateProgramScreen';
 import AddExerciseToProgram from '../screens/trainingPrograms/AddExerciseToProgram/AddExerciseToProgram';
-import ChooseExerciseForNewProgram from '../screens/trainingPrograms/ChooseExerciseForNewProgram/ChooseExerciseForNewProgram';
+import ChooseExerciseScreen from '../screens/ChooseExerciseScreen/ChooseExerciseScreen';
 import ProgramDetailScreen from '../screens/trainingPrograms/ProgramDetailScreen/ProgramDetailScreen';
 import MuscleGroupsScreen from '../screens/muscles/MuscleGroupsScreen/MuscleGroupsScreen';
 import AllMusclesScreen from '../screens/muscles/AllMusclesScreen/AllMusclesScreen';
@@ -89,7 +89,7 @@ export default function RootNavigator() {
             />
             <Stack.Screen
               name={PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM}
-              component={ChooseExerciseForNewProgram}
+              component={ChooseExerciseScreen}
             />
             <Stack.Screen
               name={PageTypes.PROGRAM_DETAIL}

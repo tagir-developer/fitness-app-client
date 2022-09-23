@@ -4,31 +4,31 @@ import { Alert, FlatList, View } from 'react-native';
 import {
   DEFAULT_SCREEN_SOURCES_COUNT,
   SEARCH_INPUT_DELAY,
-} from '../../../common/constants';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-import { InfoCard } from '../../../components/cards/InfoCard';
-import { FlatlistTopDivider } from '../../../components/common/FlatlistTopDivider';
-import { OpacityDarkness } from '../../../components/common/OpacityDarkness';
-import { AppSearchInput } from '../../../components/formControls/AppSearchInput';
-import { AppFlex } from '../../../components/ui/AppFlex';
-import { AppHeader } from '../../../components/ui/AppHeader';
-import { EmptyList } from '../../../components/ui/EmptyList';
-import MainLayout from '../../../components/ui/MainLayout';
-import { GET_ALL_EXERCISES } from '../../../graphql/exercises/exerciseQuery';
-import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
-import { transformExerciseDataToListFormat } from '../../exercises/AllExercisesScreen/helpers';
+} from '../../common/constants';
+import { useDebounce } from '../../common/hooks/useDebounce';
+import { InfoCard } from '../../components/cards/InfoCard';
+import { FlatlistTopDivider } from '../../components/common/FlatlistTopDivider';
+import { OpacityDarkness } from '../../components/common/OpacityDarkness';
+import { AppSearchInput } from '../../components/formControls/AppSearchInput';
+import { AppFlex } from '../../components/ui/AppFlex';
+import { AppHeader } from '../../components/ui/AppHeader';
+import { EmptyList } from '../../components/ui/EmptyList';
+import MainLayout from '../../components/ui/MainLayout';
+import { GET_ALL_EXERCISES } from '../../graphql/exercises/exerciseQuery';
+import { useGetSourcesLoadingState } from '../../hooks/useGetSourcesLoadingState';
+import { transformExerciseDataToListFormat } from '../exercises/AllExercisesScreen/helpers';
 import {
   TypeExerciseData,
   TypeTransformedExerciseData,
-} from '../../exercises/AllExercisesScreen/types';
-import { TypeChooseExerciseForProgram } from './types';
+} from '../exercises/AllExercisesScreen/types';
+import { TypeChooseExerciseProps } from './types';
 
 const LIST_BOTTOM_SPACE = 150;
 
-export default function ChooseExerciseForNewProgram({
+export default function ChooseExerciseScreen({
   route,
   navigation,
-}: TypeChooseExerciseForProgram) {
+}: TypeChooseExerciseProps) {
   const { callback } = route.params;
 
   const [searchValue, setSearchValue] = useState('');
