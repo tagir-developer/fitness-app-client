@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, View } from 'react-native';
-import { v4 } from 'uuid';
 import {
   DEFAULT_SCREEN_SOURCES_COUNT,
   SEARCH_INPUT_DELAY,
@@ -15,8 +14,6 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import { EmptyList } from '../../../components/ui/EmptyList';
 import MainLayout from '../../../components/ui/MainLayout';
-import { useProgramContext } from '../../../context/trainingProgram/programContext';
-import { TypeExercise } from '../../../context/trainingProgram/types';
 import { GET_ALL_EXERCISES } from '../../../graphql/exercises/exerciseQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { transformExerciseDataToListFormat } from '../../exercises/AllExercisesScreen/helpers';
@@ -29,15 +26,16 @@ import { TypeChooseExerciseForProgram } from './types';
 const LIST_BOTTOM_SPACE = 150;
 
 export default function ChooseExerciseForNewProgram({
+  route,
   navigation,
 }: TypeChooseExerciseForProgram) {
+  const { callback } = route.params;
+
   const [searchValue, setSearchValue] = useState('');
 
   const debouncedSearchValue = useDebounce(searchValue, SEARCH_INPUT_DELAY);
 
   const [exercises, setExercises] = useState<TypeTransformedExerciseData[]>([]);
-
-  const { activeDay, addExerciseToDay } = useProgramContext();
 
   const { data, loading, error, refetch } = useQuery<{
     getAllExercises: TypeExerciseData[];
@@ -46,21 +44,6 @@ export default function ChooseExerciseForNewProgram({
   const sourcesLoading = useGetSourcesLoadingState(
     DEFAULT_SCREEN_SOURCES_COUNT
   );
-
-  if (!activeDay) return null;
-
-  const cardPressHandler = (exercise: TypeTransformedExerciseData) => {
-    const dayExercise: TypeExercise = {
-      id: v4(),
-      exerciseId: exercise.id,
-      name: exercise.name,
-      muscleGroups: exercise.muscles,
-    };
-
-    addExerciseToDay(activeDay.id, dayExercise);
-
-    navigation.goBack();
-  };
 
   useEffect(() => {
     if (!loading && data) {
@@ -106,14 +89,14 @@ export default function ChooseExerciseForNewProgram({
             <InfoCard
               title={exercise.name}
               description={exercise.muscles}
-              onPress={() => cardPressHandler(exercise)}
+              onPress={() => callback(exercise)}
               infoPressHandler={() =>
                 console.log('Переходим в детальку упражнения', exercise.id)
               }
               disableSwipeoutButtons={true}
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListFooterComponent={
             <View style={{ width: '100%', height: LIST_BOTTOM_SPACE }} />
           }

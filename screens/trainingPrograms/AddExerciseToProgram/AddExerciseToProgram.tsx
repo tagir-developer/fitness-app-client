@@ -6,6 +6,7 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
+import { v4 } from 'uuid';
 import { DEFAULT_SCREEN_SOURCES_COUNT } from '../../../common/constants';
 import CheckIcon from '../../../common/icons/checkIcon';
 import { AppButton } from '../../../components/buttons/AppButton';
@@ -31,7 +32,8 @@ import {
   PageTypes,
   TypeCreateExercisePageTypes,
 } from '../../../navigation/types';
-import { TypeAddExerciseToProgram, TypeExercises } from './types';
+import { TypeTransformedExerciseData } from '../../exercises/AllExercisesScreen/types';
+import { TypeAddExerciseToProgram } from './types';
 
 const LIST_TOP_SPACE = 250;
 const LIST_BOTTOM_SPACE = 150;
@@ -57,6 +59,7 @@ export default function AddExerciseToProgram({
     deleteExercise,
     trainingProgram,
     initialProgramData,
+    addExerciseToDay,
   } = useProgramContext();
 
   const saveProgram = async (): Promise<void> => {
@@ -86,30 +89,26 @@ export default function AddExerciseToProgram({
 
     if (pageType === TypeCreateExercisePageTypes.EDIT) {
       try {
-        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(
-          (day) => {
-            const dayExercises: TypeExercise[] = day.exercises.map(
-              (exercise) => {
-                const transformedExercise: TypeExercise = {
-                  id: exercise.id,
-                  exerciseId: exercise.exerciseId,
-                  name: exercise.name,
-                  muscleGroups: exercise.muscleGroups,
-                };
-
-                return transformedExercise;
-              }
-            );
-
-            const transformedDay: TypeTrainingDay = {
-              id: day.id,
-              name: day.name,
-              exercises: dayExercises,
+        const updatedDays: TypeTrainingDay[] = trainingProgram.days.map(day => {
+          const dayExercises: TypeExercise[] = day.exercises.map(exercise => {
+            const transformedExercise: TypeExercise = {
+              id: exercise.id,
+              exerciseId: exercise.exerciseId,
+              name: exercise.name,
+              muscleGroups: exercise.muscleGroups,
             };
 
-            return transformedDay;
-          }
-        );
+            return transformedExercise;
+          });
+
+          const transformedDay: TypeTrainingDay = {
+            id: day.id,
+            name: day.name,
+            exercises: dayExercises,
+          };
+
+          return transformedDay;
+        });
         await updateProgram({
           variables: {
             programId: trainingProgram.id,
@@ -131,7 +130,7 @@ export default function AddExerciseToProgram({
 
   const exercises = useMemo(
     () =>
-      trainingProgram.days.find((day) => day.id === activeDay?.id)?.exercises ??
+      trainingProgram.days.find(day => day.id === activeDay?.id)?.exercises ??
       [],
     [trainingProgram]
   );
@@ -142,6 +141,23 @@ export default function AddExerciseToProgram({
       return setIsSaveModalOpen(true);
     }
     navigation.navigate(PageTypes.ALL_PROGRAMS);
+  };
+
+  const exerciseCardPressHandler = (
+    exercise: TypeTransformedExerciseData
+  ): void => {
+    if (activeDay) {
+      const dayExercise: TypeExercise = {
+        id: v4(),
+        exerciseId: exercise.id,
+        name: exercise.name,
+        muscleGroups: exercise.muscles,
+      };
+
+      addExerciseToDay(activeDay.id, dayExercise);
+
+      navigation.goBack();
+    }
   };
 
   if (!activeDay) return null;
@@ -174,7 +190,9 @@ export default function AddExerciseToProgram({
         <AppButton
           title='Добавить упражнение'
           onPress={() =>
-            navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM)
+            navigation.navigate(PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM, {
+              callback: exerciseCardPressHandler,
+            })
           }
           fontSize='17px'
           mt='100px'
@@ -185,7 +203,7 @@ export default function AddExerciseToProgram({
         <DraggableFlatList
           data={exercises}
           onDragEnd={({ data }) => changeExercisesOrder(activeDay.id, data)}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           ListHeaderComponent={
             <View style={{ width: '100%', height: LIST_TOP_SPACE }} />

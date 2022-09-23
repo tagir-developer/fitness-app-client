@@ -2,6 +2,7 @@ import {
   WorkoutContextActionTypes,
   TypeWorkoutContextAction,
   TypeWorkoutContextState,
+  TypeWorkoutExercise,
 } from './types';
 
 export const appReducer = (
@@ -63,129 +64,70 @@ export const appReducer = (
             }
           : null,
       };
-    // case WorkoutContextActionTypes.SET_ACTIVE_EXERCISE:
-    //   return {
-    //     ...state,
-    //     activeDay: action.payload,
-    //   };
-    // case WorkoutContextActionTypes.SET_NEW_PROGRAM_DATA:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       id: action.payload.id,
-    //       name: action.payload.name,
-    //       days: [],
-    //     },
-    //     initialProgramData: {
-    //       id: action.payload.id,
-    //       name: action.payload.name,
-    //       days: [],
-    //     },
-    //     loading: false,
-    //   };
-    // case WorkoutContextActionTypes.SET_EDITED_PROGRAM_DATA:
-    //   return {
-    //     ...state,
-    //     trainingProgram: action.payload,
-    //     initialProgramData: action.payload,
-    //     loading: false,
-    //   };
-    // case WorkoutContextActionTypes.ADD_SET:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: [...state.trainingProgram.days, action.payload],
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.CHANGE_DAYS_ORDER:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: action.payload,
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.DELETE_SET:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: state.trainingProgram.days.filter(
-    //         day => day.id !== action.payload
-    //       ),
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.RENAME_DAY:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: state.trainingProgram.days.map(day => {
-    //         if (day.id === action.payload.id) {
-    //           const newDay: TypeTrainingDay = {
-    //             ...day,
-    //             name: action.payload.name,
-    //           };
-    //           return newDay;
-    //         }
-    //         return day;
-    //       }),
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.ADD_EXERCISE_TO_DAY:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: state.trainingProgram.days.map(day => {
-    //         if (day.id === action.payload.dayId) {
-    //           const newDay: TypeTrainingDay = {
-    //             ...day,
-    //             exercises: [...day.exercises, action.payload.exercise],
-    //           };
-    //           return newDay;
-    //         }
-    //         return day;
-    //       }),
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.DELETE_EXERCISE:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: state.trainingProgram.days.map(day => {
-    //         if (day.id === action.payload.dayId) {
-    //           const newDay: TypeTrainingDay = {
-    //             ...day,
-    //             exercises: day.exercises.filter(
-    //               exercise => exercise.id !== action.payload.exerciseId
-    //             ),
-    //           };
-    //           return newDay;
-    //         }
-    //         return day;
-    //       }),
-    //     },
-    //   };
-    // case WorkoutContextActionTypes.CHANGE_EXERCISE_ORDER:
-    //   return {
-    //     ...state,
-    //     trainingProgram: {
-    //       ...state.trainingProgram,
-    //       days: state.trainingProgram.days.map(day => {
-    //         if (day.id === action.payload.dayId) {
-    //           const newDay: TypeTrainingDay = {
-    //             ...day,
-    //             exercises: action.payload.exercises,
-    //           };
-    //           return newDay;
-    //         }
-    //         return day;
-    //       }),
-    //     },
-    //   };
+    case WorkoutContextActionTypes.ADD_SET:
+      return {
+        ...state,
+        activeWorkout: state.activeWorkout
+          ? {
+              ...state.activeWorkout,
+              exercises: state.activeWorkout.exercises.map(exercise => {
+                if (exercise.id === action.payload.exerciseId) {
+                  const newExerciseData: TypeWorkoutExercise = {
+                    ...exercise,
+                    sets: [...exercise.sets, action.payload.setData],
+                  };
+                  return newExerciseData;
+                }
+                return exercise;
+              }),
+            }
+          : null,
+      };
+    case WorkoutContextActionTypes.COPY_SET:
+      return {
+        ...state,
+        activeWorkout: state.activeWorkout
+          ? {
+              ...state.activeWorkout,
+              exercises: state.activeWorkout.exercises.map(exercise => {
+                if (exercise.id === action.payload.exerciseId) {
+                  const copiedSet = exercise.sets.find(
+                    set => set.id === action.payload.setId
+                  );
+                  const newExerciseData: TypeWorkoutExercise = {
+                    ...exercise,
+                    sets: copiedSet
+                      ? [...exercise.sets, copiedSet]
+                      : exercise.sets,
+                  };
+                  return newExerciseData;
+                }
+                return exercise;
+              }),
+            }
+          : null,
+      };
+    case WorkoutContextActionTypes.DELETE_SET:
+      return {
+        ...state,
+        activeWorkout: state.activeWorkout
+          ? {
+              ...state.activeWorkout,
+              exercises: state.activeWorkout.exercises.map(exercise => {
+                if (exercise.id === action.payload.exerciseId) {
+                  const newExerciseData: TypeWorkoutExercise = {
+                    ...exercise,
+                    sets: exercise.sets.filter(
+                      set => set.id !== action.payload.setId
+                    ),
+                  };
+                  return newExerciseData;
+                }
+                return exercise;
+              }),
+            }
+          : null,
+      };
     default:
       return state;
   }

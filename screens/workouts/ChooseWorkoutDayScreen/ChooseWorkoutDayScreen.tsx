@@ -9,6 +9,7 @@ import { AppFlex } from '../../../components/ui/AppFlex';
 import { AppHeader } from '../../../components/ui/AppHeader';
 import MainLayout from '../../../components/ui/MainLayout';
 import { TypeTrainingDay } from '../../../context/trainingProgram/types';
+import { useWorkoutContext } from '../../../context/workoutContext/workoutContext';
 import { GET_PROGRAM_BY_ID } from '../../../graphql/programs/programQuery';
 import { useGetSourcesLoadingState } from '../../../hooks/useGetSourcesLoadingState';
 import { PageTypes } from '../../../navigation/types';
@@ -39,6 +40,8 @@ export default function ChooseWorkoutDayScreen({
     null
   );
 
+  const { setNewWorkoutData } = useWorkoutContext();
+
   const sourcesLoading = useGetSourcesLoadingState(
     DEFAULT_SCREEN_SOURCES_COUNT
   );
@@ -46,15 +49,16 @@ export default function ChooseWorkoutDayScreen({
   // handlers --------
 
   const cardPressHandler = (dayId: string, dayName: string): void => {
-    console.log('dayId---', dayId);
-    console.log('dayName---', dayName);
+    const trainingDay = program?.days.find(day => day.id === dayId);
 
-    // ! Создаем в контекст стейте сущность тренировки
+    if (program && trainingDay) {
+      setNewWorkoutData(program.name, trainingDay);
 
-    navigation.navigate(PageTypes.CHOOSE_EXERCISE_AND_START, {
-      dayId,
-      dayName,
-    });
+      navigation.navigate(PageTypes.CHOOSE_EXERCISE_AND_START, {
+        dayId,
+        dayName,
+      });
+    }
   };
 
   // useEffect --------

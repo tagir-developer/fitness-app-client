@@ -1,5 +1,6 @@
 import { ActionMap } from '../../common/types';
-import { TypeExercise } from '../trainingProgram/types';
+import { TypeTransformedExerciseData } from '../../screens/exercises/AllExercisesScreen/types';
+import { TypeExercise, TypeTrainingDay } from '../trainingProgram/types';
 
 export enum WorkoutContextActionTypes {
   SET_LOADING = 'SET_LOADING',
@@ -8,13 +9,9 @@ export enum WorkoutContextActionTypes {
   ADD_EXERCISE = 'ADD_EXERCISE',
   DELETE_EXERCISE = 'DELETE_EXERCISE',
   CHANGE_EXERCISES_ORDER = 'CHANGE_EXERCISES_ORDER',
-  // SET_EDITED_PROGRAM_DATA = 'SET_EDITED_PROGRAM_DATA',
-  // SET_ACTIVE_EXERCISE = 'SET_ACTIVE_EXERCISE',
-  // ADD_SET = 'ADD_SET',
-  // DELETE_SET = 'DELETE_SET',
-  // COPY_DAY = 'COPY_DAY',
-  // CHANGE_DAYS_ORDER = 'CHANGE_DAYS_ORDER',
-  // CHANGE_EXERCISE_ORDER = 'CHANGE_EXERCISE_ORDER',
+  ADD_SET = 'ADD_SET',
+  COPY_SET = 'COPY_SET',
+  DELETE_SET = 'DELETE_SET',
 }
 
 export type TypeWorkoutSet = {
@@ -34,7 +31,8 @@ export type TypeWorkoutExercise = {
 
 export type TypeWorkout = {
   id: string;
-  programName: string;
+  name: string;
+  description: string;
   startDateTime: string | null;
   endDateTime: string | null;
   exercises: TypeWorkoutExercise[];
@@ -54,19 +52,18 @@ export type WorkoutPayload = {
   [WorkoutContextActionTypes.ADD_EXERCISE]: TypeWorkoutExercise;
   [WorkoutContextActionTypes.DELETE_EXERCISE]: string;
   [WorkoutContextActionTypes.CHANGE_EXERCISES_ORDER]: TypeWorkoutExercise[];
-  // [WorkoutContextActionTypes.ADD_SET]: TypeTrainingDay;
-  // [WorkoutContextActionTypes.SET_EDITED_PROGRAM_DATA]: TypeWorkout;
-  // [WorkoutContextActionTypes.CHANGE_DAYS_ORDER]: TypeTrainingDay[];
-  // [WorkoutContextActionTypes.DELETE_SET]: string;
-  // [WorkoutContextActionTypes.RENAME_DAY]: {
-  //   id: string;
-  //   name: string;
-  // };
-  // [WorkoutContextActionTypes.CHANGE_EXERCISE_ORDER]: {
-  //   dayId: string;
-  //   exercises: TypeExercise[];
-  // };
-  // [WorkoutContextActionTypes.SET_ACTIVE_EXERCISE]: TypeTrainingDay | null;
+  [WorkoutContextActionTypes.ADD_SET]: {
+    exerciseId: string;
+    setData: TypeWorkoutSet;
+  };
+  [WorkoutContextActionTypes.COPY_SET]: {
+    exerciseId: string;
+    setId: string;
+  };
+  [WorkoutContextActionTypes.DELETE_SET]: {
+    exerciseId: string;
+    setId: string;
+  };
 };
 
 export type TypeWorkoutContextAction =
@@ -75,21 +72,14 @@ export type TypeWorkoutContextAction =
 export type TypeWorkoutContext = TypeWorkoutContextState & {
   setNewWorkoutData: (
     programName: string,
-    dayExercises: TypeExercise[]
+    trainingDay: TypeTrainingDay
   ) => void;
-  addExercise: (exercise: TypeExercise) => void;
+  addExercise: (exercise: TypeTransformedExerciseData) => void;
   deleteExercise: (exerciseId: string) => void;
   changeExercisesOrder: (exercises: TypeWorkoutExercise[]) => void;
-  // setEditedProgramData: (program: TypeWorkout) => void;
-  // addTrainingDay: (name: string) => void;
-  // changeDaysOrder: (days: TypeTrainingDay[]) => void;
-  // deleteDay: (id: string) => void;
-  // copyDay: (id: string) => void;
-  // addExerciseToDay: (dayId: string, exercise: TypeExercise) => void;
-  // renameDay: (id: string, name: string) => void;
-  // deleteExercise: (dayId: string, exerciseId: string) => void;
-  // changeExercisesOrder: (dayId: string, exercises: TypeExercise[]) => void;
-  // setActiveDay: (dayId: string | null) => void;
+  addSetToExercise: (exerciseId: string, setData: TypeWorkoutSet) => void;
+  copySet: (exerciseId: string, setId: string) => void;
+  deleteSet: (exerciseId: string, setId: string) => void;
   setLoading: (value: boolean) => void;
   startWorkout: () => void;
 };

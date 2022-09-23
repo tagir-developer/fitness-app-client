@@ -4,6 +4,8 @@
 //   }
 // }
 
+import { TypeTransformedExerciseData } from '../screens/exercises/AllExercisesScreen/types';
+
 export enum SignedOutPageTypes {
   SIGN_IN = 'SignIn',
   REGISTER = 'Register',
@@ -58,7 +60,9 @@ export type RootSignedInStackParamList = {
     dayName: string;
     pageType: TypeCreateExercisePageTypes;
   };
-  [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: undefined;
+  [PageTypes.CHOOSE_EXERCISE_FOR_NEW_PROGRAM]: {
+    callback: (exercise: TypeTransformedExerciseData) => void;
+  };
   [PageTypes.PROGRAM_DETAIL]: { programId: string };
   // muscles
   [PageTypes.MUSCLE_GROUPS]: undefined;

@@ -6,17 +6,17 @@ import {
   TypeWorkoutContextState,
   TypeWorkout,
   TypeWorkoutExercise,
+  TypeWorkoutSet,
 } from './types';
 import { v4 } from 'uuid';
-import { TypeExercise } from '../trainingProgram/types';
+import {
+  TypeExercise,
+  TypeTrainingDay,
+  TypeTrainingProgram,
+} from '../trainingProgram/types';
 import formatISO from 'date-fns/formatISO';
-
-// const defaultWorkoutData: TypeWorkout = {
-//   id: '',
-//   startDateTime: null,
-//   endDateTime: null,
-//   exercises: [],
-// };
+import { format } from 'date-fns';
+import { TypeTransformedExerciseData } from '../../screens/exercises/AllExercisesScreen/types';
 
 export const initialWorkoutState: TypeWorkoutContextState = {
   loading: true,
@@ -37,14 +37,18 @@ export const WorkoutState = ({ children }) => {
 
   const setNewWorkoutData = (
     programName: string,
-    dayExercises: TypeExercise[]
+    trainingDay: TypeTrainingDay
   ): void => {
+    const workoutName = `Тренировка от (${format(new Date(), 'dd:MM:yyyy')})`;
+    const workoutDescription = `Программа: ${programName} (${trainingDay.name})`;
+
     const workoutData: TypeWorkout = {
       id: v4(),
-      programName,
+      name: workoutName,
+      description: workoutDescription,
       startDateTime: null,
       endDateTime: null,
-      exercises: dayExercises.map(exercise => {
+      exercises: trainingDay.exercises.map(exercise => {
         const transformedExercise: TypeWorkoutExercise = {
           id: v4(),
           exerciseId: exercise.exerciseId,
@@ -72,12 +76,12 @@ export const WorkoutState = ({ children }) => {
     });
   };
 
-  const addExercise = (exercise: TypeExercise) => {
+  const addExercise = (exercise: TypeTransformedExerciseData) => {
     const exerciseData: TypeWorkoutExercise = {
       id: v4(),
-      exerciseId: exercise.exerciseId,
+      exerciseId: exercise.id,
       name: exercise.name,
-      muscleGroups: exercise.muscleGroups,
+      muscleGroups: exercise.muscles,
       sets: [],
     };
 
@@ -86,6 +90,21 @@ export const WorkoutState = ({ children }) => {
       payload: exerciseData,
     });
   };
+
+  // const addExercise = (exercise: TypeExercise) => {
+  //   const exerciseData: TypeWorkoutExercise = {
+  //     id: v4(),
+  //     exerciseId: exercise.exerciseId,
+  //     name: exercise.name,
+  //     muscleGroups: exercise.muscleGroups,
+  //     sets: [],
+  //   };
+
+  //   dispatch({
+  //     type: WorkoutContextActionTypes.ADD_EXERCISE,
+  //     payload: exerciseData,
+  //   });
+  // };
 
   const deleteExercise = (exerciseId: string) => {
     dispatch({
@@ -101,99 +120,29 @@ export const WorkoutState = ({ children }) => {
     });
   };
 
-  // const setEditedProgramData = (program: TypeWorkout): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.SET_EDITED_PROGRAM_DATA,
-  //     payload: program,
-  //   });
-  // };
+  const addSetToExercise = (
+    exerciseId: string,
+    setData: TypeWorkoutSet
+  ): void => {
+    dispatch({
+      type: WorkoutContextActionTypes.ADD_SET,
+      payload: { exerciseId, setData },
+    });
+  };
 
-  // const addTrainingDay = (name: string): void => {
-  //   const newDay: TypeTrainingDay = {
-  //     id: v4(),
-  //     name,
-  //     exercises: [],
-  //   };
+  const copySet = (exerciseId: string, setId: string): void => {
+    dispatch({
+      type: WorkoutContextActionTypes.COPY_SET,
+      payload: { exerciseId, setId },
+    });
+  };
 
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.ADD_SET,
-  //     payload: newDay,
-  //   });
-  // };
-
-  // const changeDaysOrder = (days: TypeTrainingDay[]): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.CHANGE_DAYS_ORDER,
-  //     payload: days,
-  //   });
-  // };
-
-  // const copyDay = (id: string): void => {
-  //   const copiedDay = state.trainingProgram.days.find(day => day.id === id);
-
-  //   const dayId = v4();
-
-  //   if (copiedDay) {
-  //     const newDay: TypeTrainingDay = {
-  //       ...copiedDay,
-  //       id: dayId,
-  //       name: copiedDay.name + ' (копия)',
-  //     };
-
-  //     dispatch({
-  //       type: WorkoutContextActionTypes.ADD_SET,
-  //       payload: newDay,
-  //     });
-  //   }
-  // };
-
-  // const deleteDay = (id: string): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.DELETE_SET,
-  //     payload: id,
-  //   });
-  // };
-
-  // const renameDay = (id: string, name: string): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.RENAME_DAY,
-  //     payload: { id, name },
-  //   });
-  // };
-
-  // const addExerciseToDay = (dayId: string, exercise: TypeExercise): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.ADD_EXERCISE_TO_DAY,
-  //     payload: { dayId, exercise },
-  //   });
-  // };
-
-  // const deleteExercise = (dayId: string, exerciseId: string): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.DELETE_EXERCISE,
-  //     payload: { dayId, exerciseId },
-  //   });
-  // };
-
-  // const changeExercisesOrder = (
-  //   dayId: string,
-  //   exercises: TypeExercise[]
-  // ): void => {
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.CHANGE_EXERCISE_ORDER,
-  //     payload: { dayId, exercises },
-  //   });
-  // };
-
-  // const setActiveDay = (dayId: string | null): void => {
-  //   const activeDay =
-  //     state.trainingProgram.days.find(day => day.id === dayId) ?? null;
-
-  //   dispatch({
-  //     type: WorkoutContextActionTypes.SET_ACTIVE_EXERCISE,
-  //     payload: activeDay,
-  //   });
-  // };
+  const deleteSet = (exerciseId: string, setId: string): void => {
+    dispatch({
+      type: WorkoutContextActionTypes.DELETE_SET,
+      payload: { exerciseId, setId },
+    });
+  };
 
   return (
     <WorkoutContext.Provider
@@ -207,19 +156,9 @@ export const WorkoutState = ({ children }) => {
         addExercise,
         deleteExercise,
         changeExercisesOrder,
-        // trainingProgram: state.trainingProgram,
-        // initialProgramData: state.initialProgramData,
-        // activeDay: state.activeDay,
-        // setEditedProgramData,
-        // addTrainingDay,
-        // changeDaysOrder,
-        // deleteDay,
-        // copyDay,
-        // addExerciseToDay,
-        // renameDay,
-        // deleteExercise,
-        // changeExercisesOrder,
-        // setActiveDay,
+        addSetToExercise,
+        copySet,
+        deleteSet,
         setLoading,
       }}
     >
