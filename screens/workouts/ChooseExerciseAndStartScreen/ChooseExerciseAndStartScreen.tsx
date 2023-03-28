@@ -45,6 +45,8 @@ export default function ChooseExerciseAndStartScreen({
 
   const [createWorkout] = useMutation(CREATE_WORKOUT);
 
+  const asdasd = 'sadad'
+
   const {
     activeWorkout,
     changeExercisesOrder,
